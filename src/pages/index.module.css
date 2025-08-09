@@ -10,10 +10,6 @@
   overflow: hidden;
 }
 
-.hero__title {
-  font-size: 2.5rem;
-}
-
 @media screen and (max-width: 996px) {
   .heroBanner {
     padding: 2rem;
