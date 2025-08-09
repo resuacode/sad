@@ -32,3 +32,43 @@
   --ifm-color-primary-lighter: #d831ca;
   --ifm-color-primary-lightest: #dd4ed1;
 }
+
+
+/* Footer customization */
+.footer__links {
+  margin-bottom: 1rem;
+}
+
+.footer__title {
+  margin-bottom: 0.5rem !important;
+  color: var(--ifm-footer-link-color);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Social icons hover effects */
+.footer a svg {
+  transition: all 0.3s ease;
+}
+
+.footer a:hover svg {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
+/* Center the footer content */
+.footer__links {
+  justify-content: center;
+}
+
+.footer__col {
+  text-align: center;
+}
+
+/* Copyright styling */
+.footer__copyright {
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--ifm-footer-copyright-color);
+}
