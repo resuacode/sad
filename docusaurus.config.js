@@ -49,9 +49,6 @@ const config = {
         docs: {
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/resuacode/sad/tree/main/',
         },
         blog: false,
         theme: {
@@ -92,37 +89,32 @@ const config = {
               {
                 type: 'docSidebar',
                 sidebarId: 'tema02Sidebar',
-                label: 'Tema 2: Identificación y Autenticación',
+                label: 'Tema 2: Pautas de Seguridad Informática',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema03Sidebar',
-                label: 'Tema 3: Control de Acceso',
+                label: 'Tema 3: Mecanismos de Seguridad Activa',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema04Sidebar',
-                label: 'Tema 4: Seguridad Física',
+                label: 'Tema 4: Técnicas de Acceso Remoto. Seguridad Perimetral',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema05Sidebar',
-                label: 'Tema 5: Criptografía',
+                label: 'Tema 5: Firewalls',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema06Sidebar',
-                label: 'Tema 6: Seguridad en Redes',
+                label: 'Tema 6: Servidores Proxy',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema07Sidebar',
                 label: 'Tema 7: Alta Disponibilidad',
-              },
-              {
-                type: 'docSidebar',
-                sidebarId: 'tema08Sidebar',
-                label: 'Tema 8: Backup y Recuperación',
               },
             ],
           },
