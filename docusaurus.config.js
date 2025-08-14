@@ -84,37 +84,32 @@ const config = {
               {
                 type: 'docSidebar',
                 sidebarId: 'tema01Sidebar',
-                label: 'Tema 1: Legislación',
+                label: 'Tema 1: Fundamentos de la Seguridad Informática y Marco Legal',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema02Sidebar',
-                label: 'Tema 2: Pautas de Seguridad Informática',
+                label: 'Tema 2: Mecanismos de Seguridad Activa y Prácticas Seguras',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema03Sidebar',
-                label: 'Tema 3: Mecanismos de Seguridad Activa',
+                label: 'Tema 3: Seguridad Perimetral y Acceso Remoto',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema04Sidebar',
-                label: 'Tema 4: Técnicas de Acceso Remoto. Seguridad Perimetral',
+                label: 'Tema 4: Firewalls y Servidores Proxy',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema05Sidebar',
-                label: 'Tema 5: Firewalls',
+                label: 'Tema 5: Alta disponibilidad y Virtualización',
               },
               {
                 type: 'docSidebar',
                 sidebarId: 'tema06Sidebar',
-                label: 'Tema 6: Servidores Proxy',
-              },
-              {
-                type: 'docSidebar',
-                sidebarId: 'tema07Sidebar',
-                label: 'Tema 7: Alta Disponibilidad',
+                label: 'Tema 6: Ciberseguridad Avanzada y Auditorías',
               },
             ],
           },

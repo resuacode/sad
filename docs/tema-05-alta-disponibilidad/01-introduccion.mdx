@@ -1,0 +1,45 @@
+---
+sidebar_position: 1
+title: Alta Disponibilidad y Virtualización
+---
+
+# Tema 5: Alta Disponibilidad y Virtualización
+
+## Introducción
+
+En este tema analizaremos e implmenetaremos soluciones de alta disponibilidad, las cuales tienen como objetivo garantizar la continuidad de los servicios, utilizando técnicas de redundancia y virtualización. 
+
+## Contenido
+
+1. Introducción a la Alta Disponibilidad:
+    - Definición y objetivos.
+    - Análisis de supuestos y situaciones.
+    - Soluciones hardware para continuidad (RAID, fuentes de alimentación redundantes, etc.).
+    - Servidores redundantes y sistemas de almacenamiento redundante.
+    - Sistemas de clústers.
+    - Balanceadores de carga (Load Balancers).
+    - Soluciones de futuro y demanda creciente.
+    - Esquematización y documentación de soluciones HA (alta disponibilidad).
+2. Virtualización de Sistemas:
+    - Posibilidades de la virtualización para HA (alta disponibilidad).
+    - Herramientas para la virtualización: Hipervisores (Type 1 y Type 2).
+    - Alta disponibilidad con virtualización:
+        - Migración en vivo. 
+        - Snapshots. 
+        - Failover.
+    - Simulación de servicios con virtualización:
+        - Uso de Vagrant para entornos de desarrollo y pruebas replicables.
+        - Contenedores (Docker, Podman) para servicios aislados y rápìdo despliegue. 
+        - virtualización en entornos de producción. 
+        - Análoisis y optimización de sistemas virtualizados. Pruebas de carga.
+3. Introducción a la nube y alta disponiblidad en AWS (Si da tiempo):
+    - Conceptos básicos de Cloud Computing.
+    - Servicios AWS para alta disponibilidad:
+        - EC2 (Máquinas Virtuales):
+            - Lanzamiento de instancias.
+            - Grupos de autoescalado.
+        - Elastic Load Balancing (ELB): balanceo de carga.
+        - S3 (Almacenamiento de objetos): redundancia.
+        - VPC (Virtual Private Cloud): aislamiento y seguridad.
+        - Introducción a Elastic Container Service (ECS) o Elastic Kubernetes Service (EKS) para contenedores en producción.
+
