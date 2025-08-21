@@ -5,3 +5,272 @@ title: Seguridad Lógica
 
 # Seguridad Lógica
 
+La seguridad lógica se refiere a las medidas y prácticas implementadas para proteger los sistemas informáticos y la información que contienen de accesos no autorizados, ataques cibernéticos y otras amenazas. A diferencia de la seguridad física, que se centra en proteger los dispositivos y el entorno físico, la seguridad lógica se enfoca en proteger los datos y los sistemas a través de controles técnicos y administrativos.
+
+En este tema veremos cuestiones relacionadas con la seguridad lógica como la protección de los datos y el software mediante el control de acceso, el cifrado y algunas otras medidas digitales. 
+
+## Control de Acceso
+
+El control de acceso es un componente fundamental de la seguridad lógica. Se refiere a las políticas y prácticas que regulan quién puede acceder a los recursos de un sistema y qué acciones pueden realizar sobre ellos.  
+
+Existen diferentes métodos para implementar el control de acceso, incluyendo:
+
+- **Autenticación**: Verifica la identidad de un usuario o sistema antes de permitir el acceso.
+- **Autorización**: Determina qué recursos puede acceder un usuario autenticado y qué acciones puede realizar.
+- **Auditoría**: Registra y monitorea el acceso a los recursos para detectar y responder a actividades sospechosas.
+
+Los sistemas de control de acceso protegidos con contraseñas suelen ser un punto crítico de la seguridad lógica. 
+
+Estos sistemas son propensos a sufrir ataques como:
+
+- **Fuerza Bruta**: Intentos repetidos de adivinar contraseñas.
+- **Ataque de diccionario**: Uso de una lista de palabras comunes para adivinar contraseñas.
+
+Una forma sencilla pero efectiva de proteger al sistema de este tipo de ataques concretos es establecer un número máximo de intentos de inicio de sesión fallidos, tras los cuales se bloqueará temporalmente la cuenta.
+
+Para evitar este tipo de problemas y otros parecidos, hablaremos a continuación del establecimiento de políticas de contraseñas.
+
+### Políticas de contraseñas
+
+Las contraseñas son la primera línea de defensa para la autenticación de usuarios. Una política sólida es crucial para evitar accesos no autorizados.
+
+Una política de contraseñas efectiva debe incluir:
+
+- **Requisitos de Complejidad**: Las contraseñas deben ser lo suficientemente complejas como para resistir ataques de fuerza bruta. Esto puede incluir la combinación de letras mayúsculas y minúsculas, números y caracteres especiales.
+- **Longitud Mínima**: Se debe establecer una longitud mínima para las contraseñas, generalmente de al menos 8 a 12 caracteres.
+- **Cambio Periódico de Contraseñas**: Las contraseñas deben cambiarse regularmente para reducir el riesgo de acceso no autorizado.
+- **Bloqueo de Cuenta**: Después de un número determinado de intentos fallidos de inicio de sesión, la cuenta debe bloquearse temporalmente.
+- **Educación del Usuario**: Los usuarios deben ser capacitados sobre la importancia de las contraseñas seguras y cómo proteger sus credenciales.
+- **Frases de Contraseña**: Fomentar el uso de frases de contraseña en lugar de palabras individuales, ya que son más fáciles de recordar y más seguras.
+- **No reutilizar Contraseñas**: Los usuarios deben evitar el uso de la misma contraseña en múltiples cuentas o sistemas.
+- **Autenticación Multifactor (MFA/2FA)**: Implementar un segundo factor de autenticación, como un código enviado al teléfono móvil o una aplicación de autenticación, para aumentar la seguridad.
+- **Auditoría de contraseñas**: Realizar auditorías periódicas de las contraseñas para identificar posibles debilidades y garantizar el cumplimiento de las políticas establecidas. 
+
+:::tip Gestores de contraseñas
+Actualmente existen herramientas como *KeePass*, *LastPass* y *1Password* que pueden ayudar a los usuarios a gestionar sus contraseñas de manera segura.    
+
+Estas herramientas almacenan las contraseñas de forma cifrada y pueden generar contraseñas seguras automáticamente, lo que facilita la implementación de políticas de contraseñas efectivas.
+:::
+
+:::info Otras herramientas para proteger nuestras contraseñas como Google Authenticator
+Google Authenticator es una aplicación que genera códigos de autenticación de un solo uso para la autenticación multifactor. Funciona sin conexión a Internet y es compatible con muchos servicios en línea.
+:::
+
+### Configuración de contraseñas seguras a nivel de dominio
+
+Las **directivas de cuentas** permiten configurar políticas de seguridad para las cuentas de usuario en un dominio. Esto incluye la gestión de contraseñas, bloqueo de cuentas y auditoría de eventos de seguridad.
+
+A continuación, veremos como implementar estas directivas, paso a paso, tanto en sistemas Windows como en Linux.
+
+#### Configuración de contraseñas seguras en Windows
+
+1. **Acceder a la Directiva de Seguridad Local**:
+   - Abrir el *Editor de directivas de seguridad local* (`secpol.msc`).
+   - Navegar a `Directivas de cuenta` > `Política de contraseñas`.
+
+2. **Configurar la Política de Contraseñas**:
+   - Establecer la longitud mínima de la contraseña.
+   - Habilitar la complejidad de la contraseña.
+   - Configurar la caducidad de la contraseña.
+
+3. **Configurar el Bloqueo de Cuenta**:
+   - Navegar a `Directivas de cuenta` > `Política de bloqueo de cuenta`.
+   - Establecer el umbral de bloqueo y la duración.
+
+4. **Habilitar la Auditoría de Seguridad**:
+   - Navegar a `Directivas locales` > `Opciones de seguridad`.
+   - Habilitar la auditoría de inicio de sesión y de acceso a objetos.
+
+
+
+## Listas de Control de Acceso
+
+Las listas de control de acceso (ACL), en inglés *Access Control Lists*, son un componente fundamental de la seguridad lógica. Se utilizan para definir quién tiene permiso para acceder a ciertos recursos dentro de un sistema informático. Las ACL pueden aplicarse a archivos, directorios, dispositivos y otros objetos del sistema.
+
+Podemos definir una ACL como un conjunto de reglas que determinan qué usuarios o grupos tienen permiso para acceder a un recurso (fichero, carpeta, base de datos, servicio de red, etc.) y qué tipo de operaciones pueden realizar (lectura, escritura, modificación o ejecución). 
+
+Existen dos tipos principales de ACL:
+
+1. **ACL Discrecional (DACL)**: Permite a los propietarios de los recursos definir quién puede acceder a ellos y qué tipo de acceso se les concede (lectura, escritura, ejecución, etc.).
+
+2. **ACL de Sistema (SACL)**: Se utiliza para auditar el acceso a los recursos. Permite registrar intentos de acceso no autorizados o exitosos, lo que ayuda a identificar posibles amenazas o violaciones de seguridad.
+
+Las ACL son una herramienta poderosa para implementar el principio de menor privilegio, asegurando que los usuarios solo tengan acceso a los recursos necesarios para realizar su trabajo.
+
+### Modelos de Control de Acceso
+Las ACL son una parte esencial de los modelos de control de acceso, que son enfoques estructurados para gestionar y restringir el acceso a los recursos en un sistema informático.
+
+Podemos también ver diferentes modelos de control de acceso que se utilizan para definir cómo se aplican las ACL:
+
+1. **DAC (Discretionary Access Control)**: En este modelo, los propietarios de los recursos tienen la capacidad de definir quién puede acceder a sus recursos y qué tipo de acceso se les concede. Esto se implementa a través de listas de control de acceso (ACL) que especifican los permisos para cada usuario o grupo.
+
+2. **MAC (Mandatory Access Control)**: En este modelo, el acceso a los recursos está determinado por políticas de seguridad establecidas por el sistema, y no puede ser modificado por los propietarios de los recursos. Los usuarios y grupos se clasifican en diferentes niveles de seguridad, y el acceso se concede o deniega en función de estas clasificaciones.
+
+3. **RBAC (Role-Based Access Control)**: En este modelo, los permisos se asignan a roles en lugar de a usuarios individuales. Los usuarios se agrupan en roles, y se les concede acceso a los recursos en función de su rol. Esto simplifica la gestión de permisos, especialmente en entornos con un gran número de usuarios.
+
+### Implementación de ACLs en Sistemas Operativos
+
+Podemos encontrar la implementación de ACLs en varios sistemas operativos modernos, que utilizan diferentes enfoques para gestionar el acceso a los recursos. A continuación, se presentan algunos ejemplos:
+
+1. **Windows**: En sistemas operativos Windows, las ACLs se implementan a través de la seguridad de archivos NTFS. 
+    - Cada archivo y carpeta puede tener una DACL que especifica los permisos para los usuarios y grupos. 
+    - Los administradores pueden modificar estas listas utilizando herramientas como el Explorador de Windows o la línea de comandos.
+
+2. **Linux**: En sistemas Linux, las ACLs se pueden implementar utilizando el sistema de archivos ext3/ext4. 
+    - A través de permisos tradicionales *rwx* y permisos extendidos, los administradores pueden definir quién puede leer, escribir o ejecutar archivos y directorios.
+    - Los administradores pueden utilizar el comando `setfacl` para establecer ACLs en archivos y directorios, y `getfacl` para ver las ACLs existentes. Esto permite un control más granular sobre los permisos en comparación con el modelo tradicional de propietario/grupo/otros.
+
+3. **macOS**: Al igual que Linux, macOS también admite ACLs a través de su sistema de archivos. 
+    - Los administradores pueden utilizar el comando `chmod` con la opción `+a` para agregar entradas de ACL a archivos y directorios, lo que permite un control de acceso más detallado.
+
+En resumen, la implementación de ACLs en sistemas operativos es una práctica común que permite a los administradores gestionar el acceso a los recursos de manera efectiva y segura.
+
+Profundicemos un poco más a nivel práctico en como se gestiona esto tanto en sistemas Linux como en Windows.
+
+#### Administración de ACLs en Linux
+
+Como ya seguro conocéis, en sistemas linux existe el comando `chmod` para gestionar los permisos de archivos y directorios. Este comando permite cambiar los permisos de acceso de los archivos y directorios de manera sencilla. 
+
+Como breve repaso de los permisos en Linux:
+
+- `r`: Permiso de lectura.
+- `w`: Permiso de escritura.
+- `x`: Permiso de ejecución.
+
+Con `chmod`, podemos establecer permisos para el propietario del archivo, el grupo y otros usuarios. Por ejemplo:
+
+```bash
+chmod u+rw,g+r,o-r documento.txt
+```
+
+También podemos hacerlo utilizando números:
+
+```bash
+chmod 664 documento.txt
+```
+
+Estos números se corresponden con los permisos de la siguiente manera:
+
+- El primer dígito representa los permisos del propietario.
+- El segundo dígito representa los permisos del grupo.
+- El tercer dígito representa los permisos de otros usuarios.
+
+Están en formato octal (base 8), donde cada dígito puede ser un número del 0 al 7. Dependiendo del valor estamos asignando permisos de lectura, escritura o ejecución.
+
+Por ejemplo, `chmod 764 documento.txt` asigna:
+
+- Lectura, escritura y ejecución para el propietario.
+- Lectura y escritura para el grupo.
+- Solo lectura para otros usuarios.
+
+Ya que el 764 en binario es `111 110 100`, podemos ver cómo se asignan los permisos:
+
+- El propietario tiene permisos de lectura (r), escritura (w) y ejecución (x) -> `111`
+- El grupo tiene permisos de lectura (r) y escritura (w) -> `110`
+- Otros usuarios tienen solo permiso de lectura (r) -> `100`
+
+En Linux también podemos modificar el dueño de un archivo a través del comando `chown`.
+
+Lo haríamos de la siguiente forma:
+
+```bash
+chown nuevo_dueño:nuevo_grupo documento.txt
+```
+
+También si un usuario pertenece a varios grupos puede cambiar el grupo de uno de sus archivos o directorios a los que pertenezca con el comando `chgrp`.    
+
+```bash
+chgrp nuevo_grupo documento.txt
+```
+
+Por último veremos como manejar las ACLs en Linux. Para ello, utilizamos los comandos `setfacl` y `getfacl`.
+
+:::info Ejemplo de ACL en Linux
+Supongamos que tenemos un archivo llamado `documento.txt` y queremos establecer una ACL para permitir que el usuario `juan` tenga permisos de lectura y escritura, mientras que el usuario `maria` solo tenga permisos de lectura. Podemos hacerlo con los siguientes comandos:
+
+```bash
+setfacl -m u:juan:rw documento.txt
+setfacl -m u:maria:r documento.txt
+```
+
+Para ver las ACLs establecidas en el archivo, podemos utilizar el comando:
+
+```bash
+getfacl documento.txt
+```
+:::
+
+Como podemos observar en el ejemplo, hemos establecido permisos específicos para cada usuario en el archivo `documento.txt`, lo que nos permite un control más granular sobre quién puede acceder y modificar el archivo.   
+
+El comando `getfacl` nos permite ver las ACLs establecidas en el archivo. Y con el comando `setfacl` podemos modificar las ACLs existentes. 
+
+Las opciones habituales del comando `setfacl` son las siguientes:
+
+- `-m`: Modificar una ACL existente.
+- `-x`: Eliminar una entrada de ACL.
+- `-b`: Eliminar todas las entradas de ACL.
+
+Las opciones habituales del comando `getfacl` son:
+
+- `-s`: Mostrar solo las entradas de ACL.
+- `-n`: Mostrar los nombres de los usuarios y grupos en lugar de sus IDs numéricos.
+
+
+#### Administración de ACLs en Windows
+
+En Windows, la administración de ACLs se realiza principalmente a través de la interfaz gráfica, aunque también se pueden utilizar comandos de PowerShell para gestionar las ACLs de manera más avanzada.
+
+:::info Ejemplo de ACL en Windows
+Supongamos que tenemos un archivo llamado `documento.txt` y queremos establecer una ACL para permitir que el usuario `juan` tenga permisos de lectura y escritura, mientras que el usuario `maria` solo tenga permisos de lectura. Podemos hacerlo con los siguientes pasos:
+
+```powershell
+Set-Acl -Path "documento.txt" -AclObject $acl
+```
+
+1. Hacemos clic derecho en el archivo `documento.txt` y seleccionamos "Propiedades".
+2. Vamos a la pestaña "Seguridad" y hacemos clic en "Editar".
+3. Agregamos a los usuarios `juan` y `maria` y les asignamos los permisos correspondientes.
+
+Para ver las ACLs establecidas en el archivo, podemos utilizar el comando:
+
+```powershell
+Get-Acl documento.txt
+```
+:::
+
+En el ejemplo anterior, hemos utilizado la interfaz gráfica de Windows para establecer permisos específicos para cada usuario en el archivo `documento.txt`.    
+
+El comando `Get-Acl` nos permite ver las ACLs establecidas en el archivo. Y con el comando `Set-Acl` podemos modificar las ACLs existentes.
+
+```powershell
+Set-Acl documento.txt
+```
+
+Los comandos tiene las siguientes opciones habituales:
+
+- `Set-Acl`: Establece una ACL en un archivo o directorio.
+    - `-Path`: Especifica la ruta del archivo o directorio.
+    - `-AclObject`: Especifica el objeto ACL que se va a establecer.
+- `Get-Acl`: Obtiene la ACL de un archivo o directorio.
+    - `-Path`: Especifica la ruta del archivo o directorio.
+    - `-AclObject`: Especifica el objeto ACL que se va a obtener.
+
+También en Sistemas Windows vía línea de comandos podemos hacer uso del comando `icacls`.
+
+```powershell
+icacls documento.txt
+```
+
+Este comando sirve para mostrar las ACLs de un archivo o directorio. Sus principales opciones son:
+
+- `/grant`: Otorga permisos a un usuario o grupo.
+- `/remove`: Elimina permisos de un usuario o grupo.
+- `/inheritance`: Configura la herencia de permisos.
+
+Antiguamente también podíamos usar el comando `cacls`.
+
+```powershell
+cacls documento.txt
+```
+
+Cuyo uso se desaconseja en favor de `icacls`, ya que `cacls` no es compatible con las ACLs de Windows Vista y versiones posteriores.
