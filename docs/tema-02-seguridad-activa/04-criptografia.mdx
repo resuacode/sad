@@ -4,3 +4,263 @@ title: Criptografía aplicada a la seguridad lógica
 ---
 
 # Criptografía aplicada a la seguridad lógica
+
+La **criptografía** se refiere al uso de algoritmos para transformar la información de modo que solo las partes autorizadas puedan acceder a ella.
+
+En terminología de criptografía debemos entender los siguientes conceptos:
+
+- **Cifrado**: Proceso de transformar la información original (texto plano) en un formato ilegible (texto cifrado) utilizando un algoritmo y una clave.
+- **Descifrado**: Proceso inverso al cifrado, donde se transforma el texto cifrado de vuelta a su formato original utilizando la clave adecuada.
+- **Clave**: Información secreta utilizada por los algoritmos de cifrado y descifrado. La seguridad de la criptografía depende en gran medida de la confidencialidad de la clave.
+- **Hashing**: Proceso de transformar datos de entrada de longitud variable en una cadena de longitud fija, que es única para cada entrada. Se utiliza comúnmente para verificar la integridad de los datos.
+- **Texto en claro**: Información original que se desea proteger mediante cifrado. El texto en claro es legible y comprensible para cualquier persona que tenga acceso a él.    
+
+Los algoritmos de cifrado se pueden clasificar en dos categorías principales:
+
+- **Algoritmos de cifrado en bloque**: Estos algoritmos dividen la información en bloques de tamaño fijo y cifran cada bloque por separado. Ejemplos de algoritmos de cifrado en bloque son AES (Advanced Encryption Standard) y DES (Data Encryption Standard).
+- **Algoritmos de cifrado en flujo**: Estos algoritmos cifran la información de manera continua, bit a bit o byte a byte. Son más eficientes para cifrar flujos de datos de longitud variable. Un ejemplo de algoritmo de cifrado en flujo es RC4.
+
+Las técnicas más sencillas de cifrado en criptografía clásica son el **cifrado por sustitución** y el **cifrado por transposición**.
+
+- El **cifrado por sustitución** implica reemplazar cada letra o símbolo en el texto original con otro símbolo según una regla específica. Un ejemplo clásico es el **Cifrado César**, donde cada letra se desplaza un número fijo de posiciones en el alfabeto.
+- El **cifrado por transposición** implica reorganizar las letras del texto original según un patrón específico. Un ejemplo simple es escribir el texto en filas y luego leerlo en columnas.
+
+:::info El método de cifrado César
+
+El **Cifrado César** es un tipo de cifrado por sustitución en el que cada letra del texto en claro se reemplaza por otra letra que se encuentra un número fijo de posiciones más adelante en el alfabeto. Por ejemplo, con un desplazamiento de 3, la letra A se convierte en D, la B se convierte en E, y así sucesivamente. Este método es fácil de implementar, pero también es vulnerable a ataques de fuerza bruta, ya que hay un número limitado de desplazamientos posibles.
+
+Se llama así ya que se dice que Julio César lo utilizaba para comunicarse con sus generales.
+
+Funciona de la siguiente manera:
+
+1. Se elige un número entero como clave de desplazamiento (por ejemplo, 3).
+2. Para cifrar el texto, se toma cada letra del texto en claro y se desplaza un número fijo de posiciones en el alfabeto.
+3. Si el desplazamiento lleva a una letra fuera del alfabeto, se envuelve al principio (por ejemplo, Z se convierte en C con un desplazamiento de 3).
+4. El resultado es el texto cifrado, que es ilegible sin conocer la clave de desplazamiento.
+
+Por ejemplo:
+```
+Texto en claro: "HOLA MUNDO"
+Texto cifrado (desplazamiento 3): "KROD PXQGR"
+```
+> Teniendo en cuenta el alfabeto español (incluyendo la ñ), el cifrado César se puede adaptar fácilmente a otros idiomas y conjuntos de caracteres.  
+
+:::
+
+## Principales aplicaciones de la criptografía en seguridad lógica
+
+- **Cifrado de disco completo o FDE (Full Disk Encryption)**: Esta técnica cifra todos los datos en un disco duro, protegiendo la información incluso si el dispositivo es robado o perdido.
+- **Cifrado de ficheros y carpetas**: Permite cifrar archivos o carpetas específicos para proteger su contenido.
+- **Cifrado de bases de datos**: Protege la información almacenada en bases de datos, asegurando que solo usuarios autorizados puedan acceder a ella.
+- **Cifrado de comunicaciones**: Asegura que los datos transmitidos a través de redes (como Internet) estén protegidos contra interceptaciones. 
+- **Firmas digitales**: Permiten verificar la autenticidad e integridad de un mensaje, asegurando que proviene del remitente y no ha sido modificado.
+
+## Tipos de algoritmos de cifrado
+
+Podemos dividir los algoritmos de cifrado en dos grandes grupos:
+
+- **Cifrado simétrico o de clave simétrica o privada**: En este tipo de cifrado, la misma clave se utiliza tanto para cifrar como para descifrar la información. Ejemplos de algoritmos de cifrado simétrico son AES y DES.
+- **Cifrado asimétrico o de clave asimétrica o pública**: En este tipo de cifrado, se utilizan dos claves diferentes: una clave pública para cifrar la información y una clave privada para descifrarla. Un ejemplo de algoritmo de cifrado asimétrico es RSA.
+
+:::tip El principio de *Kerckhoffs*
+
+El principio de Kerckhoffs establece que la seguridad de un sistema criptográfico no debe depender de la confidencialidad de la clave, sino de la dificultad de romper el cifrado. Esto significa que incluso si un atacante conoce el algoritmo de cifrado, no debería poder descifrar la información sin la clave adecuada.   
+:::
+
+### Criptografía simétrica
+
+Como ya adelantamos, la criptografía simétrica es un método criptográfico en el que se usa una misma clave para cifrar y descifrar la información. Esto significa que tanto el emisor como el receptor deben conocer y mantener en secreto la clave utilizada. La principal ventaja de la criptografía simétrica es su eficiencia, ya que los algoritmos suelen ser más rápidos en comparación con los de criptografía asimétrica. Sin embargo, la gestión de claves puede ser un desafío, especialmente en sistemas con múltiples usuarios.  
+
+Algunos de los algoritmos de cifrado simétrico más comunes son:
+
+- **AES (Advanced Encryption Standard)**: Un estándar de cifrado que utiliza bloques de 128 bits y claves de 128, 192 o 256 bits. Es ampliamente utilizado en aplicaciones de seguridad.
+- **DES (Data Encryption Standard)**: Un antiguo estándar de cifrado que utiliza bloques de 64 bits y una clave de 56 bits. Ha sido reemplazado en gran medida por AES debido a su vulnerabilidad a ataques de fuerza bruta.
+- **3DES (Triple DES)**: Una versión mejorada de DES que aplica el algoritmo tres veces a cada bloque de datos, aumentando así la seguridad.
+- **Blowfish**: Un algoritmo de cifrado de bloque que utiliza una longitud de clave variable de hasta 448 bits. Es conocido por su velocidad y eficacia.
+- **RC4**: Un algoritmo de cifrado en flujo que es rápido y eficiente, pero que ha sido objeto de críticas debido a vulnerabilidades en su implementación.
+
+Sin embargo, los sistemas de cifrado simétrico presentan dos **principales problemáticas**:
+
+1. **Distribución de claves**: La necesidad de compartir la clave secreta entre el emisor y el receptor puede ser un punto débil. Si la clave es interceptada durante la transmisión, un atacante podría descifrar la información.
+2. **Escalabilidad**: En sistemas con múltiples usuarios, la gestión de claves se vuelve compleja. Cada par de usuarios necesita una clave única, lo que puede llevar a un gran número de claves que deben ser almacenadas y gestionadas de forma segura.
+
+Para paliar estos problemas se mejora la seguridad de los sistemas mediante la criptografía asimétrica y la criptografía híbrida.
+
+### Criptografía asimétrica
+
+En este caso, cada usuario del sistema criptográfico necesita una pareja de claves:
+
+- **Clave pública**: Esta clave se utiliza para cifrar la información y puede ser compartida abiertamente con cualquier persona.
+- **Clave privada**: Esta clave se utiliza para descifrar la información y debe ser mantenida en secreto por el propietario.
+
+Esta pareja de claves es **complementaria**: lo que cifra una solo lo puede descifrar la otra y al revés.
+
+Los sistemas de cifrado de clave pública se basan en **funciones resumen o funciones hash **de un solo sentido que aprovechan las propiedades particulares de estas funciones para garantizar la seguridad.
+
+La **principal ventaja** de la criptografía asimétrica es que resuelve el problema de la distribución de claves, ya que la clave pública puede ser compartida sin comprometer la seguridad de la clave privada. Sin embargo, los algoritmos de cifrado asimétrico suelen ser más lentos y menos eficientes que sus contrapartes simétricas.
+
+Algunos de los algoritmos de cifrado asimétrico más comunes son:
+
+- **RSA (Rivest-Shamir-Adleman)**: Se basa en la dificultad de factorizar números grandes en sus factores primos.
+- **DSA (Digital Signature Algorithm)**: Utilizado principalmente para la firma digital y la verificación de la autenticidad de los mensajes.
+- **ECC (Elliptic Curve Cryptography)**: Se basa en las propiedades de las curvas elípticas y ofrece un alto nivel de seguridad con claves más pequeñas en comparación con RSA.
+
+:::tip ¿Que son las funciones hash?
+
+Las funciones hash son algoritmos que transforman un conjunto de datos de entrada (mensaje) en una cadena de longitud fija, que generalmente se representa como un número hexadecimal. Estas funciones tienen varias propiedades importantes:
+
+1. **Determinismo**: Para un mismo conjunto de datos de entrada, la función hash siempre producirá la misma salida.
+2. **Unidireccionalidad**: Es computacionalmente difícil revertir el proceso y obtener los datos de entrada originales a partir del hash.
+3. **Colisiones**: Es poco probable que dos conjuntos de datos diferentes produzcan el mismo hash.
+
+Las funciones hash se utilizan en diversas aplicaciones de seguridad, como la verificación de integridad de datos, la firma digital y el almacenamiento seguro de contraseñas.
+
+Por ejemplo: 
+
+- **SHA-256**: Produce un hash de 256 bits y se utiliza en diversas aplicaciones, incluyendo Bitcoin.
+- **MD5**: Produce un hash de 128 bits, pero se considera inseguro para aplicaciones criptográficas debido a vulnerabilidades conocidas.
+
+:::
+
+El tamaño de la clave es una medida de seguridad del sistema, pero no es comparable el tamaño de la clave del cifrado simétrico con el de la clave pública para medir la seguridad.
+
+En un ataque de fuerza bruta sobre un **cifrado simétrico** con una clave de 128 bits, habría que probar 2^128 combinaciones posibles, mientras que en un **cifrado asimétrico** con una clave de 2048 bits, la seguridad se basa en la dificultad de ciertos problemas matemáticos (como la factorización de números grandes), y no en el número de combinaciones posibles. 
+
+Sin embargo, en una ataque de fuerza bruta sobre un cifrado asimétrico con una clave de 2048 bits, habría que probar 2^2048 combinaciones posibles, lo que es computacionalmente mucho más inviable.
+
+La mayor ventaja de la criptografía asimétrica es que resuelve el problema de la distribución de claves, ya que la clave pública puede ser compartida sin comprometer la seguridad de la clave privada. Sin embargo, los algoritmos de cifrado asimétrico suelen ser más lentos y menos eficientes que sus contrapartes simétricas. 
+
+Pero por otro lado, tiene una serie de **desventajas**:
+
+- **Velocidad**: Los algoritmos de cifrado asimétrico son generalmente más lentos que los de cifrado simétrico debido a la complejidad matemática involucrada.
+- **Eficiencia**: Los algoritmos de cifrado asimétrico suelen requerir más recursos computacionales, lo que puede hacer que sean menos eficientes en entornos con limitaciones de hardware.
+- **Tamaño de clave**: Las claves asimétricas son generalmente más largas que las simétricas, lo que puede aumentar la carga de procesamiento.
+
+Algunos **protocolos** y software que utilizan criptografía asimétrica son:
+
+- **SSL/TLS**: Protocolo utilizado para asegurar las comunicaciones en Internet.
+- **PGP (Pretty Good Privacy)**: Utilizado para la encriptación de correos electrónicos y archivos.
+- **SSH (Secure Shell)**: Protocolo para acceder de forma segura a sistemas remotos.
+
+### Criptografía híbrida
+
+Como ya hemos visto, las claves asímetricas ralentizan el proceso de cifrado y descifrado, por lo que en la práctica se utilizan sistemas híbridos que combinan ambos tipos de criptografía. 
+
+Un sistema de cifrado híbrido utiliza criptografía asimétrica para intercambiar de forma segura una clave simétrica, que luego se utiliza para cifrar y descifrar los datos. Este enfoque aprovecha las ventajas de ambos tipos de criptografía: la seguridad en la distribución de claves proporcionada por la criptografía asimétrica y la eficiencia en el cifrado y descifrado proporcionada por la criptografía simétrica. 
+
+El proceso paso a paso sería algo así:
+
+1. El remitente genera una clave simétrica y la utiliza para cifrar el mensaje.
+2. El remitente cifra la clave simétrica con la clave pública del destinatario.
+3. El remitente envía el mensaje cifrado y la clave simétrica cifrada al destinatario.
+4. El destinatario utiliza su clave privada para descifrar la clave simétrica.
+5. El destinatario utiliza la clave simétrica para descifrar el mensaje.
+
+Con este proceso se consigue **confidencialidad** en la comunicación, ya que solo el destinatario puede descifrar el mensaje utilizando su clave privada, y también **integridad** ya que el mensaje no podrá ser modificado.
+
+Pero todavía tenemos que resolver el problema de la **autenticación**. Aunque el destinatario puede estar seguro de que solo él puede leer el mensaje, no hay forma de verificar que el mensaje realmente proviene del remitente. Para abordar este problema, se pueden utilizar **firmas digitales**.  
+
+Y también el problema del **no repudio**. Esto significa que el remitente no puede negar haber enviado el mensaje, ya que está firmado digitalmente con su clave privada. Esto proporciona una capa adicional de seguridad y confianza en la comunicación.
+
+### Firmas digitales
+Las firmas digitales son un mecanismo criptográfico que permite **verificar la autenticidad e integridad de un mensaje**. Funcionan de la siguiente manera:
+
+1. El remitente genera un hash del mensaje que desea enviar.
+2. El remitente cifra el hash con su clave privada, creando la firma digital.
+3. El remitente envía el mensaje junto con la firma digital al destinatario.
+4. El destinatario utiliza la clave pública del remitente para descifrar la firma digital y obtener el hash original.
+5. El destinatario genera un nuevo hash del mensaje recibido y lo compara con el hash obtenido de la firma digital. Si coinciden, se verifica la autenticidad e integridad del mensaje.
+
+Las firmas digitales son fundamentales en aplicaciones como el correo electrónico seguro, la firma de software y los contratos electrónicos, ya que proporcionan garantías sobre la identidad del remitente y la integridad del mensaje.    
+
+La firma digital es el resultado de cifrar con clave privada el hash del mensaje original.
+
+Con este sistema conseguimos:
+
+- **Autenticación**: El destinatario puede verificar que el mensaje proviene del remitente, ya que solo el remitente posee la clave privada utilizada para crear la firma digital.
+- **Integridad**: Cualquier modificación del mensaje después de la firma digital invalidará la firma, lo que indica que el mensaje ha sido alterado.
+- **No repudio en origen**: El remitente no puede negar haber enviado el mensaje, ya que está firmado digitalmente con su clave privada.    
+
+## Certificados digitales y PKI
+
+Para garantizar la **unicidad de las claves privadas** se suele recurrir a **soportes físicos**, como tarjetas criptográficas o tokens USB. Estos dispositivos almacenan las claves privadas de forma segura y permiten su uso sin exponerlas directamente. Además, se utilizan **infraestructuras de clave pública (PKI)** para gestionar la emisión, revocación y verificación de certificados digitales, que vinculan identidades con claves públicas.
+
+Como un caso concreto de este tipo de tarjetas podemos encontrar el **DNI electrónico** que incorpora un certificado digital que permite autenticar al titular y firmar documentos electrónicamente.    
+
+Por otro lado, para asegurarnos que una determinada clave pública pertenece a un usuario concreto se utilizan los **certificados digitales**. Un certificado digital es un documento electrónico emitido por una autoridad de certificación (CA) que vincula una clave pública con la identidad de su propietario. El certificado contiene información como el nombre del propietario, la clave pública, la fecha de expiración y la firma digital de la CA que lo emitió. 
+
+Como ejemplos de este tipo de certificados podemos encontrar:
+
+- Certificados de usuario: utilizados para autenticar la identidad de una persona en línea.
+- Certificados de servidor: utilizados para autenticar la identidad de un servidor web y establecer conexiones seguras (HTTPS).
+- Certificados de firma de código: utilizados para verificar la integridad y autenticidad del software.
+
+En España, la **Fábrica Nacional de Moneda y Timbre (FNMT)** es la entidad encargada de emitir certificados digitales para ciudadanos y empresas. Estos certificados permiten realizar trámites electrónicos de forma segura, garantizando la identidad del firmante y la integridad de los documentos. 
+
+El formato estándar de certificados digitales es el **X.509**, que define la estructura y el contenido de los certificados. Este formato incluye información sobre el propietario de la clave, la clave pública, la autoridad de certificación que emitió el certificado y la firma digital de la CA.   
+
+Su distribución es posible realizarla de dos formas:
+
+- Con clave privada: el propietario del certificado utiliza su clave privada para firmar digitalmente el certificado, garantizando su autenticidad.
+- Con clave pública: cualquier persona puede verificar la firma del certificado utilizando la clave pública de la autoridad de certificación (CA) que lo emitió.
+
+:::tip Extensiones habituales
+
+Los certificados digitales suelen tener las siguientes extensiones de archivo:
+
+- **.cer**: utilizado para certificados en formato DER o PEM.
+- **.crt**: utilizado para certificados en formato PEM.
+- **.pfx** o **.p12**: utilizado para certificados que incluyen la clave privada y la cadena de certificados.
+
+:::
+
+### Terceras partes de confianza
+
+Para garantizar la autenticidad de los certificados digitales, se recurre a **terceras partes de confianza**, que son entidades independientes que verifican la identidad de los solicitantes de certificados y emiten los certificados digitales. Estas entidades son conocidas como **autoridades de certificación (CA)**.
+
+Las CA son responsables de:
+
+- Verificar la identidad de los solicitantes de certificados.
+- Emitir certificados digitales una vez que se ha verificado la identidad.
+- Revocar certificados en caso de que la clave privada del titular se vea comprometida.
+
+Al confiar en una CA, los usuarios pueden estar seguros de que los certificados digitales han sido emitidos a entidades legítimas y que las claves públicas contenidas en los certificados pertenecen a los propietarios indicados.
+
+La forma en que esa confianza se establece es a través de un proceso de verificación y validación riguroso llevado a cabo por la CA antes de emitir un certificado. Esto incluye la recopilación de información sobre la identidad del solicitante, la verificación de documentos y, en algunos casos, la realización de entrevistas personales.
+
+El modelo basado en terceros de confianza es fundamental para el funcionamiento seguro de la criptografía asimétrica y la infraestructura de clave pública (PKI), ya que proporciona un mecanismo para validar la identidad de los usuarios y garantizar la integridad de las comunicaciones.
+
+Las autoridades de registro o **Registration Authorities (RA)** son entidades que actúan como intermediarias entre los usuarios y las autoridades de certificación. Su función principal es verificar la identidad de los solicitantes de certificados antes de que estos sean emitidos por una CA. Las RA recopilan y validan la información necesaria para garantizar que los certificados se emitan a las entidades correctas.   
+
+Las RA desempeñan un papel crucial en el proceso de emisión de certificados digitales, ya que ayudan a reducir la carga de trabajo de las CA y a mejorar la eficiencia del sistema en su conjunto. Al actuar como un filtro, las RA pueden asegurarse de que solo los solicitantes legítimos sean presentados a la CA para su aprobación final. 
+
+Las autoridades de repositorio o **Repository Authorities** son entidades que se encargan de almacenar y distribuir los certificados digitales emitidos por las CA. Su función principal es proporcionar un acceso fácil y seguro a los certificados, permitiendo a los usuarios verificar la validez de un certificado y obtener la información necesaria sobre su titular.   
+
+Las Repository Authorities mantienen bases de datos de certificados y proporcionan servicios de consulta para que los usuarios puedan verificar la autenticidad e integridad de los certificados digitales. Esto es especialmente importante en entornos donde la confianza en la identidad es crucial, como en transacciones financieras o comunicaciones seguras. 
+
+Una ICP o PKI (Infraestructura de Clave Pública o Public Key Infrastructure) es un conjunto de roles, políticas, hardware y software necesarios para crear, gestionar, distribuir, usar, almacenar y revocar certificados digitales. La PKI permite la implementación de la criptografía asimétrica y proporciona los medios para asegurar la comunicación y la autenticación en entornos digitales.
+
+Estas ICP/PKI están formadas por:
+
+- **Autoridades de Certificación (CA)**: Son las entidades responsables de emitir y gestionar los certificados digitales. Validan la identidad de los solicitantes y garantizan la integridad de los certificados emitidos.
+
+- **Autoridades de Registro (RA)**: Actúan como intermediarias entre los usuarios y las CA. Se encargan de verificar la identidad de los solicitantes antes de que los certificados sean emitidos.
+
+- **Autoridades de Repositorio (RA)**: Son responsables de almacenar y distribuir los certificados digitales emitidos por las CA. Proporcionan acceso a los certificados y permiten a los usuarios verificar su validez.
+
+- **Políticas de Certificación**: Son documentos que definen las reglas y procedimientos que deben seguir las CA y las RA en la emisión y gestión de certificados digitales.
+
+- **Infraestructura Técnica**: Incluye el hardware y software necesario para implementar y gestionar la PKI, como servidores de certificados, bases de datos y sistemas de gestión de claves.
+
+En conclusión, la Infraestructura de Clave Pública (PKI) es esencial para garantizar la seguridad y la confianza en las comunicaciones digitales. Proporciona un marco robusto para la gestión de certificados digitales y la autenticación de identidades, lo que permite a las organizaciones proteger sus activos y datos en un entorno cada vez más amenazante. 
+
+### Documento Nacional de Identidad Electrónico (DNIe)
+
+El DNIe es un documento que permite la identificación electrónica de los ciudadanos y facilita la realización de trámites y gestiones de forma segura y eficiente. Este documento incorpora un chip criptográfico que almacena la información personal del titular y permite la firma electrónica de documentos.
+
+El DNIe se basa en la infraestructura de clave pública (PKI) para garantizar la autenticidad e integridad de la información contenida en el chip. Esto permite a los ciudadanos realizar transacciones electrónicas con confianza, ya que su identidad está respaldada por un sistema de certificación robusto.
+
+Además, el DNIe facilita el acceso a servicios electrónicos ofrecidos por la administración pública y otras entidades, promoviendo la digitalización y modernización de los procesos administrativos.
+
+El uso del DNIe requiere la instalación de software específico en el dispositivo del usuario, que permite la lectura del chip y la interacción con los servicios electrónicos. Este software suele incluir controladores para el lector de tarjetas y aplicaciones para la gestión de certificados y firmas digitales.  
+
