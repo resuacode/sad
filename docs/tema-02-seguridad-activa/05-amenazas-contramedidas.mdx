@@ -1,0 +1,413 @@
+---
+sidebar_position: 5
+title: Amenazas lógicas y contramedidas
+---
+
+# Amenazas lógicas y contramedidas
+
+Cómo ya vimos en el tema anterior, la seguridad informática puede ser víctima de múltiples amenazas. En este tema vamos a ahondar un poco más en las relacionadas con la seguridad lógica.
+
+Existe una gran variedad de amenazas lógicas que pueden comprometer la seguridad de los sistemas informáticos. A continuación, se describen algunas de las más comunes junto con sus respectivas contramedidas. 
+
+A continuación veremos como clasificar estas amenazas y aplicar contramedidas efectivas para mitigarlas.    
+
+## Clasificación de las amenazas lógicas
+
+Las amenazas lógicas son acciones o eventos maliciosos que explotan vulnerabilidades en el software o en la lógica de funcionamiento de un sistema informático.
+
+Podemos subdividirlas en 5 grandes grupos, como son el **Software Malicioso (Malware)**, los **ataques de red**, los ataques basados en **ingeniería social**, los **ataques a aplicaciones web** y los **ataques de contraseña**. 
+
+Dentro de cada uno de estos grupos existen múltiples tipos de amenazas, que veremos a continuación.
+
+- **Software Malicioso (Malware)**: Programas diseñados para infiltrarse o dañar un sistema sin el consentimiento del usuario. Ejemplos incluyen virus, gusanos, troyanos, ransomware y spyware.    
+    - **Virus**: Código malicioso que se adjunta a archivos legítimos y se propaga al ejecutarse.
+    - **Gusanos (Worms)**: Malware que se reproduce a sí mismo para propagarse a otros sistemas sin necesidad de un archivo anfitrión.
+    - **Troyanos (Trojans)**: Programas que se presentan como software legítimo pero que realizan acciones maliciosas en segundo plano.
+    - **Ransomware**: Malware que cifra los archivos de un usuario y exige un rescate para desbloquearlos.
+    - **Spyware**: Software que recopila información sobre un usuario sin su conocimiento.
+    - **Adware**: Software que muestra anuncios no deseados en el sistema del usuario, a menudo recopilando datos sobre sus hábitos de navegación.
+    - **Rootkits**: Conjuntos de herramientas que permiten el acceso no autorizado a un sistema mientras ocultan su presencia.
+    - **Botnets**: Redes de dispositivos infectados que son controlados de forma remota por un atacante para realizar tareas maliciosas.
+    - **Keyloggers**: Programas que registran las pulsaciones de teclas de un usuario para robar información confidencial, como contraseñas y datos bancarios.
+    - **Exploit Kits**: Conjuntos de herramientas que permiten a los atacantes aprovechar vulnerabilidades en software o sistemas para ejecutar código malicioso.
+
+- **Ataques de red**: Estos ataques se refieren a intentos de comprometer la seguridad de una red informática, interceptando, modificando o bloqueando el tráfico de datos. Ejemplos incluyen:
+    - **Sniffing**: Intercepció n y análisis del tráfico de red para capturar información sensible.
+    - **Spoofing**: Suplantación de identidad de dispositivos o usuarios en la red.
+    - **Denegación de Servicio (DoS/DDoS)**: Saturación de recursos de un sistema o red para impedir su funcionamiento normal.
+    - **Man-in-the-Middle (MitM)**: Intercepción y posible alteración de la comunicación entre dos partes sin que estas lo sepan.
+    - **ARP Poisoning**: Manipulación de la tabla ARP para redirigir el tráfico de red a través del atacante.
+    - **Port Scanning**: Exploración de puertos abiertos en un sistema para identificar posibles puntos de ataque.
+    - **Session Hijacking**: Secuestro de una sesión activa para obtener acceso no autorizado a recursos.
+
+- **Ataques basados en ingeniería social**: Consisten en manipular a las personas para obtener información confidencial o acceso a sistemas. Ejemplos:
+    - **Phishing**: Envío de mensajes fraudulentos que simulan ser de fuentes confiables para obtener datos sensibles.
+    - **Vishing**: Variante del phishing que utiliza llamadas telefónicas.
+    - **Smishing**: Phishing a través de mensajes SMS.
+    - **Pretexting**: Creación de un pretexto falso para obtener información de la víctima.
+    - **Baiting**: Dejar dispositivos infectados (como USBs) en lugares públicos para que sean recogidos y utilizados por víctimas.
+
+- **Ataques a aplicaciones web**: Aprovechan vulnerabilidades en aplicaciones accesibles por web. Ejemplos:
+    - **Inyección SQL**: Inserción de código SQL malicioso en formularios para acceder o manipular bases de datos.
+    - **Cross-Site Scripting (XSS)**: Inyección de scripts maliciosos en páginas web vistas por otros usuarios.
+    - **Cross-Site Request Forgery (CSRF)**: Engaño a un usuario autenticado para que ejecute acciones no deseadas en una aplicación web.
+    - **Directory Traversal**: Acceso a archivos o directorios fuera del directorio permitido.
+    - **File Inclusion**: Inclusión de archivos maliciosos en el servidor.
+
+- **Ataques de contraseña**: Buscan obtener o descifrar contraseñas para acceder a sistemas o información. Ejemplos:
+    - **Fuerza bruta**: Prueba sistemática de todas las combinaciones posibles de contraseñas.
+    - **Ataques de diccionario**: Uso de listas de palabras comunes para adivinar contraseñas.
+    - **Credential stuffing**: Uso de combinaciones de usuario y contraseña obtenidas de filtraciones previas.
+    - **Shoulder surfing**: Observación directa de la introducción de contraseñas.
+    - **Keylogging**: Registro de pulsaciones de teclado para capturar contraseñas.
+
+
+:::info Otra forma de clasificar las amenazas
+También podemos realizar clasificaciones algo más genéricas que engloban varios códigos maliciosos diferentes en los siguientes grupos, es una clasficiación diferente pero igualmente válida:
+- **Ladrones de información (infostealers)**: Programas diseñados para robar información confidencial de un sistema, como credenciales de acceso, datos personales o información financiera.
+    - Dentro de esta categoría se incluyen los troyanos, spyware y keyloggers.
+- **Código delictivo (crimeware)**: Programas diseñados para facilitar actividades delictivas, como el robo de información o la realización de ataques.
+    - Dentro de esta categoría se incluyen el ransomware, botnets y exploit kits.
+- **Greyware (o grayware)**: Programas que, aunque no son estrictamente maliciosos, pueden tener efectos indeseables en un sistema, como programas potencialmente no deseados (PUP).
+    - Dentro de esta categoría se incluyen los adware y los PUP.
+:::
+
+## Anatomía de ataques y software malicioso
+
+Es importante comprender cómo funcionan los ataques para poder ayudar a prevenir y mitigar sus efectos. A continuación, se describen las etapas comunes en la mayoría de los ataques:   
+
+### Fases de un Ataque
+
+Las fases de un ataque o **el ciclo de vida de un ataque** también conocido como **Kill Chain** son las siguientes:
+
+1. **Reconocimiento**: El atacante investiga y recopila información sobre el objetivo. Recopilación de información pública y privada sobre el objetivo.
+2. **Preparación**: Se desarrollan las herramientas y técnicas necesarias para llevar a cabo el ataque. Creación de *exploits* o *payloads* diseñados específicamente para las vulnerabilidades encontradas.
+3. **Explotación**: Se aprovechan las vulnerabilidades del sistema para ejecutar el ataque.Envío de los ataques objetivos (emails con adjuntos maliciosos, descargas desde webs, USBs infectados...).
+4. **Instalación**: Se instala el malware o se establece una puerta trasera para mantener el acceso. Se establece la persistencia en el sistema, por ejemplo a través de la creación de cuentas de usuario, servicios o troyanos.
+5. **Comando y Control (C2)**: El atacante establece comunicación con el sistema comprometido para controlarlo.
+6. **Acción en el Objetivo**: Se llevan a cabo las acciones maliciosas, como el robo de datos o la destrucción de información.
+
+### Análisis de Software Malicioso (Malware Analysis)
+
+Para seguir comprendiendo la naturaleza de los ataques, es fundamental realizar un análisis exhaustivo del software malicioso involucrado. Este análisis puede clasificarse en dos categorías principales:
+
+1. **Análisis Estático**: Implica examinar el código del malware sin ejecutarlo. Se utilizan herramientas para desensamblar y analizar el código, buscando patrones y comportamientos maliciosos. Este enfoque permite identificar la funcionalidad del malware y sus posibles objetivos. Se examinan firmas, strings, cabeceras, dependencias y funciones importadas o exportadas.
+
+2. **Análisis Dinámico**: Consiste en ejecutar el malware en un entorno controlado (sandbox, MV aislada) para observar su comportamiento en tiempo real. Se monitorean las acciones del malware, como la creación de archivos, modificaciones en el registro y comunicaciones de red. Este enfoque proporciona información valiosa sobre cómo el malware interactúa con el sistema y sus posibles efectos.
+
+Ambos enfoques son complementarios y se utilizan en conjunto para obtener una comprensión completa del malware y desarrollar estrategias efectivas de defensa.
+
+## Herramientas preventivas y paliativas
+
+Existe una gran variedad de herramientas y técnicas que pueden ayudar a prevenir y mitigar las amenazas lógicas. A continuación, se describen brevemente las más comunes:
+
+- **Antivirus y Antimalware**: Software diseñado para detectar y eliminar malware de los sistemas. Proporcionan protección en tiempo real y análisis programados para identificar amenazas conocidas.
+- **Firewalls**: Dispositivos o software que controlan el tráfico de red entrante y saliente, permitiendo o bloqueando conexiones según reglas de seguridad predefinidas. Se verán con más profundidad en el Tema 4. 
+- **Sistemas de Detección de Intrusiones (IDS/IPS)**: Herramientas que monitorean el tráfico de red en busca de actividades sospechosas o maliciosas, alertando a los administradores sobre posibles incidentes de seguridad. Se verán con más profundidad en el Tema 6.
+- **Sandboxing**: Técnica que consiste en ejecutar aplicaciones o archivos en un entorno aislado para prevenir daños al sistema operativo principal. Permite analizar el comportamiento de software potencialmente malicioso sin riesgo.
+- **Sistemas de Monitorización y SIEM (Security Information and Event Management)**: Herramientas que recopilan, analizan y correlacionan datos de seguridad de diferentes fuentes para detectar y responder a incidentes de seguridad en tiempo real.
+- **Herramientas de Auditoria de Seguridad**: Aplicaciones que permiten evaluar la seguridad de los sistemas y redes, identificando vulnerabilidades y configuraciones incorrectas. Estas herramientas son esenciales para realizar pruebas de penetración y auditorías de cumplimiento. Se verán con más profundidad en el Tema 6.
+- **Herramientas de Respuesta a Incidentes**: Soluciones que ayudan a los equipos de seguridad a gestionar y responder a incidentes de seguridad de manera efectiva, minimizando el impacto y facilitando la recuperación.  
+
+Vamos a ver algunas de estas herramientas con más detalle, como los antivirus y antimalware, sin embargo, es importante recordar que ninguna herramienta es infalible y siempre se deben seguir las mejores prácticas de seguridad. 
+
+### Antivirus y Antimalware
+
+El software *antivirus* y *antimalware* es una de las primeras líneas de defensa contra las amenazas lógicas. Estos programas están diseñados para detectar, bloquear y eliminar software malicioso antes de que pueda causar daño. Su funcionamiento se basa en la identificación de firmas de malware conocidas, así como en el análisis heurístico para detectar comportamientos sospechosos. Es importante mantener estas herramientas actualizadas para garantizar la protección contra las últimas amenazas.  
+
+En la actualidad podemos encontrar variantes de antivirus como por ejemplo:
+
+- **Antivirus de escritorio**: Software instalado en computadoras personales para proteger contra malware y amenazas locales.
+- **Antivirus en línea**: Servicios basados en la web que permiten escanear archivos y sistemas en busca de malware sin necesidad de instalar software.
+- **Análisis de ficheros en línea**: Herramientas que permiten subir archivos sospechosos a un servicio en línea para su análisis, como VirusTotal.
+- **Antivirus portables**: No requieren instalación en nuestro sistema y consumen una pequeña cantidad de recursos.
+- **Antivirus Live**: Se ejecutan desde un medio extraíble, como un USB, permitiendo escanear y limpiar sistemas sin necesidad de instalación.
+
+También existen otras **herramientas más específicas** como:
+
+- **Antispyware**: Software diseñado para detectar y eliminar spyware, que es un tipo de malware que se infiltra en el sistema para recopilar información sin el conocimiento del usuario.  
+- **Herramientas de bloqueo web**: Aplicaciones o extensiones de navegador que impiden el acceso a sitios web maliciosos o no deseados.
+
+En la actualidad, los antivirus modernos utilizan múltiples capas de protección y técnicas avanzadas para detectar y neutralizar amenazas. Esto incluye el uso de inteligencia artificial y aprendizaje automático para adaptarse a nuevas tácticas de ataque. Así como un conjunto de herramientas de respuesta a incidentes que permiten a los equipos de seguridad investigar y remediar rápidamente las amenazas.   
+
+#### Tipos de Detección
+
+- **Basada en firmas**: Este método implica la búsqueda de patrones específicos en los archivos que coinciden con las firmas de malware conocidas. Aunque es efectivo para detectar amenazas conocidas, puede no ser capaz de identificar variantes nuevas o desconocidas.  
+- **Basada en comportamiento (Behavioral-based)**: Este enfoque se centra en el análisis del comportamiento de los archivos y procesos en tiempo de ejecución. Utiliza técnicas heurísticas y de aprendizaje automático para identificar actividades sospechosas, incluso si no hay una firma conocida asociada. Esto permite detectar amenazas emergentes y variantes desconocidas.
+- **Heurística**: Este método utiliza reglas y algoritmos para identificar comportamientos sospechosos en archivos y procesos. Aunque puede generar falsos positivos, es útil para detectar amenazas desconocidas que no tienen una firma asociada.
+- **Inteligencia Artificial/Machine Learning**: Estas técnicas avanzadas permiten a los sistemas antivirus y antimalware aprender de patrones de comportamiento y adaptarse a nuevas amenazas. Utilizan grandes volúmenes de datos para mejorar la detección y respuesta a incidentes de seguridad. 
+
+:::warning La importancia de las actualizaciones
+En el software antivirus y antimalware, las actualizaciones son cruciales para mantener la eficacia de la protección. Los desarrolladores de estas herramientas lanzan regularmente actualizaciones que incluyen nuevas firmas de malware, mejoras en los algoritmos de detección y parches de seguridad. Mantener el software actualizado garantiza que el sistema esté protegido contra las amenazas más recientes y reduce el riesgo de infecciones. Además, muchas soluciones modernas ofrecen actualizaciones automáticas para facilitar este proceso. 
+:::
+
+:::info Ejemplos de software antivirus y antimalware
+- **Windows Defender**: Integrado en Windows 10 y 11, ofrece protección en tiempo real y análisis de malware.
+- **Malwarebytes**: Conocido por su capacidad para detectar y eliminar malware que otros antivirus pueden pasar por alto.
+- **Bitdefender**: Ofrece protección avanzada contra malware y ransomware, con características de aprendizaje automático.
+- **Kaspersky**: Proporciona una sólida protección contra malware y amenazas en línea, con un enfoque en la privacidad del usuario.
+- **Norton**: Ofrece una suite completa de seguridad con protección contra malware, firewall y herramientas de optimización del sistema.
+- **ESET**: Conocido por su bajo impacto en el rendimiento del sistema y su capacidad para detectar amenazas en tiempo real.
+- **Panda Security**: Ofrece soluciones de seguridad basadas en la nube, con un enfoque en la protección de dispositivos móviles y la privacidad del usuario.
+- **Sophos**: Proporciona una amplia gama de soluciones de seguridad, incluyendo protección contra malware, filtrado web y control de aplicaciones.
+- **Trend Micro**: Ofrece protección contra malware, ransomware y amenazas en línea, con un enfoque en la seguridad de la privacidad y la protección de datos.  
+- **ClamAV**: Solución de código abierto para la detección de malware, especialmente en entornos de servidor y correo electrónico.
+:::
+
+#### Verificación y actualización
+
+La verificación y actualización regular del software antivirus y antimalware es esencial para mantener la eficacia de la protección. Esto incluye la revisión de los registros de actividad, la realización de análisis completos del sistema y la actualización de las definiciones de malware. Además, es importante asegurarse de que el software esté configurado correctamente y que todas las funciones de protección estén habilitadas.  
+
+Esto garantiza que el sistema esté protegido contra las amenazas más recientes y reduce el riesgo de infecciones. Además, muchas soluciones modernas ofrecen actualizaciones automáticas para facilitar este proceso.
+
+Es importante descargar software solo de fuentes oficiales o repositorios de confianza para evitar la instalación de malware o software no deseado. También la verificación de firmas digitales de los ejecutables y paquetes, esto ayuda a asegurar la integridad y autenticidad del software. 
+
+Por otro lado, el uso de **hashes criptográficos** como MD5 o SHA-256 permite verificar la integridad de los archivos descargados, asegurando que no han sido modificados maliciosamente.
+
+#### Ejemplos de instalación, prueba y actualización
+
+##### Instalación y configuración de ClamAV en Linux
+
+Aquí hay un ejemplo básico de cómo instalar, probar y actualizar un antivirus en un sistema basado en Linux utilizando ClamAV, una solución de código abierto:
+
+```bash
+# Instalación de ClamAV
+sudo apt update
+sudo apt install clamav clamtk
+
+# Actualización de la base de datos de virus
+sudo freshclam
+
+# Escaneo del sistema
+clamscan -r /home
+
+# Actualización de ClamAV
+sudo apt upgrade clamav clamtk
+```
+
+En el ejemplo anterior, se instala ClamAV y su interfaz gráfica ClamTK, se actualiza la base de datos de virus utilizando `freshclam`, se realiza un escaneo recursivo del directorio `/home` y finalmente se actualiza el software a la última versión disponible. 
+
+##### Instalación y configuración de Malwarebytes en Windows
+
+1. Descargue el instalador de Malwarebytes desde el sitio web oficial.
+2. Ejecute el instalador y siga las instrucciones en pantalla para completar la instalación.
+3. Una vez instalado, abra Malwarebytes y realice una actualización de la base de datos de virus.
+4. Configure un análisis programado para escanear su sistema regularmente.
+
+### Mantenimiento del estado de actualización del sistema operativo y aplicaciones
+
+Es importante implementar una política de actualizaciones robusta y asegurarse de que tanto el sistema operativo como las aplicaciones estén siempre actualizadas con los últimos parches de seguridad. Esto ayuda a cerrar vulnerabilidades que podrían ser explotadas por atacantes.  
+
+Automatizar el proceso para que sea posible y seguro. Para esto pueden utilizarse herramientas como **WSUS** (Windows Server Update Services) para entornos Windows, o **apt** y **yum** para sistemas basados en Linux.    
+
+Monitorear los *feeds* de seguridad para vulnerabilidades críticas también es una buena práctica para mantenerse informado sobre las últimas amenazas y parches disponibles. Esto permite una respuesta rápida ante nuevas vulnerabilidades y ayuda a mantener la seguridad del sistema.
+
+El concepto de **CVE** o **Common Vulnerabilities and Exposures** es un sistema de referencia para identificar y catalogar vulnerabilidades de seguridad conocidas. Mantenerse al tanto de las CVE relevantes para su entorno puede ayudar a priorizar las actualizaciones y parches necesarios.    
+
+A continuación, veremos algo más en profundidad la monitorización básica del tráfico en redes, que nos ayudará a detectar posibles amenazas lógicas en nuestra red. 
+
+## Monitorización básica del tráfico en redes
+
+La monitorización del tráfico de red es una práctica esencial para detectar y responder a amenazas lógicas. Permite identificar patrones de tráfico inusuales, posibles intrusiones y actividades maliciosas en tiempo real.
+
+El proceso de monitorización implica la recopilación y análisis de datos de tráfico de red, lo que puede ayudar a identificar comportamientos anómalos que podrían indicar un ataque en curso. Esto se puede lograr mediante el uso de herramientas de análisis de tráfico y sistemas de detección de intrusiones (IDS).
+
+La monitorización del tráfico de red tiene los siguientes propósitos principales:
+
+- **Detección de intrusiones**: Identificar y responder a intentos no autorizados de acceso a la red o a sistemas específicos.
+- **Análisis forense**: Investigar incidentes de seguridad y determinar la causa raíz de los ataques. Se verá en más profundidad en temas posteriores.
+- **Rendimiento de la red**: Monitorear el rendimiento de la red y detectar cuellos de botella o problemas de latencia.
+- **Conformidad**: Asegurarse de que la red cumpla con las políticas y regulaciones de seguridad establecidas.
+- **Troubleshooting**: Identificar y resolver problemas de red de manera eficiente.
+
+### El concepto de captura de paquetes (packet sniffing)
+
+La captura de paquetes, también conocida como *packet sniffing*, es una técnica utilizada para interceptar y analizar el tráfico de red en tiempo real. Esta técnica es fundamental para la monitorización del tráfico de red y puede ser utilizada tanto para fines legítimos como maliciosos. 
+
+Los administradores de red utilizan herramientas de captura de paquetes para diagnosticar problemas de red, analizar el rendimiento y detectar actividades sospechosas. Sin embargo, los atacantes también pueden emplear esta técnica para espiar comunicaciones, robar credenciales o llevar a cabo ataques de tipo "man-in-the-middle".  
+
+A continuación, veremos diferentes herramientas para monitorizar la red y capturar los paquetes que circulan por ella.
+
+### Riesgos de redes sin monitorización
+
+Las redes sin monitorización son vulnerables a una serie de riesgos, que incluyen:
+
+- **Intrusiones no detectadas**: Sin herramientas de monitorización, es difícil identificar intentos de acceso no autorizados o actividades sospechosas en la red.
+- **Rendimiento deficiente**: La falta de visibilidad sobre el tráfico de red puede llevar a cuellos de botella y problemas de rendimiento que afectan a los usuarios finales.
+- **Cumplimiento inadecuado**: Las organizaciones pueden tener dificultades para cumplir con las regulaciones de seguridad si no tienen visibilidad sobre su tráfico de red.
+- **Dificultades en la resolución de problemas**: Sin datos de monitorización, puede ser complicado identificar y resolver problemas de red de manera eficiente.
+
+### Herramientas para la monitorización del tráfico
+
+#### Wireshark
+
+**Wireshark** es un analizador de protocolos de red de código abierto que permite capturar y examinar el tráfico de red en tiempo real. Es una herramienta muy popular entre los administradores de red y los profesionales de la seguridad, ya que proporciona una interfaz gráfica intuitiva y potentes capacidades de filtrado y análisis.
+
+Con Wireshark, los usuarios pueden ver todos los paquetes que circulan por la red, desglosarlos por protocolo y analizar su contenido en detalle. Esto facilita la identificación de problemas de red, la detección de intrusiones y el análisis forense de incidentes de seguridad.
+
+Sus principales características incluyen:
+
+- **Captura en tiempo real**: Wireshark permite capturar y analizar el tráfico de red en tiempo real, lo que facilita la detección de problemas y amenazas a medida que ocurren.
+- **Filtrado avanzado**: Los usuarios pueden aplicar filtros complejos para centrarse en paquetes específicos, lo que simplifica el análisis de grandes volúmenes de datos.
+- **Análisis de protocolos**: Wireshark es compatible con una amplia variedad de protocolos de red, lo que permite a los usuarios examinar el tráfico en detalle y comprender mejor su comportamiento.
+- **Interfaz gráfica intuitiva**: La interfaz de usuario de Wireshark es fácil de usar y permite a los usuarios navegar por los datos de manera eficiente.
+- **Soporte para múltiples plataformas**: Wireshark está disponible para Windows, macOS y Linux, lo que lo convierte en una herramienta versátil para administradores de red y profesionales de la seguridad.
+
+Sus principales usos en seguridad son:
+
+- Identificar el tráfico no cifrado (HTTP, FTP, Telnet...) que podría estar exponiendo información sensible.
+- Detectar escaneos de puertos (SYN scans, ACK scans...) que podrían indicar un intento de reconocimiento.
+- Analizar el tráfico de *malware* (conexiones a C2, descargas de payloads...) para entender su comportamiento.
+- Identificar intentos de fuerza bruta (login attempts, password spraying...) que podrían comprometer cuentas de usuario.
+- Detectar ataques ARP spoofing (ARP replies, MAC address changes...) que podrían desviar el tráfico de red o suplantar identidades.
+
+Para instalar Wireshark, puedes seguir estos pasos:
+
+- En **Linux**:
+    1. Abre una terminal.
+    2. Actualiza la lista de paquetes: `sudo apt update`.
+    3. Instala Wireshark: `sudo apt install wireshark`.
+    4. Agrega tu usuario al grupo de Wireshark: `sudo usermod -aG wireshark $USER`.
+    5. Reinicia tu sesión para aplicar los cambios.
+
+- En **Windows**:
+    1. Descarga el instalador de Wireshark desde la página oficial: [Wireshark Download](https://www.wireshark.org/download.html).
+    2. Ejecuta el instalador y sigue las instrucciones en pantalla.
+    3. Durante la instalación, asegúrate de seleccionar la opción para instalar WinPcap o Npcap, que son necesarios para la captura de paquetes.
+    4. Una vez completada la instalación, abre Wireshark desde el menú de inicio.
+
+- En **macOS**:
+    1. Descarga el instalador de Wireshark desde la página oficial: [Wireshark Download](https://www.wireshark.org/download.html).
+    2. Abre el archivo .dmg descargado y arrastra Wireshark a la carpeta de Aplicaciones.
+    3. Abre Wireshark desde la carpeta de Aplicaciones.
+
+##### Cómo usar Wireshark
+
+Para trabajar con Wireshark es importante entender su interfaz y las diferentes funciones que ofrece. A continuación, se presentan algunos conceptos básicos para comenzar:
+
+1. **Interfaz de usuario**: Wireshark tiene una interfaz gráfica que muestra una lista de paquetes capturados en tiempo real. La parte superior de la ventana muestra una lista de los paquetes, mientras que la parte inferior muestra los detalles del paquete seleccionado.
+
+2. **Filtros de captura**: Antes de comenzar a capturar paquetes, puedes configurar filtros de captura para limitar el tráfico que se captura. Esto es útil para centrarse en un tipo específico de tráfico o en una dirección IP particular.
+
+3. **Filtros de visualización**: Después de capturar paquetes, puedes aplicar filtros de visualización para mostrar solo los paquetes que cumplen ciertos criterios. Esto facilita el análisis de grandes volúmenes de datos.
+
+4. **Análisis de paquetes**: Al seleccionar un paquete en la lista, Wireshark muestra información detallada sobre el mismo, incluyendo los protocolos utilizados, las direcciones IP de origen y destino, y el contenido del paquete.
+
+5. **Exportación de datos**: Wireshark permite exportar los datos capturados en varios formatos, lo que facilita su análisis posterior o la creación de informes.
+
+Con estos conceptos básicos, estarás mejor preparado para utilizar Wireshark de manera efectiva en tus tareas de análisis de red y seguridad.
+
+
+#### ``tcpdump`` en sistemas Unix
+
+``tcpdump`` es una herramienta de línea de comandos para la captura y análisis de tráfico de red. 
+
+A continuación, se presentan algunos ejemplos básicos de uso:
+
+1. **Capturar tráfico en una interfaz específica**:
+   ```bash
+   sudo tcpdump -i eth0
+   ```
+
+2. **Filtrar tráfico por dirección IP**:
+   ```bash
+   sudo tcpdump -i eth0 host 192.168.1.1
+   ```
+
+3. **Guardar la captura en un archivo**:
+   ```bash
+   sudo tcpdump -i eth0 -w captura.pcap
+   ```
+
+4. **Leer una captura desde un archivo**:
+   ```bash
+   tcpdump -r captura.pcap
+   ```
+
+5. **Mostrar solo paquetes TCP**:
+   ```bash
+   sudo tcpdump -i eth0 tcp
+   ```
+
+6. **Mostrar paquetes en tiempo real**:
+   ```bash
+   sudo tcpdump -i eth0 -A
+   ```
+
+7. **Capturar el tráfico en eth0 para el host 192.168.1.100 y el puerto 80**:
+   ```bash
+   sudo tcpdump -i eth0 host 192.168.1.100 and port 80
+   ```
+
+#### ``netstat`` en sistemas Windows o Linux
+
+``netstat`` nos sirve para mostrar las conexiones de red activas, las tablas de enrutamiento y una serie de estadísticas de interfaz de red. 
+
+A continuación, se presentan algunos ejemplos básicos de uso:
+
+1. **Mostrar todas las conexiones de red**:
+   ```bash
+   netstat -a
+   ```
+
+2. **Mostrar conexiones activas y sus estados**:
+   ```bash
+   netstat -an
+   ```
+
+3. **Mostrar estadísticas de la interfaz de red**:
+   ```bash
+   netstat -i
+   ```
+
+4. **Mostrar la tabla de enrutamiento**:
+   ```bash
+   netstat -r
+   ```
+
+5. **Mostrar las conexiones de red en tiempo real**:
+   ```bash
+   netstat -c
+   ```
+6. **Mostrar las conexiones, puertos de escucha y PIDs de los procesos en Windows**:
+   ```bash
+   netstat -ano
+   ```
+
+Puede utilizarse tanto en sistemas Windows como en sistemas Linux, lo que la convierte en una herramienta versátil para administradores de red y profesionales de la seguridad.
+
+#### ``ss`` en sistemas Linux
+
+El comando *``ss`` se utiliza para mostrar información sobre las conexiones de red en sistemas Linux. 
+
+A continuación, se presentan algunos ejemplos básicos de uso:
+
+1. **Mostrar todas las conexiones de red**:
+   ```bash
+   ss -a
+   ```
+
+2. **Mostrar conexiones activas y sus estados**:
+   ```bash
+   ss -an
+   ```
+
+3. **Mostrar estadísticas de la interfaz de red**:
+   ```bash
+   ss -i
+   ```
+
+4. **Mostrar la tabla de enrutamiento**:
+   ```bash
+   ss -r
+   ```
+
+5. **Mostrar las conexiones de red en tiempo real**:
+   ```bash
+   ss -c
+   ```
+6. **Mostrar los sockets TCP/UDP de escucha con sus PIDs**:
+   ```bash
+   ss -tulnp
+   ```
+

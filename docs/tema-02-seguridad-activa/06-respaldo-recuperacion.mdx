@@ -1,0 +1,279 @@
+---
+sidebar_position: 6
+title: Respaldo y recuperación de datos
+---
+
+# Respaldo y recuperación de datos
+
+En este apartado se abordarán los conceptos y técnicas relacionados con las copias de seguridad y la recuperación de datos, fundamentales para garantizar la integridad y disponibilidad de la información en caso de fallos o pérdidas.
+
+La capacidad para recuperar los datos después de un incidente es crucial para la continuidad del negocio y la disponibilidad de la información.
+
+## Copias de seguridad
+
+La copia de seguridad, también conocida como respaldo, es el proceso de duplicar y almacenar datos en un lugar seguro para protegerlos contra pérdidas, daños o accesos no autorizados.
+
+La información contenida en nuestro equipo puede resultar dañada o incluso desaparecer. Las copias de seguridad o *backups* son réplicas de datos que nos permiten recuperar la información original en caso de necesitarlo.
+
+### Tipos de copias de seguridad
+
+Existen diferentes tipos de copias de seguridad, cada una con sus propias características y usos:
+
+- **Total o Completa**: Se realiza una copia de todos los datos seleccionados. Es la más sencilla de restaurar, pero también la que más espacio y tiempo requiere.  
+- **Incremental**: Se copia solo la información que ha cambiado desde la última copia de seguridad, lo que ahorra espacio y tiempo. Sin embargo, la restauración puede ser más compleja, ya que requiere la última copia completa y todas las incrementales posteriores.    
+- **Diferencial**: Se copia la información que ha cambiado desde la última copia de seguridad completa. Esto facilita la restauración, ya que solo se necesita la última copia completa y la última copia diferencial.  
+
+:::info Ventajas y desventajas
+
+Veamos las diferentes ventajas y desventajas de cada tipo de copia de seguridad:
+
+- **Total o Completa**:
+  - Ventajas: Sencillez en la restauración, ya que todos los datos están en un solo lugar.
+  - Desventajas: Requiere mucho espacio de almacenamiento y tiempo para realizar la copia.
+
+- **Incremental**:
+  - Ventajas: Ahorra espacio y tiempo, ya que solo copia los cambios.
+  - Desventajas: La restauración puede ser más compleja, ya que se necesitan múltiples copias.
+
+- **Diferencial**:
+  - Ventajas: Facilita la restauración, ya que solo se necesita la última copia completa y la última diferencial.
+  - Desventajas: Requiere más espacio que las copias incrementales, ya que almacena todos los cambios desde la última copia completa.
+
+Dependiendo de la situación, puede ser más adecuado utilizar un tipo de copia de seguridad en lugar de otro. Es importante evaluar las necesidades específicas de cada caso y elegir la estrategia de respaldo que mejor se adapte a ellas.
+
+Por ejemplo, si tenemos un gran volumen de datos que cambia con frecuencia, una copia de seguridad incremental puede ser la mejor opción para ahorrar espacio y tiempo. Por otro lado, si los datos son críticos y no se pueden perder, una copia de seguridad completa puede ser más adecuada a pesar de los mayores requisitos de tiempo y espacio.
+Sin embargo, en muchos casos, una combinación de diferentes tipos de copias de seguridad puede ser la mejor estrategia para garantizar la protección de los datos.  
+:::
+
+### Estrategias de copia de seguridad
+
+Además de los tipos de copias de seguridad, existen diferentes estrategias que pueden implementarse para optimizar el proceso de respaldo:
+
+- **3-2-1**: Esta estrategia sugiere tener **tres** copias de los datos (original + 2 copias), en **dos** tipos de medios diferentes (por ejemplo, disco duro + nube), y **una** copia fuera del sitio (off-site). Esto proporciona una mayor protección contra la pérdida de datos.
+- **GFS (Grandfather-Father-Son)**: Esta estrategia implica mantener múltiples generaciones de copias de seguridad, donde las copias más antiguas (abuelo) se reemplazan por copias más nuevas (padre) y así sucesivamente. Esto permite una recuperación más flexible y la posibilidad de restaurar datos a diferentes puntos en el tiempo.
+- **Copia de seguridad continua**: Esta estrategia implica realizar copias de seguridad de los datos de forma continua o casi en tiempo real, lo que minimiza la pérdida de datos en caso de un fallo.
+- **Copia de seguridad en la nube**: Esta estrategia utiliza servicios de almacenamiento en la nube para realizar copias de seguridad de los datos, lo que proporciona escalabilidad y accesibilidad desde cualquier lugar.
+- **Copia de seguridad local**: Esta estrategia implica almacenar las copias de seguridad en dispositivos locales, como discos duros externos o servidores locales, lo que permite un acceso rápido y una recuperación más sencilla en caso de fallo.
+- **Copia de seguridad híbrida**: Esta estrategia combina copias de seguridad locales y en la nube, lo que proporciona lo mejor de ambos mundos: acceso rápido a las copias de seguridad locales y protección adicional mediante el almacenamiento en la nube.
+- **Copia de seguridad fuera de línea**: Esta estrategia implica desconectar las copias de seguridad de la red, lo que las protege contra ataques cibernéticos y ransomware.
+- **Copia de seguridad programada**: Esta estrategia implica realizar copias de seguridad en horarios específicos, como durante la noche o los fines de semana, para minimizar el impacto en el rendimiento del sistema durante las horas de trabajo.
+
+### Medios de almacenamiento para copias de seguridad
+
+A día de hoy existe una gran variedad de medios de almacenamiento que se pueden utilizar para realizar copias de seguridad, cada uno con sus propias características y ventajas:
+
+- **Discos duros externos**: Son una opción popular para copias de seguridad locales, ya que ofrecen gran capacidad de almacenamiento y son fáciles de usar.
+- **Unidades de estado sólido (SSD)**: Aunque suelen ser más caras, las SSD ofrecen velocidades de lectura y escritura mucho más rápidas que los discos duros tradicionales, lo que puede ser beneficioso para copias de seguridad y restauraciones rápidas.
+- **Cintas magnéticas**: Aunque son una tecnología más antigua, las cintas todavía se utilizan en entornos empresariales para copias de seguridad a largo plazo debido a su alta capacidad y bajo costo por gigabyte.
+    - **Cintas LTO**: Las cintas LTO (Linear Tape-Open) son un tipo de cinta magnética que se utiliza comúnmente para copias de seguridad en entornos empresariales. Ofrecen alta capacidad de almacenamiento y son ideales para archivado a largo plazo.   
+- **Almacenamiento en la nube**: Servicios como Google Drive, Dropbox y Amazon S3 permiten realizar copias de seguridad de datos en línea, lo que proporciona accesibilidad y escalabilidad.
+- **NAS (Network Attached Storage)**: Dispositivos de almacenamiento conectados a la red que permiten realizar copias de seguridad centralizadas y accesibles desde múltiples dispositivos.
+- **SAN (Storage Area Network)**: Redes de almacenamiento que proporcionan acceso a dispositivos de almacenamiento a nivel de bloque, lo que permite una gestión más eficiente y un rendimiento mejorado en entornos empresariales. 
+- **Servidores de copia de seguridad**: En entornos empresariales, se pueden utilizar servidores dedicados para gestionar y almacenar copias de seguridad de manera eficiente.
+
+Al elegir un medio de almacenamiento para copias de seguridad, es importante considerar factores como la capacidad, la velocidad, la seguridad y el costo.
+
+Cada uno de estos factores puede influir en la eficacia de la solución de copia de seguridad elegida, por lo que es fundamental realizar un análisis exhaustivo antes de tomar una decisión.
+
+Además, es recomendable realizar pruebas periódicas de restauración para asegurarse de que las copias de seguridad se están realizando correctamente y que los datos pueden recuperarse en caso de necesidad.
+
+Esto implica verificar la integridad de los datos respaldados y asegurarse de que se pueden restaurar sin problemas. Al realizar estas pruebas, se pueden identificar y corregir posibles problemas antes de que se conviertan en un riesgo real para la organización.  
+
+## Imágenes de Respaldo (System Images)
+
+Las imágenes de respaldo, también conocidas como "system images", son copias exactas del estado de un sistema en un momento dado. Estas imágenes incluyen no solo los archivos y datos del usuario, sino también la configuración del sistema operativo y las aplicaciones instaladas. Las imágenes de respaldo son especialmente útiles en situaciones de recuperación ante desastres, ya que permiten restaurar un sistema completo a su estado anterior de manera rápida y eficiente.
+
+### Herramientas para crear imágenes de respaldo
+
+Existen diversas herramientas y software que permiten crear imágenes de respaldo de manera sencilla y eficiente. Algunas de las más populares incluyen:
+
+- **Acronis True Image**: Una solución completa de copia de seguridad que permite crear imágenes de disco y realizar copias de seguridad en la nube.
+- **Macrium Reflect**: Una herramienta gratuita para usuarios de Windows que permite crear imágenes de disco y realizar copias de seguridad incrementales.
+- **Clonezilla**: Una herramienta de código abierto que permite clonar discos y particiones, ideal para usuarios avanzados.
+- **Windows Backup and Restore**: Una herramienta integrada en Windows que permite crear imágenes del sistema y realizar copias de seguridad de archivos.   
+- **dd**: Una herramienta de línea de comandos en sistemas Unix/Linux que permite crear imágenes de disco de manera precisa y flexible.
+- **Veeam Agent**: Una solución de copia de seguridad que permite crear imágenes de disco y realizar copias de seguridad en entornos físicos y virtuales.   
+
+A nivel empresarial, es crucial contar con un enfoque integral para la gestión de imágenes de respaldo, que incluya políticas claras, capacitación del personal y pruebas regulares de los procedimientos de recuperación.
+
+Automatizar la creación y gestión de imágenes de respaldo puede mejorar significativamente la eficiencia y reducir el riesgo de errores humanos. Esto se puede lograr mediante el uso de herramientas de copia de seguridad que ofrezcan opciones de programación y automatización. 
+
+#### Proceso de creación de una imagen de respaldo
+
+Vamos a ver un par de ejemplos de como crear y restaurar el sistema a partir de una imagen de respaldo con Windows Backup and Restore y con ``dd``.
+
+##### Creación y restauración de una imagen de respaldo con Windows Backup and Restore en Windows 10/11
+
+Paso a paso:
+
+1. Abrir el Panel de control y seleccionar "Sistema y seguridad".
+2. Hacer clic en "Historial de archivos" y luego en "Copia de seguridad de imagen del sistema" en la parte inferior izquierda.
+3. Seleccionar la ubicación donde se desea guardar la imagen de respaldo (en un disco duro externo, en la red, etc.).
+4. Seguir las instrucciones para completar el proceso de creación de la imagen de respaldo.
+5. Para restaurar el sistema a partir de la imagen de respaldo, se debe iniciar desde un medio de instalación de Windows y seleccionar "Reparar el equipo".
+6. Elegir "Restaurar el equipo usando una imagen de sistema" y seguir las instrucciones para completar la restauración.
+
+##### Creación y restauración de una imagen de respaldo con ``dd`` en Linux
+
+Paso a paso: 
+
+1. Abrir una terminal.
+2. Identificar el disco o partición que se desea respaldar (por ejemplo, `/dev/sda1`).
+3. Ejecutar el siguiente comando para crear una imagen de respaldo:
+   ```
+   sudo dd if=/dev/sda1 of=/ruta/donde/guardar/imagen.img bs=4M
+   ```
+4. Para restaurar la imagen de respaldo, se puede usar el siguiente comando:
+   ```
+   sudo dd if=/ruta/donde/guardar/imagen.img of=/dev/sda1 bs=4M
+   ```
+
+La opción `bs=4M` establece el tamaño del bloque en 4 megabytes. Esto puede mejorar la velocidad de copia al leer y escribir datos en bloques más grandes.
+
+:::info Atención
+El uso de `dd` puede ser peligroso si no se utiliza correctamente, ya que puede sobrescribir datos importantes. Se recomienda hacer una copia de seguridad de los datos importantes antes de usar esta herramienta.
+:::
+
+##### Creación y restauración con ``tar`` y ``cron`` 
+
+En Linux, también podemos utilizar el comando ``tar`` para empaquetar y comprimir archivos y directorios. Esto es útil para crear copias de seguridad de datos importantes.
+
+Paso a paso:
+
+1. Abrir una terminal.
+2. Ejecutar el siguiente comando para crear un archivo tar comprimido:
+   ```
+   tar -czvf /ruta/donde/guardar/backup.tar.gz /ruta/a/resguardar
+   ```
+3. Para restaurar el contenido del archivo tar, se puede usar el siguiente comando:
+   ```
+   tar -xzvf /ruta/donde/guardar/backup.tar.gz -C /ruta/de/restaurar
+   ```
+
+Además, podemos utilizar ``cron`` para programar copias de seguridad automáticas. Para ello, se debe editar el archivo de configuración de cron con el siguiente comando:
+```
+crontab -e
+```
+Luego, se puede agregar una línea para programar la tarea de copia de seguridad. Por ejemplo, para realizar una copia de seguridad diaria a las 2 AM:
+```
+0 2 * * * tar -czvf /ruta/donde/guardar/backup_$(date +\%Y-\%m-\%d).tar.gz /ruta/a/resguardar
+```
+Esto creará un archivo de copia de seguridad con la fecha actual en el nombre del archivo.
+
+Las opciones que nos da ``tar`` para empaquetar y desempaquetar son las siguientes:
+
+- `-c`: Crear un nuevo archivo tar.
+- `-x`: Extraer el contenido de un archivo tar.
+- `-v`: Mostrar el progreso en la terminal.
+- `-f`: Especificar el nombre del archivo tar.
+- `-C`: Cambiar al directorio especificado antes de realizar la operación.
+- `-newer=<fecha>`: Incluir solo archivos modificados después de la fecha especificada.
+- `t`: Listar el contenido del archivo tar sin extraerlo.
+
+Por su parte, la sintaxis `contab` es la siguiente:  ``crontab [-e | -l | -r] [-u usuario]``.
+
+El parámetro `-e` permite editar el archivo de configuración de cron para el usuario actual.
+
+El parámetro `-l` permite listar las tareas programadas en cron para el usuario actual.
+
+El parámetro `-r` permite eliminar el archivo de configuración de cron para el usuario actual.
+
+Si no se indica el usuario, el comando se ejecutará para el usuario actual.
+
+Al ejecutar el comando ``crontab -e``, se abrirá el editor de texto configurado para editar el archivo de configuración de cron.
+
+El archivo tiene el siguiente formato:
+
+```
+# m h dom mon dow command
+```
+
+- `m`: Minuto (0-59)
+- `h`: Hora (0-23)
+- `dom`: Día del mes (1-31)
+- `mon`: Mes (1-12)
+- `dow`: Día de la semana (0-7) (0 y 7 son ambos domingo)
+- `command`: El comando a ejecutar
+
+De forma que un ejemplo de tarea programada en cron podría ser:
+
+```
+0 2 * * * tar -czvf /ruta/donde/guardar/backup_$(date +\%Y-\%m-\%d).tar.gz /ruta/a/resguardar
+```
+
+Con este comando estaríamos programando una tarea de copia de seguridad diaria a las 2 AM.
+
+Sería una buena idea añadir una mejora a la creación de la copia de seguridad, automatizando la creación de una copia en una carpeta remota, ejecutando un comando que vía NFS, SMB, FTP o SSH vuelque los archivos en un servidor remoto para mayor seguridad.
+
+Para realizar esto también existen herramientas para realizar copias de seguridad remotas como `rsync`, `Bacula`, `Amanda`, entre otras.
+
+## Recuperación de datos
+
+La recuperación de datos es el proceso de restaurar datos que han sido perdidos, eliminados o inaccesibles debido a fallos del sistema, errores humanos, ataques cibernéticos u otros incidentes. Existen diversas técnicas y herramientas para recuperar datos, dependiendo de la naturaleza del problema y del tipo de almacenamiento utilizado.
+
+Algunos conceptos clave en dicha recuperación:
+
+- **RTO (Recovery Time Objective)**: Es el tiempo máximo tolerable que un sistema puede estar inoperativo después de un desastre. Define el objetivo de tiempo para la recuperación de los sistemas y servicios críticos.
+- **RPO (Recovery Point Objective)**: Es el punto en el tiempo al que se deben restaurar los datos después de un incidente. Define la cantidad máxima de datos que se pueden perder en un desastre. 
+
+Por ejemplo, si el RPO es de 4 horas, significa que se pueden perder hasta 4 horas de datos en caso de un fallo. Por otro lado, si un RTO es de 2 horas, significa que el sistema debe estar operativo nuevamente dentro de ese tiempo después de un incidente. 
+
+Hay diversos escenarios de recuperación, como por ejemplo un fallo de hardware (un disco duro o un servidor), un borrado accidental de ficheros, un ataque de ransomware, desastres naturales, etc.
+
+Para cada uno de estos escenarios, es importante contar con un plan de recuperación que defina los pasos a seguir y las herramientas a utilizar para restaurar los datos y sistemas afectados.  
+
+### Proceso de recuperación
+
+El proceso de recuperación de datos pasa por varias fases:
+
+1. **Identificación del incidente**: Determinar la naturaleza y el alcance del problema que ha causado la pérdida de datos.
+2. **Contención**: Implementar medidas para evitar que el problema se propague y cause más daños.
+3. **Evaluación**: Analizar la situación para entender qué datos se han perdido y cuáles son recuperables.
+4. **Recuperación**: Utilizar las copias de seguridad y las herramientas de recuperación para restaurar los datos perdidos.
+5. **Verificación**: Comprobar que los datos recuperados son correctos y están completos.
+6. **Documentación o análisis post-incidente**: Registrar el incidente y las acciones tomadas para mejorar los futuros procesos de recuperación.
+7. **Prevención**: Implementar medidas para evitar que el mismo problema vuelva a ocurrir en el futuro.
+
+### Herramientas de recuperación de datos
+
+En líneas generales, las mismas herramientas que podemos utilizar para generar nuestras copias de seguridad o imágenes de respaldo, nos pueden servir para recuperar los datos. 
+
+Podemos plantear diferentes escenarios:
+
+- **Desde copias de seguridad**: Utilizar las copias de seguridad realizadas previamente para restaurar los datos perdidos.
+    - Herramientas como `rsync`, `tar` o `Bacula` pueden ser útiles en este proceso.
+    - También se pueden utilizar herramientas de recuperación de archivos específicos, como `TestDisk` o `PhotoRec`, para recuperar datos de particiones dañadas o formateadas.
+- **Directa del medio (forense)**: En casos de fallos de hardware o corrupción de datos, se pueden utilizar herramientas forenses para recuperar datos directamente del medio de almacenamiento.
+    - Herramientas como `ddrescue` o `R-Studio` pueden ser útiles en este proceso.
+    - También se pueden utilizar técnicas de recuperación de datos a nivel de bloque para acceder a datos que no son visibles a nivel de sistema de archivos.   
+
+### Planes de recuperación ante desastres (DRP)
+
+Los **DRP** (Disaster Recovery Plans) son un conjunto de procedimientos y políticas diseñadas para garantizar la recuperación de los sistemas y datos críticos de una organización en caso de un desastre. Estos planes son esenciales para minimizar el tiempo de inactividad y la pérdida de datos, y deben ser probados y actualizados regularmente.
+
+Un DRP típico incluye:
+
+1. **Análisis de impacto en el negocio (BIA)**: Evaluar los procesos críticos de negocio y determinar los requisitos de recuperación.
+2. **Estrategias de recuperación**: Definir las estrategias y procedimientos para restaurar los sistemas y datos en caso de un desastre.
+3. **Asignación de recursos**: Identificar y asignar los recursos necesarios para implementar el DRP, incluyendo personal, tecnología y presupuesto.
+4. **Pruebas y mantenimiento**: Realizar pruebas regulares del DRP para garantizar su efectividad y actualizarlo según sea necesario.
+
+Un DRP bien diseñado puede marcar la diferencia entre una recuperación exitosa y un fracaso catastrófico en caso de un desastre.
+
+Los DRP suelen ser documentos detallados que especifican los procedimientos a seguir para recuperar la infraestructura lógica y los datos tras un desastre mayor. Incluyen roles, responsabilidades y ubicaciones alternativas.
+
+Suelen estar compuestos por listas de contactos de emergencia, inventario de sistemas, diagramas de red, procedimientos de recuperación paso a paso para cada servicio crítico, estrategias de comunicación y planes de contingencia.   
+
+Es importante realizar pruebas periódicas para asegurar la eficacia del DRP y su capacidad para responder a diferentes escenarios de desastre.
+
+#### Planes de Continuidad de Negocio (BCP)
+
+Los **BCP** (Business Continuity Plans) son un conjunto de procedimientos y políticas diseñadas para garantizar la continuidad de las operaciones de negocio en caso de un desastre. Estos planes se centran en mantener la funcionalidad crítica de la organización y minimizar el impacto en los clientes y las partes interesadas.
+
+Son parecidos a los DRP, pero mientras que los DRP se centran en la recuperación de sistemas y datos tras un desastre, los BCP se centran en mantener las operaciones de negocio en funcionamiento durante y después de un desastre.
+
+Sus principales diferencias son:
+
+1. **Enfoque**: Los DRP se centran en la recuperación de TI y datos, mientras que los BCP se centran en la continuidad de las operaciones comerciales.
+2. **Alcance**: Los DRP suelen ser más técnicos y específicos, mientras que los BCP son más amplios e incluyen aspectos no técnicos, como la comunicación con los clientes.
+3. **Objetivos**: El objetivo principal de un DRP es restaurar los sistemas y datos, mientras que el objetivo de un BCP es mantener las operaciones comerciales y minimizar el impacto en los clientes.

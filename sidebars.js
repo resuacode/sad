@@ -18,6 +18,7 @@ const sidebars = {
   // Sidebar principal con introducción
   mainSidebar: [
     'intro',
+    'formato-entregas',
   ],
   
   // Sidebar para cada tema - autogenerado desde las carpetas
