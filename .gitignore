@@ -18,3 +18,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Scripts y archivos de desarrollo local
+eliminar-carpetas-problematicas.sh
+limpiar-cache.sh
+monitor-carpetas.sh
+GUIA_CONTENIDO.md
