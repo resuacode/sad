@@ -24,3 +24,6 @@ eliminar-carpetas-problematicas.sh
 limpiar-cache.sh
 monitor-carpetas.sh
 GUIA_CONTENIDO.md
+
+# Cuestionarios (contenido local)
+cuestionarios/
