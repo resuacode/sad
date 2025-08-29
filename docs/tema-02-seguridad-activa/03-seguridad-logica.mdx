@@ -109,6 +109,20 @@ El paso a paso sería:
 4. Configurar los parámetros de la política de contraseñas según las necesidades de la organización.
 5. Aplicar la GPO y realizar pruebas para asegurarse de que la política se aplica correctamente.
 
+##### Implementación de MFA en Windows
+
+La implementación de la autenticación multifactor (MFA) en Windows se puede llevar a cabo utilizando Azure AD o soluciones locales como Windows Hello for Business. Los pasos generales son los siguientes:
+
+1. **Habilitar MFA en Azure AD**:
+   - Navegar a `Azure Active Directory` > `Usuarios` > `Todos los usuarios`.
+   - Seleccionar el usuario y habilitar la opción de MFA.
+
+2. **Configurar Windows Hello for Business**:
+   - Navegar a `Configuración` > `Cuentas` > `Opciones de inicio de sesión`.
+   - Habilitar Windows Hello y seguir las instrucciones para configurarlo.
+
+Con estos sencillos pasos, la autenticación multifactor estará habilitada en Windows.
+
 ##### Recuperación de contraseñas en Windows
 
 En caso de que un usuario olvide su contraseña, existen varios métodos para recuperarla:
@@ -215,6 +229,34 @@ passwd usuario
 ```
 
 Esto solicitará la nueva contraseña para el usuario especificado.
+
+##### Implantación de MFA en Linux
+
+La implementación de la autenticación multifactor (MFA) en Linux se puede llevar a cabo utilizando herramientas como `Google Authenticator` o `Duo Security`. Los pasos generales son los siguientes:
+
+1. **Instalar Google Authenticator**:
+   - Ejecutar el siguiente comando para instalar el paquete:
+     ```
+     sudo apt-get install libpam-google-authenticator
+     ```
+
+2. **Configurar Google Authenticator**:
+   - Ejecutar el comando `google-authenticator` y seguir las instrucciones para configurar la MFA.
+   - Esto generará un código QR que se puede escanear con la aplicación Google Authenticator en un dispositivo móvil.
+
+3. **Modificar la configuración de PAM**:
+   - Editar el archivo `/etc/pam.d/sshd` y agregar la siguiente línea al final:
+     ```
+     auth required pam_google_authenticator.so
+     ```
+
+4. **Reiniciar el servicio SSH**:
+   - Ejecutar el siguiente comando para reiniciar el servicio SSH:
+     ```
+     sudo systemctl restart sshd
+     ```
+
+Con estos pasos conseguimos implementar la autenticación multifactor en Linux. 
 
 ### Control de acceso a la BIOS y Gestor de arranque
 
