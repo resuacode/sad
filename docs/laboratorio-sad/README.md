@@ -71,6 +71,9 @@ Este repositorio contiene las configuraciones y documentación necesarias para m
 - **[Troubleshooting](documentacion/troubleshooting.md)** - Solución de problemas comunes
 - **[Configuraciones Post-Instalación](documentacion/post-configuracion.md)** - Ajustes finales
 - **[Scripts de Automatización](scripts/README.md)** - Herramientas auxiliares
+- **[🏢 Configuración de Proxy del Centro](configuracion-proxy/README.md)** - Para uso en red del centro educativo
+
+> ⚠️ **Nota especial**: La configuración de proxy **solo es necesaria** cuando uses el laboratorio dentro de la red del centro educativo. Para uso doméstico, omitir esta sección.
 
 ## 🚀 Inicio Rápido
 

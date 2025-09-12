@@ -1,0 +1,24 @@
+[Unit]
+Description=Detección automática de proxy del centro educativo
+Documentation=file:///usr/local/share/doc/sad-proxy/README.md
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/usr/local/bin/proxy-auto-detect.sh
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/local/bin/proxy-auto-detect.sh
+RemainAfterExit=yes
+TimeoutStartSec=60
+StandardOutput=journal
+StandardError=journal
+
+# Reintentar si falla la primera vez
+Restart=on-failure
+RestartSec=10
+StartLimitInterval=300
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
