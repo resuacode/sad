@@ -24,3 +24,469 @@ En este tema se van a abordar los mecanismos preventivos y paliativos para prote
     - Copias de seguridad e imágenes de respaldo.
     - Recuperación de datos.
 
+## Ejercicios prácticos
+
+### Requisitos del laboratorio
+
+Para realizar todos los ejercicios de este tema, necesitarás configurar un entorno de laboratorio virtual con las siguientes máquinas:
+
+:::info 📚 Documentación Completa del Laboratorio
+
+**Antes de empezar, consulta la documentación completa del laboratorio:**
+
+👉 **[Guía Completa del Laboratorio SAD](/docs/laboratorio-sad)**
+
+La documentación incluye:
+- 🚀 **Instalación paso a paso** (OVAs y Vagrant)
+- 💾 **Guía para recursos limitados** (si tienes 8-16 GB RAM)
+- 🔧 **Troubleshooting** y resolución de problemas
+- 📋 **Scripts de utilidad** y gestión de VMs
+- 🎯 **Ejercicios prácticos** detallados por tema
+
+:::
+
+| Nombre VM | Sistema Operativo | Recursos Mínimos | Función Principal |
+|-----------|-------------------|------------------|-------------------|
+| **Ubuntu-Server** | Ubuntu Server 22.04 LTS | 1.5 GB RAM, 1 vCPU, 15 GB HD | Servicios web, SSH, criptografía |
+| **Windows-Server** | Windows Server 2019/2022 | 2 GB RAM, 1 vCPU, 25 GB HD | AD, políticas de grupo, certificados |
+| **Windows-Client** | Windows 10/11 | 2 GB RAM, 1 vCPU, 20 GB HD | Cliente del dominio, pruebas |
+| **Kali-Security** | Kali Linux | 2 GB RAM, 1 vCPU, 15 GB HD | Herramientas de seguridad y análisis |
+| **Storage-Backup** | Debian/Ubuntu Server | 1 GB RAM, 1 vCPU, 10 GB HD | Respaldos y almacenamiento |
+
+**Configuración de red optimizada:**
+- **Red interna**: 192.168.56.0/24 (Host-Only VirtualBox)
+- **NAT**: Para acceso a Internet cuando sea necesario
+- **Snapshots**: Crear punto de restauración inicial en cada VM
+
+**💡 Configuración Flexible:**
+- **Hardware mínimo**: 8 GB RAM, 80 GB disco (ejecutar 2-3 VMs por ejercicio)
+- **Hardware recomendado**: 16 GB RAM, 120 GB disco (todas las VMs simultáneamente)
+- **Ver guía de recursos limitados** para estrategias de optimización
+
+**Software adicional requerido:**
+- **VirtualBox 7.0+** (hipervisor)
+- **Vagrant 2.3+** (opcional, para automatización)
+- **Navegador web** actualizado (Firefox/Chrome)
+- **Cliente SSH**: Terminal (Linux/macOS) o PuTTY (Windows)
+- **Editor de texto**: VS Code, Notepad++, nano/vim
+- **Herramientas específicas** (se instalarán en VMs durante ejercicios):
+  - OpenSSL (criptografía)
+  - Wireshark (análisis de red)
+  - ClamAV (antivirus)
+  - rsync/tar (backup)
+
+**📝 Documentación de ejercicios:**
+- Usar **plantillas de informe** disponibles en `/laboratorio-sad/documentacion/`
+- **Capturas de pantalla** para evidenciar resultados
+- **Logs y archivos** de configuración como evidencia
+
+---
+
+### 2.1 Ejercicios de Seguridad Física y Ambiental
+
+**Objetivo:** Aplicar conceptos de protección física, control de acceso y continuidad operacional.
+
+#### **Ejercicios Básicos (1-3)**
+
+**Ejercicio 1: Inventario y Clasificación de Activos**
+- Crea un inventario completo de tu laboratorio virtual incluyendo:
+  - Nombre de VM, IP asignada, función, criticidad (Alto/Medio/Bajo)
+  - Hardware simulado (CPU, RAM, almacenamiento)
+  - Servicios ejecutándose en cada máquina
+- Documenta en formato tabla o hoja de cálculo
+- **Entregable:** `inventario_laboratorio.xlsx`
+
+**Ejercicio 2: Análisis de Riesgos Físicos**
+- Diseña un diagrama de tu "CPD virtual" mostrando:
+  - Ubicación física simulada del host
+  - Conexiones de red entre VMs
+  - Puntos críticos de fallo (host físico, red, almacenamiento)
+- Identifica 5 amenazas físicas y su impacto potencial
+- **Entregable:** `diagrama_cpd_virtual.pdf`, `analisis_riesgos.docx`
+
+**Ejercicio 3: Plan de Contingencia Básico**
+- Redacta un procedimiento de respuesta ante "caída del host físico"
+- Define RTO y RPO para cada VM según su criticidad
+- Especifica pasos de recuperación y orden de prioridad
+- **Entregable:** `plan_contingencia_basico.md`
+
+#### **Ejercicios Intermedios (4-6)**
+
+**Ejercicio 4: Simulación de Control de Acceso**
+- En Windows-Server, configura usuarios con diferentes niveles de acceso:
+  - Administrador de dominio, Operador de backup, Usuario estándar
+- Crea grupos de seguridad y asigna permisos específicos
+- Documenta la matriz de acceso (quién puede acceder a qué)
+- **Entregable:** Capturas de pantalla + `matriz_acceso.xlsx`
+
+**Ejercicio 5: Implementación de Monitoreo Básico**
+- Configura registro de eventos en Windows-Server
+- Habilita auditoría de inicio de sesión y acceso a archivos
+- En Ubuntu-Server, configura rsyslog para logs centralizados
+- Crea un script que revise logs cada 10 minutos
+- **Entregable:** Configuraciones + `script_monitoreo.sh`
+
+**Ejercicio 6: Protocolos de Mantenimiento**
+- Diseña un calendario de mantenimiento para tu laboratorio:
+  - Actualizaciones semanales, backups diarios, revisión mensual
+- Crea scripts automatizados para verificar estado de VMs
+- Documenta procedimientos de apagado/encendido seguro
+- **Entregable:** `calendario_mantenimiento.xlsx`, scripts
+
+#### **Ejercicios Avanzados (7-8)**
+
+**Ejercicio 7: Simulación de Desastre y Recuperación**
+- Simula fallo de Windows-Server (apagado abrupto)
+- Documenta tiempo de detección, diagnóstico y recuperación
+- Implementa un "servidor de respaldo" (segunda VM con misma función)
+- Mide RTO y RPO reales vs objetivos planificados
+- **Entregable:** `informe_simulacro.pdf` con métricas
+
+**Ejercicio 8: Sistema de Alertas Avanzado**
+- Implementa monitoreo con Nagios o Zabbix en Ubuntu-Server
+- Configura alertas por email/SMS simuladas para:
+  - Caída de servicio, uso de disco >80%, CPU >90%
+- Crea dashboard de estado general del laboratorio
+- **Entregable:** Configuración completa + capturas dashboard
+
+---
+
+### 2.2 Ejercicios de Seguridad Lógica
+
+**Objetivo:** Implementar controles de acceso, políticas de contraseñas y sistemas de autenticación.
+
+#### **Ejercicios Básicos (1-3)**
+
+**Ejercicio 1: Configuración de Políticas de Contraseñas**
+- En Windows-Server, configura política de dominio:
+  - Longitud mínima 12 caracteres, complejidad habilitada
+  - Caducidad 90 días, historial 5 contraseñas
+  - Bloqueo tras 5 intentos por 30 minutos
+- En Ubuntu-Server, configura PAM con requisitos similares
+- **Entregable:** Capturas de configuración + archivo `/etc/pam.d/common-password`
+
+**Ejercicio 2: Gestión de Usuarios y Grupos**
+- Crea estructura organizacional en Active Directory:
+  - OU: Administradores, Usuarios, Servicios
+  - Grupos: AdminIT, OperadoresBackup, UsuariosEstandar
+- En Linux, crea usuarios con diferentes privilegios sudo
+- **Entregable:** Esquema organizacional + comandos utilizados
+
+**Ejercicio 3: Control de Acceso a Archivos**
+- En Windows, configura carpetas compartidas con permisos NTFS específicos
+- En Linux, implementa ACLs con `setfacl` para control granular
+- Prueba accesos con diferentes usuarios y documenta resultados
+- **Entregable:** Matriz de permisos + pruebas de acceso
+
+#### **Ejercicios Intermedios (4-6)**
+
+**Ejercicio 4: Implementación de Autenticación Multifactor**
+- Configura Google Authenticator en Ubuntu-Server para SSH
+- En Windows, habilita Windows Hello for Business (simulado)
+- Prueba y documenta el proceso de autenticación
+- **Entregable:** Guía de configuración + evidencias de funcionamiento
+
+**Ejercicio 5: Hardening de Sistemas**
+- Aplica bastionado básico en Ubuntu-Server:
+  - Cambiar puerto SSH, deshabilitar root login
+  - Configurar fail2ban, instalar y configurar firewall
+- En Windows, aplica plantillas de seguridad
+- **Entregable:** Checklist de hardening + configuraciones
+
+**Ejercicio 6: Sistemas Biométricos Simulados**
+- Investiga e implementa autenticación biométrica disponible:
+  - Windows Hello (si hay webcam/sensor)
+  - fprintd en Linux (si hay lector de huellas)
+- Si no hay hardware, documenta proceso teórico completo
+- **Entregable:** Configuración + análisis de ventajas/desventajas
+
+#### **Ejercicios Avanzados (7-8)**
+
+**Ejercicio 7: Auditoría de Seguridad Lógica**
+- Realiza auditoría completa de tu laboratorio:
+  - Análisis de cuentas, permisos, configuraciones
+  - Identificación de vulnerabilidades de configuración
+  - Uso de herramientas como lynis, Windows Security Compliance Toolkit
+- **Entregable:** `informe_auditoria_completo.pdf`
+
+**Ejercicio 8: Implementación de PKI Básica**
+- Configura una CA (Certificate Authority) en Windows-Server
+- Genera certificados para servicios (HTTPS, SSH)
+- Implementa autenticación basada en certificados
+- **Entregable:** Documentación PKI + certificados generados
+
+---
+
+### 2.3 Ejercicios de Criptografía
+
+**Objetivo:** Implementar sistemas de cifrado y firma digital para protección de datos.
+
+#### **Ejercicios Básicos (1-3)**
+
+**Ejercicio 1: Cifrado Simétrico Básico**
+- Usa herramientas de línea de comandos para cifrar archivos:
+  - `openssl` en Linux para cifrado AES
+  - `cipher.exe` en Windows para EFS
+- Cifra diferentes tipos de archivos y compara resultados
+- **Entregable:** Comandos utilizados + archivos cifrados de ejemplo
+
+**Ejercicio 2: Implementación de Hashing**
+- Genera hashes MD5, SHA-256 y SHA-512 de archivos importantes
+- Crea script que verifique integridad de archivos usando checksums
+- Simula modificación de archivo y detecta cambios
+- **Entregable:** `verificar_integridad.sh` + log de verificaciones
+
+**Ejercicio 3: Cifrado de Disco Básico**
+- Configura BitLocker en Windows-Client (partición de datos)
+- Implementa LUKS en Ubuntu-Server (partición adicional)
+- Documenta proceso de montaje/desmontaje
+- **Entregable:** Guía de configuración + pruebas de acceso
+
+#### **Ejercicios Intermedios (4-6)**
+
+**Ejercicio 4: Criptografía Asimétrica con GPG**
+- Genera par de claves GPG en Ubuntu-Server
+- Cifra archivos para destinatarios específicos
+- Implementa firma digital de documentos importantes
+- Intercambia claves públicas entre VMs
+- **Entregable:** Claves públicas + ejemplos cifrados/firmados
+
+**Ejercicio 5: Certificados Digitales**
+- Genera certificados X.509 autofirmados
+- Configura HTTPS en servidor web con certificado personalizado
+- Implementa autenticación por certificado cliente
+- **Entregable:** Certificados + configuración servidor web
+
+**Ejercicio 6: VPN con Criptografía**
+- Configura OpenVPN entre Ubuntu-Server y cliente
+- Implementa túnel IPSec básico entre redes
+- Analiza tráfico cifrado con Wireshark
+- **Entregable:** Configuración VPN + análisis de tráfico
+
+#### **Ejercicios Avanzados (7-8)**
+
+**Ejercicio 7: Implementación de PKI Completa**
+- Crea jerarquía de CAs (Root CA, Intermediate CA)
+- Implementa OCSP para verificación de certificados
+- Gestiona revocación y renovación de certificados
+- **Entregable:** Infraestructura PKI completa + documentación
+
+**Ejercicio 8: Criptografía en Aplicaciones**
+- Desarrolla aplicación simple que use criptografía:
+  - Cifrado de comunicaciones cliente-servidor
+  - Autenticación con certificados
+  - Almacenamiento seguro de credenciales
+- **Entregable:** Código fuente + manual de uso
+
+---
+
+### 2.4 Ejercicios de Amenazas y Contramedidas
+
+**Objetivo:** Identificar, analizar y mitigar amenazas lógicas mediante herramientas preventivas.
+
+#### **Ejercicios Básicos (1-3)**
+
+**Ejercicio 1: Análisis de Malware Estático**
+- Descarga samples de malware de repositorios seguros (VirusShare, Malware-Traffic-Analysis)
+- Usa herramientas en Kali para análisis estático:
+  - `file`, `strings`, `hexdump`, `objdump`
+- Identifica indicadores de compromiso (IOCs)
+- **Entregable:** `reporte_analisis_estatico.pdf` con hallazgos
+
+**Ejercicio 2: Instalación y Configuración de Antivirus**
+- Instala ClamAV en Ubuntu-Server y configura escaneos programados
+- En Windows-Client, configura Windows Defender con políticas específicas
+- Realiza escaneos completos y documenta resultados
+- **Entregable:** Configuraciones + logs de escaneo
+
+**Ejercicio 3: Detección de Vulnerabilidades**
+- Ejecuta Nessus/OpenVAS desde Kali contra otras VMs
+- Usa Nikto para escanear aplicaciones web
+- Clasifica vulnerabilidades por criticidad (CVSS)
+- **Entregable:** `informe_vulnerabilidades.pdf` con recomendaciones
+
+#### **Ejercicios Intermedios (4-6)**
+
+**Ejercicio 4: Análisis de Tráfico Malicioso**
+- Captura tráfico de red con Wireshark durante actividades sospechosas
+- Analiza patrones de comunicación C2 (Command & Control)
+- Identifica exfiltración de datos simulada
+- **Entregable:** Archivos .pcap + análisis detallado
+
+**Ejercicio 5: Implementación de IDS/IPS Básico**
+- Instala Suricata en Ubuntu-Server
+- Configura reglas para detectar ataques comunes
+- Genera alertas de prueba y analiza logs
+- **Entregable:** Configuración Suricata + ejemplos de alertas
+
+**Ejercicio 6: Sandboxing y Análisis Dinámico**
+- Configura sandbox con VMware/VirtualBox anidado
+- Ejecuta malware en entorno controlado
+- Monitoriza comportamiento con herramientas como Process Monitor
+- **Entregable:** `reporte_analisis_dinamico.pdf`
+
+#### **Ejercicios Avanzados (7-8)**
+
+**Ejercicio 7: Red Team vs Blue Team**
+- Simula ataque completo desde Kali (Red Team):
+  - Reconocimiento, explotación, post-explotación
+- Detecta y responde desde perspectiva defensiva (Blue Team)
+- Documenta kill chain completa y contramedidas
+- **Entregable:** `informe_ejercicio_red_blue_team.pdf`
+
+**Ejercicio 8: SIEM y Correlación de Eventos**
+- Implementa ELK Stack (Elasticsearch, Logstash, Kibana)
+- Centraliza logs de todas las VMs
+- Crea reglas de correlación para detectar ataques
+- **Entregable:** Dashboard SIEM + reglas de detección
+
+---
+
+### 2.5 Ejercicios de Monitorización de Red
+
+**Objetivo:** Implementar herramientas de monitoreo y análisis de tráfico para detectar anomalías.
+
+#### **Ejercicios Básicos (1-3)**
+
+**Ejercicio 1: Captura y Análisis Básico con Wireshark**
+- Captura tráfico HTTP, HTTPS, SSH, FTP entre VMs
+- Analiza estructura de protocolos TCP/IP
+- Identifica credenciales en texto plano (HTTP, FTP, Telnet)
+- **Entregable:** Archivos .pcap + análisis de protocolos
+
+**Ejercicio 2: Monitoreo con Herramientas de Línea de Comandos**
+- Usa `netstat`, `ss`, `lsof` para analizar conexiones
+- Implementa monitoreo con `tcpdump` y filtros específicos
+- Crea scripts de monitoreo automatizado
+- **Entregable:** Scripts + logs de monitoreo
+
+**Ejercicio 3: Detección de Escaneos de Puertos**
+- Desde Kali, ejecuta diferentes tipos de escaneos (nmap)
+- Detecta escaneos desde el lado defendido
+- Analiza patrones de tráfico sospechoso
+- **Entregable:** Comparativa tipos de escaneo + detección
+
+#### **Ejercicios Intermedios (4-6)**
+
+**Ejercicio 4: Análisis de Protocolos Avanzados**
+- Analiza tráfico SMB, LDAP, DNS, DHCP
+- Identifica ataques ARP Spoofing y DNS Poisoning
+- Detecta túneles de datos en protocolos legítimos
+- **Entregable:** Análisis de ataques + contramedidas
+
+**Ejercicio 5: Implementación de NIDS (Network IDS)**
+- Configura Snort con reglas personalizadas
+- Detecta ataques de fuerza bruta, DoS, port scanning
+- Ajusta reglas para minimizar falsos positivos
+- **Entregable:** Configuración Snort + log de detecciones
+
+**Ejercicio 6: Análisis Forense de Red**
+- Simula incidente de seguridad completo
+- Recopila evidencias de tráfico de red
+- Reconstruye timeline del ataque
+- **Entregable:** `informe_forense_red.pdf` con evidencias
+
+#### **Ejercicios Avanzados (7-8)**
+
+**Ejercicio 7: Detección de Amenazas Avanzadas**
+- Implementa detección de APT (Advanced Persistent Threats)
+- Analiza tráfico cifrado para detectar anomalías
+- Usa machine learning básico para detección de anomalías
+- **Entregable:** Sistema de detección + casos de uso
+
+**Ejercicio 8: NOC (Network Operations Center) Simulado**
+- Implementa solución completa de monitoreo (PRTG/Nagios)
+- Crea dashboard en tiempo real
+- Configura alertas y escalado automático
+- **Entregable:** NOC funcional + procedimientos de operación
+
+---
+
+### 2.6 Ejercicios de Respaldo y Recuperación
+
+**Objetivo:** Implementar estrategias completas de backup, recuperación y continuidad de negocio.
+
+#### **Ejercicios Básicos (1-3)**
+
+**Ejercicio 1: Backups Locales Básicos**
+- Implementa copias con `tar`, `rsync` en Linux
+- Configura Windows Backup and Restore en Windows
+- Programa backups automáticos con cron/Task Scheduler
+- **Entregable:** Scripts de backup + logs de ejecución
+
+**Ejercicio 2: Verificación de Integridad**
+- Implementa checksums MD5/SHA256 para verificar backups
+- Crea proceso de verificación automática post-backup
+- Simula corrupción de datos y detecta con checksums
+- **Entregable:** Scripts de verificación + reportes
+
+**Ejercicio 3: Restauración Básica**
+- Simula pérdida de datos (eliminación accidental)
+- Restaura desde diferentes tipos de backup
+- Mide RTO y RPO reales del proceso
+- **Entregable:** Procedimientos de restauración + métricas
+
+#### **Ejercicios Intermedios (4-6)**
+
+**Ejercicio 4: Estrategia 3-2-1**
+- Implementa backups locales, en otra VM y simulado "nube"
+- Usa diferentes medios: disco, cinta simulada, almacenamiento remoto
+- Automatiza rotación de backups (diario, semanal, mensual)
+- **Entregable:** Estrategia completa + configuración
+
+**Ejercicio 5: Backups Incrementales y Diferenciales**
+- Configura sistema con backup completo + incrementales
+- Implementa backup diferencial para recuperación rápida
+- Compara eficiencia de espacio vs tiempo de recuperación
+- **Entregable:** Análisis comparativo + configuraciones
+
+**Ejercicio 6: Disaster Recovery Básico**
+- Simula fallo completo de VM crítica
+- Implementa recuperación en VM alternativa
+- Documenta proceso completo de DR
+- **Entregable:** `plan_disaster_recovery.pdf` + evidencias
+
+#### **Ejercicios Avanzados (7-8)**
+
+**Ejercicio 7: Backup Empresarial Simulado**
+- Implementa Bacula o similar para backups centralizados
+- Configura políticas complejas de retención
+- Implementa encriptación y compresión de backups
+- **Entregable:** Solución empresarial completa
+
+**Ejercicio 8: Business Continuity Plan**
+- Desarrolla BCP completo para tu laboratorio
+- Define RTO/RPO para cada servicio crítico
+- Implementa sitio de recuperación alternativo
+- Realiza drill completo de continuidad
+- **Entregable:** `bcp_completo.pdf` + resultados drill
+
+---
+
+### Estructura de Entrega y Evaluación
+
+**Organización de archivos:**
+```
+/entregas/tema2/
+├── 2.1-seguridad-fisica/
+├── 2.2-seguridad-logica/
+├── 2.3-criptografia/
+├── 2.4-amenazas-contramedidas/
+├── 2.5-monitorizacion-red/
+├── 2.6-respaldo-recuperacion/
+└── resumen-ejecutivo.pdf
+```
+
+**Criterios de evaluación:**
+- **Técnico (40%)**: Funcionamiento correcto de configuraciones
+- **Documentación (30%)**: Claridad y completitud de procedimientos
+- **Análisis (20%)**: Comprensión de conceptos y justificación de decisiones  
+- **Innovación (10%)**: Mejoras o enfoques creativos implementados
+
+**Recomendaciones:**
+- Realizar snapshots antes de ejercicios destructivos
+- Documentar todos los comandos y configuraciones utilizados
+- Incluir capturas de pantalla para evidenciar funcionamiento
+- Justificar decisiones técnicas tomadas durante implementación
+
+> **Nota importante:** Este laboratorio debe realizarse en entorno completamente aislado. Nunca probar técnicas de ataque en redes de producción o sistemas ajenos.
