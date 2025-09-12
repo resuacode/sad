@@ -136,6 +136,11 @@ const config = {
             ],
           },
           {
+            type: 'docSidebar',
+            sidebarId: 'laboratorioSidebar',
+            label: 'Laboratorio',
+          },
+          {
             href: 'https://github.com/resuacode/sad',
             label: 'GitHub',
             position: 'right',
