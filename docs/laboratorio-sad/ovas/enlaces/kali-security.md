@@ -14,22 +14,8 @@
 - **Usuario root:** `root`
 - **Contraseña root:** `toor123!`
 
-## 🔗 Enlaces de Descarga
+## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EXrpXy4ojORNgsJIuZMAI6oBKn8aXUWDfxK5hpzzPRIxIw?e=BwpzlD)
 
-### Opción 1: Google Drive
-```
-https://drive.google.com/file/d/1ZZZZZZZZZZZZZZZ/view?usp=sharing
-```
-
-### Opción 2: OneDrive Educativo
-```
-https://educacion-my.sharepoint.com/personal/profesor_centro_edu/Documents/SAD/Kali-Security-SAD.ova
-```
-
-### Opción 3: Servidor del Centro
-```
-http://servidor.centro.edu/laboratorios/sad/Kali-Security-SAD.ova
-```
 
 ## ✅ Verificación de Integridad
 

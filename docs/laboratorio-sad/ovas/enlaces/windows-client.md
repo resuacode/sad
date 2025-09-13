@@ -14,22 +14,7 @@
 - **Usuario admin:** `clienteadmin`
 - **Contraseña admin:** `User123!`
 
-## 🔗 Enlaces de Descarga
-
-### Opción 1: Google Drive
-```
-https://drive.google.com/file/d/1XXXXXXXXXXXXXXX/view?usp=sharing
-```
-
-### Opción 2: OneDrive Educativo
-```
-https://educacion-my.sharepoint.com/personal/profesor_centro_edu/Documents/SAD/Windows10-Client-SAD.ova
-```
-
-### Opción 3: Servidor del Centro
-```
-http://servidor.centro.edu/laboratorios/sad/Windows10-Client-SAD.ova
-```
+## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EXvIRH2oyBFCiQdUvmuMCnQBvmodGq2DcDin_MiB9s6gSg?e=7zeAa8)
 
 ## ✅ Verificación de Integridad
 

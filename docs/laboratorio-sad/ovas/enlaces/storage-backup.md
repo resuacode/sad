@@ -14,22 +14,8 @@
 - **Usuario root:** `root`
 - **Contraseña root:** `Backup123!`
 
-## 🔗 Enlaces de Descarga
+## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EbmRoBIpooBKm_ehhOxrg00BJ6csaEHQvJB4ZF9BdgEtDw?e=OmOWxG)
 
-### Opción 1: Google Drive
-```
-https://drive.google.com/file/d/1AAAAAAAAAAAAAAAA/view?usp=sharing
-```
-
-### Opción 2: OneDrive Educativo
-```
-https://educacion-my.sharepoint.com/personal/profesor_centro_edu/Documents/SAD/Debian-Storage-SAD.ova
-```
-
-### Opción 3: Servidor del Centro
-```
-http://servidor.centro.edu/laboratorios/sad/Debian-Storage-SAD.ova
-```
 
 ## ✅ Verificación de Integridad
 

@@ -14,22 +14,8 @@
 - **Usuario root:** `root`
 - **Contraseña root:** `Pass123!`
 
-## 🔗 Enlaces de Descarga
+## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/Ebrp0ovAFd5KmF1sZLtIYe0BXPeDeJgbbREFoebs0zcm7Q?e=yCU7sJ)
 
-### Opción 1: Google Drive
-```
-https://drive.google.com/file/d/1YYYYYYYYYYYYYYY/view?usp=sharing
-```
-
-### Opción 2: OneDrive Educativo
-```
-https://educacion-my.sharepoint.com/personal/profesor_centro_edu/Documents/SAD/Ubuntu-Server-SAD.ova
-```
-
-### Opción 3: Servidor del Centro
-```
-http://servidor.centro.edu/laboratorios/sad/Ubuntu-Server-SAD.ova
-```
 
 ## ✅ Verificación de Integridad
 

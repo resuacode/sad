@@ -39,7 +39,9 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--usb", "off"]
       
       # Crear disco compacto
-      vb.customize ["createhd", "--filename", "ubuntu-server-disk", "--size", "15360", "--format", "VDI", "--variant", "Standard"]
+      unless File.exist?("ubuntu-server-disk.vdi")
+        vb.customize ["createhd", "--filename", "ubuntu-server-disk.vdi", "--size", "15360", "--format", "VDI", "--variant", "Standard"]
+      end
     end
     
     # Scripts de provisioning
@@ -54,13 +56,39 @@ Vagrant.configure("2") do |config|
       echo "192.168.56.11 windows-server" >> /etc/hosts
       echo "192.168.56.20 kali-security" >> /etc/hosts
       
-      # Crear usuario para ejercicios
-      useradd -m -s /bin/bash admin
-      echo "admin:adminSAD2024!" | chpasswd
-      usermod -aG sudo admin
+      # Crear usuario para ejercicios (solo si no existe)
+      if ! id "admin" &>/dev/null; then
+        useradd -m -s /bin/bash admin
+        echo "admin:adminSAD2024!" | chpasswd
+        usermod -aG sudo admin
+        echo "✓ Usuario admin creado"
+      else
+        echo "✓ Usuario admin ya existe, configurando contraseña"
+        echo "admin:adminSAD2024!" | chpasswd
+        usermod -aG sudo admin
+      fi
       
       # Configurar timezone
       timedatectl set-timezone Europe/Madrid
+      
+      # Mostrar información del laboratorio al final
+      echo "============================================="
+      echo "   Laboratorio SAD - Configuración Optimizada"
+      echo "============================================="
+      echo "VMs disponibles:"
+      echo "- Ubuntu Server:    192.168.56.10 (SSH: localhost:2210)"
+      echo "- Windows Server:   192.168.56.11 (RDP: localhost:3389)"
+      echo "- Windows Client:   192.168.56.12 (RDP: localhost:3390)"
+      echo "- Storage Backup:   192.168.56.13 (SSH: localhost:2213)"
+      echo "- Kali Security:    192.168.56.20 (SSH: localhost:2220)"
+      echo "============================================="
+      echo "💾 Uso total estimado: ~85 GB"
+      echo "🧠 RAM simultánea: 8.5 GB"
+      echo "============================================="
+      echo "💡 Ejecuta solo las VMs necesarias por ejercicio"
+      echo "📋 Credenciales en guia-estudiante.md"
+      echo "💾 Crea snapshots antes de ejercicios importantes"
+      echo "============================================="
     SHELL
   end
   
@@ -142,7 +170,7 @@ Vagrant.configure("2") do |config|
       unless File.exist?("storage-disk.vdi")
         vb.customize ["createhd", "--filename", "storage-disk.vdi", "--size", 20480, "--format", "VDI", "--variant", "Standard"]
       end
-      vb.customize ["storageattach", :id, "--storagectl", "SCSI", "--port", 2, "--device", 0, "--type", "hdd", "--medium", "storage-disk.vdi"]
+      vb.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 2, "--device", 0, "--type", "hdd", "--medium", "storage-disk.vdi"]
     end
     
     storage.vm.provision "shell", path: "provision/common/update-system.sh"
@@ -211,9 +239,15 @@ Vagrant.configure("2") do |config|
       # Configurar zona horaria
       tzutil /s "Romance Standard Time"
       
+      # Habilitar ping (ICMP) en Windows Firewall
+      netsh advfirewall firewall add rule name="Allow ICMPv4-In" protocol=icmpv4:8,any dir=in action=allow
+      netsh advfirewall firewall add rule name="Allow ICMPv4-Out" protocol=icmpv4:8,any dir=out action=allow
+      
       # Configurar IP estática
       New-NetIPAddress -IPAddress 192.168.56.11 -PrefixLength 24 -InterfaceAlias "Ethernet" -ErrorAction SilentlyContinue
       Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 8.8.8.8
+      
+      Write-Host "Configuración de red y firewall completada en Windows Server"
     SHELL
   end
   
@@ -221,7 +255,7 @@ Vagrant.configure("2") do |config|
   # VM 5: Windows Client (Cliente del dominio)
   # ===========================================
   config.vm.define "windows-client" do |winclient|
-    winclient.vm.box = "gusztavvargadr/windows-10-22h2-enterprise-ltsc"  # LTSC más ligero
+    winclient.vm.box = "gusztavvargadr/windows-10-21h2-enterprise"  # Cambiado a box disponible
     winclient.vm.hostname = "windows-client"
     winclient.vm.network "private_network", ip: "#{NETWORK_BASE}.12"
     
@@ -247,38 +281,58 @@ Vagrant.configure("2") do |config|
     
     # Configuración del cliente
     winclient.vm.provision "shell", inline: <<-SHELL
-      # Usuario estudiante
-      net user /add cliente User123!
-      net localgroup "Remote Desktop Users" cliente /add
+      # Usuario estudiante (con manejo de errores PowerShell)
+      try {
+        net user /add cliente User123! 2>$null
+        Write-Host "Usuario cliente creado exitosamente"
+      } catch {
+        Write-Host "Usuario cliente ya existe o error en creación"
+      }
       
-      # Configurar DNS
-      Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 8.8.8.8
+      try {
+        net localgroup "Remote Desktop Users" cliente /add 2>$null
+        Write-Host "Usuario cliente agregado al grupo RDP"
+      } catch {
+        Write-Host "Usuario ya está en grupo RDP o error"
+      }
       
-      # Configurar IP estática
-      New-NetIPAddress -IPAddress 192.168.56.12 -PrefixLength 24 -InterfaceAlias "Ethernet" -ErrorAction SilentlyContinue
+      # Habilitar ping (ICMP) en Windows Firewall
+      try {
+        netsh advfirewall firewall add rule name="Allow ICMPv4-In" protocol=icmpv4:8,any dir=in action=allow
+        netsh advfirewall firewall add rule name="Allow ICMPv4-Out" protocol=icmpv4:8,any dir=out action=allow
+        Write-Host "Reglas de firewall para ICMP agregadas"
+      } catch {
+        Write-Host "Error configurando firewall para ICMP"
+      }
+      
+      # Configurar DNS (con manejo de errores robusto)
+      $adapter = Get-NetAdapter | Where-Object {$_.Status -eq "Up" -and $_.Name -like "*Ethernet*"} | Select-Object -First 1
+      if ($adapter) {
+        try {
+          Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses "8.8.8.8" -ErrorAction Stop
+          Write-Host "DNS configurado en interfaz: $($adapter.Name)"
+        } catch {
+          Write-Host "Error configurando DNS: $($_.Exception.Message)"
+        }
+        
+        # Configurar IP estática (con verificación previa)
+        try {
+          $existingIP = Get-NetIPAddress -InterfaceAlias $adapter.Name -AddressFamily IPv4 | Where-Object {$_.IPAddress -eq "192.168.56.12"}
+          if (-not $existingIP) {
+            New-NetIPAddress -IPAddress 192.168.56.12 -PrefixLength 24 -InterfaceAlias $adapter.Name -ErrorAction Stop
+            Write-Host "IP estática configurada: 192.168.56.12"
+          } else {
+            Write-Host "IP 192.168.56.12 ya está configurada"
+          }
+        } catch {
+          Write-Host "Error configurando IP estática: $($_.Exception.Message)"
+        }
+      } else {
+        Write-Host "No se encontró adaptador de red activo"
+      }
+      
+      Write-Host "Configuración de Windows Client completada"
     SHELL
   end
-  
-  # ===========================================
-  # Mensaje final de configuración optimizada
-  # ===========================================
-  config.vm.provision "shell", run: "always", inline: <<-SHELL
-    echo "============================================="
-    echo "   Laboratorio SAD - Configuración Optimizada"
-    echo "============================================="
-    echo "VMs disponibles:"
-    echo "- Ubuntu Server:    192.168.56.10 (SSH: localhost:2210)"
-    echo "- Windows Server:   192.168.56.11 (RDP: localhost:3389)"
-    echo "- Windows Client:   192.168.56.12 (RDP: localhost:3390)"
-    echo "- Storage Backup:   192.168.56.13 (SSH: localhost:2213)"
-    echo "- Kali Security:    192.168.56.20 (SSH: localhost:2220)"
-    echo "============================================="
-    echo "💾 Uso total estimado: ~85 GB"
-    echo "🧠 RAM simultánea: 8.5 GB"
-    echo "============================================="
-    echo "💡 Ejecuta solo las VMs necesarias por ejercicio"
-    echo "📋 Credenciales en guia-estudiante.md"
-    echo "💾 Crea snapshots antes de ejercicios importantes"
-    echo "============================================="
-  SHELL
+
 end

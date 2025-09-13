@@ -15,22 +15,7 @@
 - **Usuario dominio:** `saduser`
 - **Contraseña dominio:** `User123!`
 
-## 🔗 Enlaces de Descarga
-
-### Opción 1: Google Drive
-```
-https://drive.google.com/file/d/1XXXXXXXXXXXXXXX/view?usp=sharing
-```
-
-### Opción 2: OneDrive Educativo
-```
-https://educacion-my.sharepoint.com/personal/profesor_centro_edu/Documents/SAD/WindowsServer2022-SAD.ova
-```
-
-### Opción 3: Servidor del Centro
-```
-http://servidor.centro.edu/laboratorios/sad/WindowsServer2022-SAD.ova
-```
+## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/Ea5YcdlFF4NCoPTz_aTAqvMBfMWEp3ItfInNCYZZ9P2GRQ?e=jDjzko)
 
 ## ✅ Verificación de Integridad
 
