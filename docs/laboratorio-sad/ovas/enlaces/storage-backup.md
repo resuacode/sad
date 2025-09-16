@@ -21,7 +21,7 @@
 
 **SHA256 Checksum:**
 ```
-b1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5a6b7c8d9e0f1g2
+057863f808eb5da0cf0d50548558fec2c190f6f7054ec466736fca6dd637adca
 ```
 
 **Verificar en Linux/macOS:**
