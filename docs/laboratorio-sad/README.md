@@ -156,24 +156,10 @@ Rango: 192.168.100.0/24
 DHCP: Deshabilitado (IPs estáticas)
 ```
 
-## 📖 Ejercicios del Laboratorio
-
-El laboratorio está diseñado para los ejercicios del **Tema 2: Mecanismos de Seguridad Activa**, organizados en:
-
-1. **Seguridad Física y Ambiental** (8 ejercicios)
-2. **Seguridad Lógica** (8 ejercicios)  
-3. **Criptografía** (8 ejercicios)
-4. **Amenazas y Contramedidas** (8 ejercicios)
-5. **Monitorización de Red** (8 ejercicios)
-6. **Respaldo y Recuperación** (8 ejercicios)
-
-**Total**: 48 ejercicios prácticos con dificultad progresiva.
-
 ## 🆘 Soporte
 
 - **Issues**: Reportar problemas en el repositorio
 - **Documentación**: Revisar troubleshooting.md
-- **Contacto**: [email del instructor]
 
 ## 📄 Licencia
 
@@ -181,6 +167,6 @@ Material educativo para uso en el módulo SAD de ASIR.
 Distribuido bajo licencia Creative Commons BY-SA.
 
 ---
-**Última actualización**: Diciembre 2024
+**Última actualización**: Septiembre 2025
 **Versión**: 1.0
-**Autor**: [Nombre del instructor]
+**Autor**: @ResuaCode

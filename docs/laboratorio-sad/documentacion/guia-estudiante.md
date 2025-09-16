@@ -206,9 +206,9 @@ ejercicios/tema2-X-nombre/
 
 ## Desarrollo
 ### Paso 1: [Descripción]
-```bash
+````bash
 [comandos ejecutados]
-```
+````
 [resultado obtenido]
 
 ### Paso 2: [Descripción]
@@ -227,27 +227,6 @@ ejercicios/tema2-X-nombre/
 ## Referencias
 [Enlaces y fuentes consultadas]
 ```
-
-## 🎓 Progresión Recomendada
-
-### Semana 1: Fundamentos
-- **Día 1-2**: Instalación y configuración inicial
-- **Día 3-4**: Ejercicios básicos de seguridad física
-- **Día 5**: Ejercicios básicos de seguridad lógica
-
-### Semana 2: Seguridad Activa
-- **Día 1-2**: Criptografía básica e intermedia
-- **Día 3-4**: Amenazas y contramedidas básicas
-- **Día 5**: Monitorización básica
-
-### Semana 3: Herramientas Avanzadas
-- **Día 1-2**: Análisis de tráfico y forense básico
-- **Día 3-4**: Backup y recuperación
-- **Día 5**: Integración y casos complejos
-
-### Semana 4: Proyectos Avanzados
-- **Día 1-3**: Ejercicios avanzados de elección
-- **Día 4-5**: Proyecto integrador final
 
 ## 🔧 Herramientas Esenciales
 
@@ -369,29 +348,6 @@ Cuando reportes un problema, incluye:
 - 🔄 **Repetir ejercicios** hasta dominarlos
 - 💡 **Experimentar** con variaciones
 - 🤝 **Colaborar** con compañeros
-
-## 📅 Plan de Estudio Sugerido
-
-### Dedicación Diaria: 2-3 horas
-
-#### Lunes: Teoría y Configuración
-- 📖 30 min: Lectura de documentación
-- ⚙️ 90 min: Configuración y setup
-- 📝 30 min: Documentación del progreso
-
-#### Martes-Jueves: Ejercicios Prácticos
-- 🔧 120 min: Ejercicios hands-on
-- 📝 30 min: Documentación de resultados
-
-#### Viernes: Revisión e Integración
-- 🔄 60 min: Repaso de conceptos
-- 🧪 60 min: Experimentos personales
-- 📊 30 min: Evaluación del progreso semanal
-
-#### Fin de Semana: Proyectos Avanzados
-- 🚀 Trabajo en ejercicios complejos
-- 📚 Investigación de temas de interés
-- 🤝 Colaboración en proyectos grupales
 
 ## 🎖️ Certificación de Competencias
 

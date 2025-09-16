@@ -546,41 +546,6 @@ vagrant snapshot restore ubuntu-server "configuracion-inicial"
 vagrant snapshot delete ubuntu-server "configuracion-inicial"
 ```
 
-## 📁 Estructura del Proyecto
-
-```
-vagrant/
-├── Vagrantfile                 # Configuración principal
-├── provision/                  # Scripts de configuración
-│   ├── common/                # Scripts comunes para todas las VMs
-│   │   ├── update-system.sh
-│   │   ├── install-basics.sh
-│   │   └── configure-network.sh
-│   ├── ubuntu-server/         # Específicos para Ubuntu
-│   │   ├── install-services.sh
-│   │   ├── configure-ssh.sh
-│   │   └── setup-firewall.sh
-│   ├── windows-server/        # Específicos para Windows Server
-│   │   ├── install-roles.ps1
-│   │   ├── configure-ad.ps1
-│   │   └── setup-dns-dhcp.ps1
-│   ├── kali-security/         # Específicos para Kali
-│   │   ├── update-tools.sh
-│   │   ├── configure-metasploit.sh
-│   │   └── setup-wireshark.sh
-│   └── storage-backup/        # Específicos para Storage
-│       ├── install-backup-tools.sh
-│       ├── configure-samba.sh
-│       └── setup-bacula.sh
-├── configs/                   # Archivos de configuración
-│   ├── ssh/
-│   ├── network/
-│   └── services/
-├── boxes/                     # Información sobre boxes base
-│   └── box-info.md
-└── README.md                  # Esta documentación
-```
-
 ## ⚙️ Configuración Detallada
 
 ### Vagrantfile Principal
@@ -747,7 +712,6 @@ vagrant reload ubuntu-server
 
 ### Tutoriales Recomendados
 - [Vagrant Tutorial - HashiCorp Learn](https://learn.hashicorp.com/vagrant)
-- [Infrastructure as Code with Vagrant](https://www.infracloud.io/blogs/vagrant-infrastructure-as-code/)
 
 ## 📖 Siguiente Paso
 

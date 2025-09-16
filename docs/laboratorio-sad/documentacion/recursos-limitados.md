@@ -178,23 +178,7 @@ vagrant destroy ubuntu-server
 vagrant up kali-security
 ```
 
-### Opción 2: Configuración Cloud
-
-Para estudiantes sin hardware suficiente:
-
-1. **AWS Academy/Google Cloud Education**
-   - Usar créditos estudiantiles gratuitos
-   - Crear instancias EC2/Compute Engine
-
-2. **VPS Económicos**
-   - Contabo, Hetzner, DigitalOcean
-   - 4-8€/mes por VPS con 8 GB RAM
-
-3. **Laboratorio Compartido**
-   - Acceso remoto a laboratorio del centro educativo
-   - TeamViewer/VNC para acceso desde casa
-
-### Opción 3: Contenedores Docker (Alternativo)
+### Opción 2: Contenedores Docker (Alternativo)
 
 Para algunos ejercicios, usar contenedores en lugar de VMs:
 
@@ -215,23 +199,6 @@ docker run -d --name kali-lab kalilinux/kali-rolling
 | **VMs individuales** | 4 GB | 40 GB | Funciona en cualquier PC | Experiencia limitada |
 | **Cloud** | 2 GB | 20 GB | Sin limitaciones locales | Requiere conexión a Internet |
 | **Contenedores** | 4 GB | 30 GB | Muy ligero | Menos realista |
-
-## 🎯 Recomendaciones por Perfil
-
-### Estudiante con PC Básico (4-8 GB RAM)
-1. Usar VMs individuales por ejercicio
-2. Considerar laboratorio cloud para ejercicios complejos
-3. Trabajar en grupos para compartir recursos
-
-### Estudiante con PC Estándar (8-16 GB RAM)
-1. Usar configuración por módulos (2-3 VMs simultáneas)
-2. Crear snapshots antes de ejercicios importantes
-3. Gestionar VMs activamente (suspend/resume)
-
-### Estudiante con PC Potente (16+ GB RAM)
-1. Configuración completa disponible
-2. Experimentación libre
-3. Ayudar a compañeros con recursos limitados
 
 ## 🔧 Scripts de Ayuda
 
@@ -349,11 +316,3 @@ if [ -d ~/VirtualBox\ VMs ]; then
 fi
 ```
 
-Con estas optimizaciones, hemos reducido significativamente los requisitos:
-
-- **De 500 GB a 80-120 GB** (reducción del 75%)
-- **De 32 GB RAM a 8-16 GB** (reducción del 50-75%)
-- **Configuración flexible** por módulos
-- **Alternativas** para hardware muy limitado
-
-Esto hace el laboratorio **mucho más accesible** para estudiantes con PCs domésticos estándar.
