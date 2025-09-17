@@ -236,7 +236,8 @@ Vagrant.configure("2") do |config|
     # Scripts PowerShell de provisioning
     winserver.vm.provision "shell", path: "provision/windows-server/basic-config.ps1"
     winserver.vm.provision "shell", path: "provision/windows-server/install-services.ps1"
-    winserver.vm.provision "shell", path: "provision/windows-server/install-ad-services.ps1"
+    # winserver.vm.provision "shell", path: "provision/windows-server/install-ad-services.ps1"  # Deshabilitado por conflictos
+    winserver.vm.provision "shell", path: "provision/windows-server/fix-winrm.ps1"  # Reparar WinRM al final
     
     # Configuración básica optimizada
     winserver.vm.provision "shell", inline: <<-SHELL

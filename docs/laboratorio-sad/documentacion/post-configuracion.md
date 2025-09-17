@@ -258,8 +258,7 @@ sudo passwd username
 Una vez completada la configuración:
 
 1. 📚 Revisar [Guía del Estudiante](guia-estudiante.md)
-2. 🎯 Comenzar con [Ejercicios Prácticos](ejercicios-practicos.md)
-3. 💾 Consultar [Recursos Limitados](recursos-limitados.md) si es necesario
-4. 🔧 Tener a mano [Troubleshooting](troubleshooting.md) para problemas
+2. 💾 Consultar [Recursos Limitados](recursos-limitados.md) si es necesario
+3. 🔧 Tener a mano [Troubleshooting](troubleshooting.md) para problemas
 
 ¡Tu laboratorio está listo para los ejercicios de seguridad!

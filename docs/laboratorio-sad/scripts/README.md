@@ -66,4 +66,3 @@ Esta carpeta contiene scripts y herramientas auxiliares para facilitar la gesti�
 - 📚 [Guía del Estudiante](../documentacion/guia-estudiante.md)
 - 🔧 [Troubleshooting](../documentacion/troubleshooting.md)
 - 💾 [Recursos Limitados](../documentacion/recursos-limitados.md)
-- 🎯 [Ejercicios Prácticos](../documentacion/ejercicios-practicos.md)
