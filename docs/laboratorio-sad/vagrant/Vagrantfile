@@ -187,14 +187,15 @@ Vagrant.configure("2") do |config|
       echo "backup:backup123" | chpasswd
       usermod -aG sudo backup
       
-      # Configurar disco adicional para backups (optimizado)
+      # Configurar disco adicional para backups (optimizado y seguro)
       if [ ! -e /dev/sdc1 ]; then
         echo "Configurando disco adicional para backups..."
         parted -s /dev/sdc mklabel gpt
         parted -s /dev/sdc mkpart primary ext4 0% 100%
         mkfs.ext4 /dev/sdc1
         mkdir -p /backup
-        echo "/dev/sdc1 /backup ext4 defaults 0 0" >> /etc/fstab
+        # Usar opciones de montaje seguras para evitar emergency mode
+        echo "/dev/sdc1 /backup ext4 defaults,nofail,x-systemd.device-timeout=10 0 2" >> /etc/fstab
         mount /backup
         chown backup:backup /backup
       fi

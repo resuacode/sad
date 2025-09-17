@@ -14,14 +14,14 @@
 - **Usuario root:** `root`
 - **Contraseña root:** `Backup123!`
 
-## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EbmRoBIpooBKm_ehhOxrg00BJ6csaEHQvJB4ZF9BdgEtDw?e=OmOWxG)
+## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EdK-QLyE7LhMrvDfGbE6hjYBobUA9WwDsM_Bw5z73aZb4g?e=lEPj1G)
 
 
 ## ✅ Verificación de Integridad
 
 **SHA256 Checksum:**
 ```
-057863f808eb5da0cf0d50548558fec2c190f6f7054ec466736fca6dd637adca
+f1dc4de1da4fbf34783db4741b7cfc561368ff05902f07fae6b1c3c673cb765c
 ```
 
 **Verificar en Linux/macOS:**

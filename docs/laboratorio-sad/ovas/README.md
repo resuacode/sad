@@ -8,11 +8,11 @@ Las OVAs (Open Virtual Appliance) son máquinas virtuales preconfiguradas que se
 
 | OVA | Tamaño | Checksum SHA256 | Enlace de Descarga |
 |-----|--------|-----------------|-------------------|
-| **WindowsServer2022-SAD.ova** | ~8 GB | `9cf99d48...` | [Descargar](./enlaces/windows-server) |
-| **Windows11-Client-SAD.ova** | ~6 GB | `72eed97c...` | [Descargar](./enlaces/windows-client) |
-| **Ubuntu-Server-SAD.ova** | ~3 GB | `058240a0...` | [Descargar](./enlaces/ubuntu-server) |
-| **Kali-Security-SAD.ova** | ~4 GB | `e6857d6e...` | [Descargar](./enlaces/kali-security) |
-| **Debian-Storage-SAD.ova** | ~2 GB | `057863f8...` | [Descargar](./enlaces/storage-backup) |
+| **WindowsServer2022-SAD.ova** | ~8 GB | `8353a950...` | [Descargar](./enlaces/windows-server) |
+| **Windows11-Client-SAD.ova** | ~6 GB | `3fa2d62e...` | [Descargar](./enlaces/windows-client) |
+| **Ubuntu-Server-SAD.ova** | ~3 GB | `ef5e0e23...` | [Descargar](./enlaces/ubuntu-server) |
+| **Kali-Security-SAD.ova** | ~4 GB | `ecfe4fdc...` | [Descargar](./enlaces/kali-security) |
+| **Debian-Storage-SAD.ova** | ~2 GB | `f1dc4de1...` | [Descargar](./enlaces/storage-backup) |
 
 ## 🚀 Proceso de Instalación
 

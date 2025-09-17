@@ -322,6 +322,22 @@ export_ovas() {
     done
     
     log_success "Exportación completada. OVAs guardadas en: $export_dir/"
+    
+    # Generar checksums automáticamente
+    log_info "Generando checksums SHA256..."
+    if cd "$export_dir" && ls *.ova >/dev/null 2>&1; then
+        sha256sum *.ova > checksums.sha256
+        log_success "Checksums generados en: $export_dir/checksums.sha256"
+        
+        echo ""
+        log_info "📋 Checksums SHA256:"
+        cat checksums.sha256
+        echo ""
+        log_info "💡 Para verificar: sha256sum -c $export_dir/checksums.sha256"
+    else
+        log_warning "No se encontraron archivos OVA para generar checksums"
+    fi
+    cd - >/dev/null
 }
 
 # Función para probar conectividad del laboratorio

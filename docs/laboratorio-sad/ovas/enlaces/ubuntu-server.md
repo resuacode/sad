@@ -14,14 +14,14 @@
 - **Usuario root:** `root`
 - **Contraseña root:** `Pass123!`
 
-## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/Ebrp0ovAFd5KmF1sZLtIYe0BXPeDeJgbbREFoebs0zcm7Q?e=yCU7sJ)
+## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EejD2FSy7sFJtHfRKOCKc-8BujLzQi4icD-byoPU7KXDMQ?e=2cXqdX)
 
 
 ## ✅ Verificación de Integridad
 
 **SHA256 Checksum:**
 ```
-058240a0ef42c9d2d07e1da6e3956148bc3a2c8c8701b7f9234b6227eb33ffeb
+ef5e0e23324f271ccd6fcbac9bece799dd2e8333abb557f0717eb92b7457d343
 ```
 
 **Verificar en Linux/macOS:**
