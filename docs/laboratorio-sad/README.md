@@ -141,11 +141,16 @@ vagrant status
 ### Credenciales por Defecto
 | Sistema | Usuario | Contraseña | Notas |
 |---------|---------|------------|-------|
-| Windows Server | Administrator | AdminSAD2024! | Cambiar en primera ejecución |
-| Windows Client | estudiante | EstudianteSAD2024! | Usuario estándar |
+| Windows Server | vagrant | vagrant | Usuario Vagrant por defecto |
+| Windows Server | labadmin | Password123! | Administrador del laboratorio |
+| Windows Server | labuser | Password123! | Usuario estándar |
+| Windows Client | vagrant | vagrant | Usuario Vagrant por defecto |
+| Windows Client | cliente | User123! | Usuario cliente |
+| Windows Client | clienteadmin | User123! | Administrador local |
 | Ubuntu Server | admin | adminSAD2024! | Usuario con sudo |
-| Kali Linux | kali | kaliSAD2024! | Usuario por defecto |
-| Storage-Backup | backup | backupSAD2024! | Usuario de servicios |
+| Kali Linux | kali | kali | Usuario por defecto |
+| Storage-Backup | vagrant | vagrant | Usuario Vagrant por defecto |
+| Storage-Backup | backup | backup123 | Usuario de servicios |
 
 ⚠️ **Importante**: Cambiar todas las contraseñas en el primer uso.
 

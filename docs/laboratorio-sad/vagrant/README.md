@@ -138,10 +138,11 @@ laboratorio-sad/vagrant/
 | Apache Web | http://localhost:8010 | - |
 | phpMyAdmin | http://localhost:8010/phpmyadmin | sadlab_user:sadlab_pass |
 | Portainer | http://localhost:9000 | admin:admin123 |
-| RDP Windows Server | `localhost:3389` | Administrator:WinSAD2024! |
-| RDP Windows Client | `localhost:3390` | cliente:User123! |
+| RDP Windows Server | `localhost:3389` | vagrant:vagrant ó labadmin:Password123! |
+| RDP Windows Client | `localhost:3390` | vagrant:vagrant ó cliente:User123! |
 | SMB Storage | `\\localhost:4445\shared` | backup:backup123 |
 | SSH Kali | `ssh -p 2220 kali@localhost` | kali:kali |
+| SSH Storage | `ssh -p 2213 backup@localhost` | backup:backup123 |
 
 ## 🛠️ Instalación y Uso Manual
 

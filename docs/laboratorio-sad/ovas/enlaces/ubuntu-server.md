@@ -9,10 +9,10 @@
 
 ## 🔐 Credenciales Preconfiguradas
 
-- **Usuario principal:** `servidor`
-- **Contraseña:** `Pass123!`
-- **Usuario root:** `root`
-- **Contraseña root:** `Pass123!`
+- **Usuario principal:** `admin`
+- **Contraseña:** `adminSAD2024!`
+- **Usuario vagrant:** `vagrant`
+- **Contraseña vagrant:** `vagrant`
 
 ## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EejD2FSy7sFJtHfRKOCKc-8BujLzQi4icD-byoPU7KXDMQ?e=2cXqdX)
 

@@ -127,11 +127,15 @@ ping 192.168.56.20  # Kali Security
 ```bash
 # Conectar a Ubuntu Server
 ssh admin@192.168.56.10
-# Contraseña: admin123
+# Contraseña: adminSAD2024!
 
 # Conectar a Kali Security
 ssh kali@192.168.56.20
 # Contraseña: kali
+
+# Conectar a Storage Backup
+ssh backup@192.168.56.13
+# Contraseña: backup123
 ```
 
 #### 3.3 Test de Acceso RDP (Windows)

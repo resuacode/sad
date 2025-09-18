@@ -10,9 +10,9 @@
 ## 🔐 Credenciales Preconfiguradas
 
 - **Usuario principal:** `kali`
-- **Contraseña:** `kali123!`
-- **Usuario root:** `root`
-- **Contraseña root:** `toor123!`
+- **Contraseña:** `kali`
+- **Usuario vagrant:** `vagrant`
+- **Contraseña vagrant:** `vagrant`
 
 ## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EaAeP4IKcgdJq6q_RUz716IBLROOPECiFdibnYEVNcJ2ew?e=sE0UbB)
 

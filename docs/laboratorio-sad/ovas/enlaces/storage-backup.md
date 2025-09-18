@@ -10,9 +10,9 @@
 ## 🔐 Credenciales Preconfiguradas
 
 - **Usuario principal:** `backup`
-- **Contraseña:** `Backup123!`
-- **Usuario root:** `root`
-- **Contraseña root:** `Backup123!`
+- **Contraseña:** `backup123`
+- **Usuario vagrant:** `vagrant`
+- **Contraseña vagrant:** `vagrant`
 
 ## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EdK-QLyE7LhMrvDfGbE6hjYBobUA9WwDsM_Bw5z73aZb4g?e=lEPj1G)
 
@@ -82,7 +82,7 @@ Get-FileHash -Path "Debian-Storage-SAD.ova" -Algorithm SHA256
 
 ### Configuración de Samba
 - **Share principal:** `//192.168.56.20/shared`
-- **Credenciales:** `backup / Backup123!`
+- **Credenciales:** `backup / backup123`
 - **Permisos:** Lectura/escritura para usuarios autorizados
 
 ### Configuración de NFS

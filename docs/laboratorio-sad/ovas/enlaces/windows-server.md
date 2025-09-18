@@ -9,11 +9,12 @@
 
 ## 🔐 Credenciales Preconfiguradas
 
-- **Usuario Administrador:** `Administrador`
-- **Contraseña:** `Admin123!`
-- **Dominio:** `sad.local`
-- **Usuario dominio:** `saduser`
-- **Contraseña dominio:** `User123!`
+- **Usuario Vagrant:** `vagrant`
+- **Contraseña:** `vagrant`
+- **Usuario Lab Admin:** `labadmin`
+- **Contraseña:** `Password123!`
+- **Usuario Lab User:** `labuser`
+- **Contraseña:** `Password123!`
 
 ## 🔗 [Enlace de Descarga](https://iesarmandocotarelovall-my.sharepoint.com/:u:/g/personal/dresua_iescotarelo_org/EX31M2ylYKFJmNDsVROw9YUBk_jV5saBWxpFGRvszEXBFA?e=bEROnG)
 
