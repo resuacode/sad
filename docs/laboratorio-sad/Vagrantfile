@@ -8,11 +8,6 @@ Vagrant.configure("2") do |config|
   # Configuración global
   config.vm.box_check_update = false
   
-  # Deshabilitar vagrant-vbguest si está instalado
-  if Vagrant.has_plugin?("vagrant-vbguest")
-    config.vbguest.auto_update = false
-  end
-  
   # Red Host-Only común
   NETWORK_BASE = "192.168.56"
   

@@ -1,3 +1,8 @@
+---
+sidebar_position: 2
+---
+
+
 # Laboratorio SAD v2.0 - Guía Completa
 
 ## 📋 Descripción
@@ -159,31 +164,6 @@ VBoxManage snapshot "SAD-Ubuntu-Server" list
 VBoxManage snapshot "SAD-Ubuntu-Server" restore "snapshot-inicial"
 ```
 
-## 🎓 Casos de Uso por Módulo
-
-### Módulo 2-3: Criptografía y PKI
-**VMs necesarias**: Ubuntu Server, Kali Security
-```bash
-vagrant up ubuntu-server kali-security
-```
-
-### Módulo 4: Seguridad en Redes
-**VMs necesarias**: Ubuntu Server, Kali Security, Windows Server
-```bash
-vagrant up ubuntu-server kali-security windows-server
-```
-
-### Módulo 5: Alta Disponibilidad
-**VMs necesarias**: Ubuntu Server, Storage Backup
-```bash
-vagrant up ubuntu-server storage-backup
-```
-
-### Módulo 6: Análisis Forense
-**VMs necesarias**: Kali Security, Ubuntu Server, Storage Backup
-```bash
-vagrant up kali-security ubuntu-server storage-backup
-```
 
 ## 🔧 Solución de Problemas
 
