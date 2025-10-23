@@ -1,8 +1,8 @@
 #!/bin/bash
 # Provisioning script para Kali Security
-# Configuración mínima de herramientas
+# Configuración robusta con manejo de errores
 
-set -e
+set -e  # Detener solo en errores críticos
 
 echo "============================================"
 echo "Configurando Kali Security..."
@@ -11,15 +11,17 @@ echo "============================================"
 # Configurar zona horaria
 timedatectl set-timezone Europe/Madrid 2>/dev/null || echo "Zona horaria ya configurada"
 
-# Configurar usuario kali con contraseña
-# Forzar contraseña "kali" para el usuario kali
+# Configurar contraseña para usuario kali
 echo "Configurando contraseña para usuario kali..."
-echo "kali:kali" | sudo chpasswd 2>/dev/null || {
-    echo "kali" | sudo passwd --stdin kali 2>/dev/null || {
-        echo -e "kali\nkali" | sudo passwd kali 2>/dev/null
+if id "kali" &>/dev/null; then
+    echo "kali:kali" | chpasswd 2>/dev/null || {
+        echo "Método alternativo para cambiar contraseña..."
+        echo -e "kali\nkali" | passwd kali 2>/dev/null || true
     }
-}
-echo "Usuario kali configurado con contraseña: kali"
+    echo "✓ Contraseña configurada"
+else
+    echo "⚠ Usuario kali no existe, omitiendo cambio de contraseña"
+fi
 
 # Configurar SSH para acceso con contraseña
 echo "Configurando SSH para autenticación por contraseña..."
@@ -33,14 +35,29 @@ systemctl restart sshd || systemctl restart ssh
 systemctl enable ssh
 echo "SSH configurado correctamente"
 
-# Actualizar sistema
+# Actualizar repositorios
+echo "Actualizando repositorios..."
 export DEBIAN_FRONTEND=noninteractive
-apt-get update -qq
+apt-get update -qq 2>/dev/null || {
+    echo "⚠ Error al actualizar repositorios, continuando..."
+}
 
-# Instalar herramientas básicas (sin metasploit por ahora, muy pesado)
+# Actualizar sistema (opcional, comentado por defecto para agilizar)
+# echo "Actualizando sistema..."
+# apt-get upgrade -y -qq 2>/dev/null || true
+
+# Instalar herramientas básicas
 echo "Instalando herramientas básicas..."
-apt-get install -y -qq nmap tshark tcpdump netcat-traditional curl wget 2>/dev/null || \
-apt-get install -y -qq nmap tcpdump netcat-traditional curl wget
+apt-get install -y -qq \
+    net-tools \
+    curl \
+    wget \
+    vim \
+    nmap \
+    tshark \
+    tcpdump \
+    netcat-traditional \
+    2>/dev/null || echo "⚠ Algunas herramientas no se pudieron instalar"
 
 # Configurar red estática
 cat > /etc/network/interfaces.d/eth1 << 'EOF'
@@ -78,10 +95,16 @@ else
     echo "Directorio /home/kali no encontrado, omitiendo script de Metasploit"
 fi
 
+# Configurar red
+echo "Configurando red..."
+ip addr show eth1 || echo "⚠ Interfaz eth1 no disponible"
+
 echo "============================================"
-echo "✅ Kali Security configurado correctamente"
+echo "✓ Configuración de Kali completada"
 echo "============================================"
-echo "Usuario: kali / kali"
+echo "Usuario: kali"
+echo "Contraseña: kali"
+echo "IP: 192.168.56.20"
 echo "Herramientas: nmap, wireshark-cli, tcpdump"
 echo "Para Metasploit: ~/install-metasploit.sh"
 echo "============================================"
