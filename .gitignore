@@ -27,3 +27,13 @@ GUIA_CONTENIDO.md
 
 # Cuestionarios (contenido local)
 cuestionarios/
+
+# Carpetas shared de desarrollo local
+shared-ubuntu-server/
+shared-windows-server/
+shared-windows-client/
+shared-kali-security/
+shared-storage-backup/
+
+# Carpeta configuraciones de Vagrant local
+docs/laboratorio-sad/.vagrant/
