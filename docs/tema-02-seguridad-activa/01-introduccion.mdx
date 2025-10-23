@@ -465,28 +465,207 @@ La documentación incluye:
 
 ### Estructura de Entrega y Evaluación
 
-**Organización de archivos:**
-```
-/entregas/tema2/
-├── 2.1-seguridad-fisica/
-├── 2.2-seguridad-logica/
-├── 2.3-criptografia/
-├── 2.4-amenazas-contramedidas/
-├── 2.5-monitorizacion-red/
-├── 2.6-respaldo-recuperacion/
-└── resumen-ejecutivo.pdf
-```
+#### Distribución de Bloques de Ejercicios
 
-**Criterios de evaluación:**
-- **Técnico (40%)**: Funcionamiento correcto de configuraciones
-- **Documentación (30%)**: Claridad y completitud de procedimientos
-- **Análisis (20%)**: Comprensión de conceptos y justificación de decisiones  
-- **Innovación (10%)**: Mejoras o enfoques creativos implementados
+Para la evaluación de este tema, se han organizado **12 bloques diferenciados**, cada uno con **3 ejercicios** que cubren diferentes niveles de complejidad:
+- 1 ejercicio **básico**
+- 1 ejercicio **intermedio**
+- 1 ejercicio **avanzado**
 
-**Recomendaciones:**
-- Realizar snapshots antes de ejercicios destructivos
-- Documentar todos los comandos y configuraciones utilizados
-- Incluir capturas de pantalla para evidenciar funcionamiento
-- Justificar decisiones técnicas tomadas durante implementación
+Cada estudiante tendrá asignado **un bloque específico** que deberá completar y documentar. Los bloques están diseñados para ser **equilibrados en complejidad y tiempo de dedicación** (aproximadamente 8-10 horas de trabajo total por bloque).
 
-> **Nota importante:** Este laboratorio debe realizarse en entorno completamente aislado. Nunca probar técnicas de ataque en redes de producción o sistemas ajenos.
+:::info 📋 Formato de Entrega
+La entrega consiste en un **único documento PDF** que debe seguir las normas establecidas en:
+
+👉 **[Formato de Entregas](../formato-entregas.mdx)**
+
+El documento debe contener la resolución completa de los 3 ejercicios del bloque asignado.
+:::
+
+#### **BLOQUE 1: Fundamentos de Seguridad y Protección**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Inventario y Clasificación de Activos | 2.1 | Crear inventario completo del laboratorio con clasificación de criticidad |
+| **Intermedio** | Configuración de Políticas de Contraseñas | 2.2 | Implementar políticas de contraseñas en Windows Server y Ubuntu |
+| **Avanzado** | Sistema de Alertas Avanzado | 2.1 | Monitoreo con Nagios/Zabbix y dashboard de estado general |
+
+---
+
+#### **BLOQUE 2: Control de Acceso y Criptografía Básica**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Gestión de Usuarios y Grupos | 2.2 | Crear estructura organizacional en AD y usuarios Linux con privilegios |
+| **Intermedio** | Cifrado Simétrico Básico | 2.3 | Uso de OpenSSL y herramientas de cifrado en Windows/Linux |
+| **Avanzado** | Implementación de PKI Básica | 2.2 | Configurar CA y generar certificados para servicios |
+
+---
+
+#### **BLOQUE 3: Análisis de Amenazas y Respaldo**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Análisis de Malware Estático | 2.4 | Análisis estático de samples con herramientas de Kali |
+| **Intermedio** | Estrategia 3-2-1 de Backup | 2.6 | Implementar backups en 3 ubicaciones con 2 medios diferentes |
+| **Avanzado** | Implementación de PKI Completa | 2.3 | Jerarquía de CAs, OCSP y gestión de certificados |
+
+---
+
+#### **BLOQUE 4: Monitorización y Recuperación**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Captura y Análisis Básico con Wireshark | 2.5 | Captura y análisis de protocolos HTTP, SSH, FTP |
+| **Intermedio** | Backups Incrementales y Diferenciales | 2.6 | Comparativa de estrategias de backup |
+| **Avanzado** | Red Team vs Blue Team | 2.4 | Simulación completa de ataque y defensa |
+
+---
+
+#### **BLOQUE 5: Seguridad Física y Hardening**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Análisis de Riesgos Físicos | 2.1 | Diseño de diagrama CPD virtual e identificación de amenazas |
+| **Intermedio** | Hardening de Sistemas | 2.2 | Bastionado de Ubuntu Server y Windows con plantillas de seguridad |
+| **Avanzado** | SIEM y Correlación de Eventos | 2.4 | Implementar ELK Stack con reglas de correlación |
+
+---
+
+#### **BLOQUE 6: Criptografía y Detección**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Implementación de Hashing | 2.3 | Generación y verificación de checksums, detección de modificaciones |
+| **Intermedio** | Análisis de Tráfico Malicioso | 2.4 | Captura y análisis de patrones C2 y exfiltración de datos |
+| **Avanzado** | Backup Empresarial Simulado | 2.6 | Implementar Bacula con políticas complejas de retención |
+
+---
+
+#### **BLOQUE 7: Control de Acceso Avanzado**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Control de Acceso a Archivos | 2.2 | Configurar permisos NTFS y ACLs en Linux con pruebas |
+| **Intermedio** | Monitoreo con Herramientas de Línea de Comandos | 2.5 | Scripts de monitoreo con netstat, tcpdump y análisis de conexiones |
+| **Avanzado** | Simulación de Desastre y Recuperación | 2.1 | Simulacro completo con métricas RTO/RPO reales |
+
+---
+
+#### **BLOQUE 8: Protocolos y Continuidad**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Plan de Contingencia Básico | 2.1 | Procedimiento de respuesta ante caída del host físico |
+| **Intermedio** | Certificados Digitales | 2.3 | Generar certificados X.509 y configurar HTTPS con autenticación cliente |
+| **Avanzado** | Business Continuity Plan | 2.6 | BCP completo con drill de continuidad y sitio alternativo |
+
+---
+
+#### **BLOQUE 9: Detección y Respuesta**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Instalación y Configuración de Antivirus | 2.4 | ClamAV en Linux y Windows Defender con políticas |
+| **Intermedio** | Implementación de Autenticación Multifactor | 2.2 | Google Authenticator en SSH y Windows Hello |
+| **Avanzado** | NOC Simulado | 2.5 | Dashboard en tiempo real con alertas y escalado automático |
+
+---
+
+#### **BLOQUE 10: Infraestructura Segura**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Cifrado de Disco Básico | 2.3 | Configurar BitLocker y LUKS con procedimientos de montaje |
+| **Intermedio** | Simulación de Control de Acceso | 2.1 | Usuarios con diferentes niveles y matriz de acceso en AD |
+| **Avanzado** | Detección de Amenazas Avanzadas | 2.5 | Detección de APT y análisis de tráfico cifrado con ML básico |
+
+---
+
+#### **BLOQUE 11: Análisis Forense y VPN**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Detección de Vulnerabilidades | 2.4 | Escaneo con Nessus/OpenVAS y clasificación CVSS |
+| **Intermedio** | VPN con Criptografía | 2.3 | Configurar OpenVPN e IPSec con análisis de tráfico |
+| **Avanzado** | Análisis Forense de Red | 2.5 | Simulación de incidente con timeline y evidencias |
+
+---
+
+#### **BLOQUE 12: Seguridad Integral**
+**Tiempo estimado:** 8-10 horas
+
+| Nivel | Ejercicio | Sección | Descripción |
+|-------|-----------|---------|-------------|
+| **Básico** | Backups Locales Básicos | 2.6 | Implementar tar, rsync y Windows Backup con automatización |
+| **Intermedio** | Implementación de IDS/IPS Básico | 2.4 | Configurar Suricata con reglas personalizadas y análisis de alertas |
+| **Avanzado** | Auditoría de Seguridad Lógica | 2.2 | Auditoría completa con lynis y Windows Security Compliance Toolkit |
+
+---
+
+#### Formato y Contenido del Documento PDF
+
+El documento debe incluir **obligatoriamente**:
+
+1. **Portada** con:
+   - Título: "Tema 2: Seguridad Activa - Bloque [X]"
+   - Nombre completo del estudiante
+   - Módulo: Seguridad y Alta Disponibilidad
+   - Fecha de entrega
+   - Número de bloque asignado
+
+2. **Índice** numerado con enlaces a cada sección
+
+3. **Resolución de cada ejercicio** (uno por apartado) que incluya:
+   - **Introducción:** Breve descripción del objetivo del ejercicio
+   - **Procedimiento:** Pasos seguidos detalladamente con:
+     - Comandos ejecutados (con sintaxis resaltada o en bloques de código)
+     - Configuraciones realizadas (archivos modificados, parámetros)
+     - Capturas de pantalla numeradas y tituladas mostrando:
+       - Proceso de configuración
+       - Resultados obtenidos
+       - Verificaciones de funcionamiento
+   - **Análisis de resultados:** Interpretación de los resultados obtenidos
+   - **Problemas encontrados y soluciones:** Documentar dificultades y cómo se resolvieron
+   - **Conclusiones del ejercicio:** Aprendizajes y reflexiones
+
+4. **Conclusiones generales del bloque:** Síntesis de lo aprendido en los 3 ejercicios
+
+5. **Referencias:** Fuentes consultadas (documentación oficial, tutoriales, etc.)
+
+6. **Anexo sobre uso de IA** (obligatorio según normativa de formato de entregas)
+
+:::warning Normas de Formato
+El documento **DEBE** cumplir estrictamente con todas las especificaciones del [Formato de Entregas](../formato-entregas.mdx)
+:::
+
+---
+
+#### Rúbrica de Evaluación
+
+La evaluación del bloque asignado se realizará sobre **10 puntos** con la siguiente distribución:
+
+| Criterio | Ejercicio Básico | Ejercicio Intermedio | Ejercicio Avanzado | Calidad de la Memoria | **Total** |
+|----------|------------------|----------------------|--------------------|----------------------|-----------|
+| **Puntuación** | 2.0 puntos | 3.0 puntos | 4.0 puntos | 1.0 punto | **10 puntos** |
+
+#### Asignación de Bloques
+
+La asignación de bloques a cada estudiante se realizará de forma **aleatoria** o según criterios que el docente comunicará oportunamente. Cada estudiante recibirá la notificación de su bloque asignado con suficiente antelación a la fecha de entrega.
+
+**Fecha de entrega:** Se comunicará por el docente  
+**Plataforma de entrega:** Aula Virtual (Moodle)  
+**Nombre del archivo:** `Tema2_Bloque[X]_ApellidoNombre.pdf`
+
+> **Ejemplo:** `Tema2_Bloque05_GarciaMariaJose.pdf`
