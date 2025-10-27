@@ -24,3 +24,128 @@ En este tema veremos conceptos de seguridad perimetral y como implementar técni
     - Implementación de pasarelas de acceso.
     - Protocolos y métodos de autenticación (RADIUS, LDAP, TACACS+).
 
+## Ejercicios prácticos
+
+### Ejercicio Práctico 1: Diseño de Arquitectura de Red con DMZ
+**Objetivo**: Diseñar una topología de red que incluya una DMZ, justificando la ubicación de los servicios y las reglas de seguridad.
+**Escenario**: Eres el arquitecto de red de una PYME que necesita exponer un servidor web (HTTP/HTTPS) y un servidor FTP a Internet. Además, tiene una red interna con servidores de bases de datos y estaciones de trabajo.
+**Tareas**:
+    - Diagrama de Red: Dibuja un diagrama de red que incluya:
+        - Internet.
+        - Un router frontera.
+        - Dos firewalls (uno externo y uno interno).
+        - Una DMZ con el servidor web y el servidor FTP.
+        - Una red interna con el servidor de base de datos y varias estaciones de trabajo.
+    - Direccionamiento IP: Asigna rangos de direcciones IP (privadas) a cada segmento de red (Internet simula IP pública, DMZ, Red Interna).
+    - Reglas de Firewall: Propón un conjunto de reglas de firewall (tanto para el firewall externo como el interno) para permitir el tráfico necesario y bloquear el tráfico no deseado, garantizando la seguridad de la red interna. Considera:
+        - Acceso al servidor web desde Internet.
+        - Acceso al servidor FTP desde Internet.
+        - Comunicación limitada desde DMZ a base de datos interna (solo si es estrictamente necesario y a puertos específicos).
+        - Navegación de las estaciones de trabajo a Internet.
+        - Bloqueo de todo el tráfico no explícitamente permitido.
+**En la entrega**: Diagrama de red (puede ser con Lucidchart, Draw.io, o parecidos) y un documento explicando el direccionamiento y las reglas propuestas para cada firewall.
+
+
+### Ejercicio Práctico 2: Configuración de un Servidor OpenVPN
+**Objetivo**: Implementar un servidor OpenVPN en una máquina virtual Linux y conectar un cliente.
+**Escenario**: Tienes una máquina virtual (MV1) con Ubuntu Server (servidor OpenVPN) y otra máquina virtual (MV2) con Windows o Linux (cliente OpenVPN). MV1 tiene dos interfaces de red: una NAT (simulando Internet) y otra de red interna (host-only o red interna).
+**Tareas**:
+    - En MV1 (Ubuntu Server):
+        - Instala OpenVPN y easy-rsa para la gestión de la PKI.
+        - Crea una Autoridad Certificadora (CA).
+        - Genera un certificado y clave para el servidor OpenVPN.
+        - Genera certificados y claves para un cliente.
+        - Configura el servidor OpenVPN (archivo .conf), incluyendo el pool de IPs para los clientes, el reenvío de IP (ip_forward) y las reglas NAT (iptables) para que los clientes puedan salir a Internet a través de la VPN.
+        - Copia los archivos de configuración del cliente y los certificados a MV2.
+    - En MV2 (Windows o Linux):
+        - Instala el cliente OpenVPN.
+        - Copia los archivos de configuración y certificados del cliente a su directorio correspondiente.
+        - Conéctate al servidor OpenVPN.
+        - Verifica que tu dirección IP ha cambiado (si estás en modo túnel) y que puedes acceder a recursos en la red interna del servidor OpenVPN (ej. hacer ping a la IP de la interfaz interna de MV1).
+**En la entrega**: Documento con los pasos detallados de configuración del servidor y cliente, capturas de pantalla de la configuración, y pruebas de conectividad a través de la VPN.
+
+### Ejercicio Práctico 3: Configuración de Autenticación RADIUS para un Servicio
+
+**Objetivo**: Configurar un servidor FreeRADIUS y utilizarlo para autenticar usuarios de un servicio, como un servidor VPN o un servidor SSH.
+**Escenario**: Tienes dos máquinas virtuales: MV1 (Ubuntu Server con FreeRADIUS) y MV2 (Ubuntu Server con OpenVPN o SSH).
+**Tareas**:
+    - En MV1 (Ubuntu Server):
+        - Instala FreeRADIUS.
+        - Configura FreeRADIUS para que acepte solicitudes del cliente (MV2). Debes añadir la IP del cliente RADIUS (MV2) y una clave secreta.
+        - Crea un usuario de prueba en la base de datos de usuarios de FreeRADIUS (en users o un módulo de ficheros plano).
+        - Configura FreeRADIUS para que muestre logs detallados de autenticación.
+    - En MV2 (Ubuntu Server con OpenVPN o SSH):
+        - Si usas OpenVPN: Configura el servidor OpenVPN para que utilice RADIUS como método de autenticación. Esto generalmente implica un plugin o módulo (openvpn-plugin-auth-radius).
+        - Si usas SSH: Configura el servidor SSH para que utilice RADIUS como método de autenticación. Esto se hace a través de PAM (Pluggable Authentication Modules), configurando pam_radius_auth.
+        - Asegúrate de que el servicio está configurado como cliente RADIUS de MV1, especificando la IP y la clave secreta.
+**Pruebas**:
+    - Intenta conectarte al servicio en MV2 utilizando las credenciales del usuario de prueba configurado en FreeRADIUS.
+    - Verifica los logs de FreeRADIUS en MV1 para confirmar que las solicitudes de autenticación se están procesando correctamente (tanto las exitosas como las fallidas con credenciales incorrectas).
+    - Intenta autenticarte con un usuario que no exista o con una contraseña incorrecta y observa el resultado en los logs.
+**En la entrega**: Documento con los pasos de instalación y configuración de FreeRADIUS y el servicio en MV2 (incluyendo los extractos relevantes de los archivos de configuración), capturas de pantalla de la configuración y de las pruebas de autenticación exitosas y fallidas. Un análisis de los logs del servidor RADIUS.
+
+
+### Estructura de Entrega y Evaluación
+
+Cada estudiante debe resolver los 3 ejercicios prácticos propuestos en este tema. La evaluación se basará en:
+
+:::info 📋 Formato de Entrega
+La entrega consiste en un **único documento PDF** que debe seguir las normas establecidas en:
+
+👉 **[Formato de Entregas](../formato-entregas.mdx)**
+
+El documento debe contener la resolución completa de los 3 ejercicios del bloque asignado.
+:::
+
+
+#### Formato y Contenido del Documento PDF
+
+El documento debe incluir **obligatoriamente**:
+
+1. **Portada** con:
+   - Título: "Tema 2: Seguridad Activa - Bloque [X]"
+   - Nombre completo del estudiante
+   - Módulo: Seguridad y Alta Disponibilidad
+   - Fecha de entrega
+   - Número de bloque asignado
+
+2. **Índice** numerado con enlaces a cada sección
+
+3. **Resolución de cada ejercicio** (uno por apartado) que incluya:
+   - **Introducción:** Breve descripción del objetivo del ejercicio
+   - **Procedimiento:** Pasos seguidos detalladamente con:
+     - Comandos ejecutados (con sintaxis resaltada o en bloques de código)
+     - Configuraciones realizadas (archivos modificados, parámetros)
+     - Capturas de pantalla numeradas y tituladas mostrando:
+       - Proceso de configuración
+       - Resultados obtenidos
+       - Verificaciones de funcionamiento
+   - **Análisis de resultados:** Interpretación de los resultados obtenidos
+   - **Problemas encontrados y soluciones:** Documentar dificultades y cómo se resolvieron
+   - **Conclusiones del ejercicio:** Aprendizajes y reflexiones
+
+4. **Conclusiones generales del bloque:** Síntesis de lo aprendido en los 3 ejercicios
+
+5. **Referencias:** Fuentes consultadas (documentación oficial, tutoriales, etc.)
+
+6. **Anexo sobre uso de IA** (obligatorio según normativa de formato de entregas)
+
+:::warning Normas de Formato
+El documento **DEBE** cumplir estrictamente con todas las especificaciones del [Formato de Entregas](../formato-entregas.mdx)
+:::
+
+---
+
+#### Rúbrica de Evaluación
+
+La evaluación del bloque asignado se realizará sobre **10 puntos** con la siguiente distribución:
+
+| Criterio | Ejercicio 1 | Ejercicio 2 | Ejercicio 3 | Calidad de la Memoria | **Total** |
+|----------|--------------|--------------|--------------|----------------------|-----------|
+| **Puntuación** | 2.5 puntos | 3 puntos | 3 puntos | 1.5 punto | **10 puntos** |
+
+#### Nombre del archivo de entrega
+
+El archivo PDF debe nombrarse siguiendo la convención:
+
+`Tema3_SeguridadPerimetral_Apellido1_Apellido2_Nombre.pdf`
