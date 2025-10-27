@@ -978,12 +978,15 @@ Una **plantilla de documentación** estandarizada garantiza que toda la informac
 - **Sistema**: Ubuntu 22.04 LTS
 - **Firewall**: iptables + UFW
 - **Función**: Servidor Web en DMZ
-
-## Arquitectura de Red
 ```
-Internet --- [Router] --- [Firewall] --- [DMZ] --- [Servidor Web]
-                               |
-                               +--- [LAN Interna]
+#### Arquitectura de Red
+
+```mermaid
+flowchart LR
+  Internet[Internet] --> Router[Router] --> Firewall[Firewall] --> DMZ[DMZ] --> Web[Servidor Web]
+  Firewall --> LAN[LAN Interna]
+```
+
 ```
 
 ## Direccionamiento IP

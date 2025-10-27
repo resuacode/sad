@@ -19,24 +19,24 @@ Las **pasarelas de acceso** (Access Gateways) son puntos de entrada controlados 
 
 Verificar la identidad del usuario antes de permitir el acceso:
 
-```
-Usuario Remoto
-      |
-      | 1. Solicitud de conexión (credenciales)
-      ↓
-[Pasarela de Acceso]
-      |
-      | 2. Validación contra servidor AAA
-      ↓
-[Servidor RADIUS/LDAP/TACACS+]
-      |
-      | 3. Respuesta: Aceptar/Rechazar
-      ↓
-[Pasarela de Acceso]
-      |
-      | 4. Establecer/Denegar conexión
-      ↓
-Red Corporativa
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as Usuario Remoto
+    participant GW as Pasarela de Acceso
+    participant AAA as Servidor RADIUS/LDAP/TACACS+
+    participant NET as Red Corporativa
+
+    U->>GW: 1) Solicitud de conexión<br/>(credenciales)
+    GW->>AAA: 2) Validación de credenciales
+    AAA-->>GW: 3) Respuesta (Aceptar/Rechazar)
+
+    alt Acceso aceptado
+        GW-->>U: 4) Conexión establecida
+        U->>NET: Tráfico autorizado
+    else Acceso rechazado
+        GW-->>U: 4) Conexión denegada
+    end
 ```
 
 **Métodos de autenticación soportados**:
@@ -120,19 +120,13 @@ Registrar todas las actividades para cumplimiento normativo y análisis forense:
 
 #### Arquitectura Básica - Gateway Único
 
-```
-        Internet
-            |
-     [Router/Firewall]
-            |
-   [Pasarela de Acceso]
-    (VPN Gateway)
-            |
-    +--------------+
-    |              |
-[Red Interna]  [Servidor AAA]
-    |
-Recursos Corporativos
+```mermaid
+graph TD
+    A[Internet] --> B[Router/Firewall]
+    B --> C[Pasarela de Acceso<br/>VPN Gateway]
+    C --> D[Red Interna]
+    C --> E[Servidor AAA]
+    D --> F[Recursos Corporativos]
 ```
 
 **Características**:
@@ -147,21 +141,15 @@ Recursos Corporativos
 
 #### Arquitectura Redundante - Alta Disponibilidad
 
-```
-            Internet
-                |
-         [Balanceador]
-         /           \
-[Gateway-01]    [Gateway-02]
-    (Activo)      (Standby)
-         \           /
-          \         /
-        [Cluster VRRP/HSRP]
-               |
-    +---------------------+
-    |                     |
-[Red Interna]    [Servidores AAA]
-                  (Cluster)
+```mermaid
+graph TD
+    A[Internet] --> B[Balanceador]
+    B --> C[Gateway-01<br/>Activo]
+    B --> D[Gateway-02<br/>Standby]
+    C --> E[Cluster VRRP/HSRP]
+    D --> E
+    E --> F[Red Interna]
+    E --> G[Servidores AAA<br/>Cluster]
 ```
 
 **Características**:
@@ -177,20 +165,13 @@ Recursos Corporativos
 
 #### Arquitectura Distribuida Geográficamente
 
-```
-    Internet
-       |
- [DNS/GeoDNS]
-       |
-   +---+---+
-   |       |
-[GW-EU]  [GW-US]
-Europa   América
-   |       |
-   +-------+
-       |
-   [Red Corporativa Global]
-   (MPLS/SD-WAN)
+```mermaid
+graph TD
+    A[Internet] --> B[DNS/GeoDNS]
+    B --> C[GW-EU<br/>Europa]
+    B --> D[GW-US<br/>América]
+    C --> E[Red Corporativa Global<br/>MPLS/SD-WAN]
+    D --> E
 ```
 
 **Ventajas**:
@@ -260,20 +241,11 @@ Pasarela específica para acceso RDP (Remote Desktop Protocol) en entornos Windo
 - Redirección de dispositivos (impresoras, unidades, portapapeles)
 
 **Arquitectura RD Gateway**:
-```
-Usuario Remoto (RDP Client)
-         |
-         | HTTPS (443) - Túnel SSL/TLS
-         ↓
-[RD Gateway Server]
-         |
-         | Validación con AD
-         ↓
-[Active Directory]
-         |
-         | RDP interno (3389)
-         ↓
-[Terminal Servers / Escritorios Virtuales]
+```mermaid
+graph TD
+    A[Usuario Remoto<br/>RDP Client] -->|HTTPS 443<br/>Túnel SSL/TLS| B[RD Gateway Server]
+    B -->|Validación con AD| C[Active Directory]
+    B -->|RDP interno 3389| D[Terminal Servers /<br/>Escritorios Virtuales]
 ```
 
 #### 3. SSH Bastion Host / Jump Server
@@ -287,18 +259,14 @@ Servidor fortificado que actúa como punto de entrada único para acceso SSH a s
 - **Sin acceso directo**: No contiene datos sensibles, solo redirecciona conexiones
 
 **Flujo de conexión**:
-```
-Administrador
-    |
-    | 1. SSH al Bastion (puerto 22)
-    | ssh -i ~/.ssh/id_rsa admin@bastion.empresa.com
-    ↓
-[Bastion Host]
-    |
-    | 2. Desde el Bastion, SSH al servidor destino
-    | ssh usuario@servidor-interno.local
-    ↓
-[Servidor Interno]
+```mermaid
+sequenceDiagram
+    participant Admin as Administrador
+    participant Bastion as Bastion Host
+    participant Server as Servidor Interno
+    Admin->>Bastion: 1. SSH al Bastion (puerto 22)<br/>ssh -i ~/.ssh/id_rsa admin@bastion.empresa.com
+    Bastion->>Server: 2. Desde el Bastion, SSH al servidor destino<br/>ssh usuario@servidor-interno.local
+    Server-->>Admin: Conexión establecida
 ```
 
 **Configuración de seguridad (sshd_config)**:
@@ -429,30 +397,23 @@ Los protocolos de autenticación centralizada permiten que las pasarelas de acce
 
 #### Funcionamiento del Protocolo RADIUS
 
-```
-Usuario                NAS/Gateway             Servidor RADIUS           Backend
-   |                        |                         |                      |
-   |--1. Login Request----->|                         |                      |
-   |   (usuario/password)   |                         |                      |
-   |                        |--2. Access-Request----->|                      |
-   |                        |   (User-Name,           |                      |
-   |                        |    User-Password,       |                      |
-   |                        |    NAS-IP-Address)      |                      |
-   |                        |                         |--3. Verificar------->|
-   |                        |                         |    credenciales      |
-   |                        |                         |<--4. Usuario válido--|
-   |                        |<--5. Access-Accept------|                      |
-   |                        |    (atributos de        |                      |
-   |                        |     autorización)       |                      |
-   |<--6. Acceso Concedido--|                         |                      |
-   |                        |                         |                      |
-   |--7. Tráfico de datos-->|                         |                      |
-   |                        |--8. Accounting-Start--->|                      |
-   |                        |                         |                      |
-   |                        |--9. Accounting-Update-->|  (periódico)         |
-   |                        |                         |                      |
-   |--10. Logout----------->|                         |                      |
-   |                        |--11. Accounting-Stop--->|                      |
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant NAS as NAS/Gateway
+    participant R as Servidor RADIUS
+    participant B as Backend
+    U->>NAS: 1. Login Request (usuario/password)
+    NAS->>R: 2. Access-Request<br/>(User-Name, User-Password, NAS-IP-Address)
+    R->>B: 3. Verificar credenciales
+    B-->>R: 4. Usuario válido
+    R-->>NAS: 5. Access-Accept<br/>(atributos de autorización)
+    NAS-->>U: 6. Acceso Concedido
+    U->>NAS: 7. Tráfico de datos
+    NAS->>R: 8. Accounting-Start
+    NAS->>R: 9. Accounting-Update (periódico)
+    U->>NAS: 10. Logout
+    NAS->>R: 11. Accounting-Stop
 ```
 
 **Tipos de mensajes RADIUS**:
@@ -571,23 +532,17 @@ ldap {
 
 #### Estructura LDAP
 
-```
-dc=empresa,dc=com (root)
-    |
-    +-- ou=usuarios
-    |     |
-    |     +-- cn=Juan Perez
-    |     +-- cn=Maria Gomez
-    |
-    +-- ou=grupos
-    |     |
-    |     +-- cn=administradores
-    |     +-- cn=desarrolladores
-    |
-    +-- ou=servicios
-          |
-          +-- cn=radius
-          +-- cn=vpn
+```mermaid
+graph TD
+    A[dc=empresa,dc=com<br/>root] --> B[ou=usuarios]
+    A --> C[ou=grupos]
+    A --> D[ou=servicios]
+    B --> E[cn=Juan Perez]
+    B --> F[cn=Maria Gomez]
+    C --> G[cn=administradores]
+    C --> H[cn=desarrolladores]
+    D --> I[cn=radius]
+    D --> J[cn=vpn]
 ```
 
 **Ejemplo de entrada de usuario LDAP (formato LDIF)**:
@@ -705,46 +660,16 @@ sequenceDiagram
     Admin->>Router: 5. Password
     Router->>TAC: 6. AUTHEN/CONTINUE (password: *****)
     TAC-->>Router: 7. AUTHEN/PASS
-    Router-->>Admin: 6. Login exitoso
-    Admin->>Router: 7. show running
-    Router->>TAC: 8. AUTHOR/REQUEST (comando: show run)
-    TAC-->>Router: 9. AUTHOR/ACCEPT
-    Router-->>Admin: 8. Config display
-    Router->>TAC: 10. ACCT/START
-    Admin->>Router: 9. configure term
-    Router->>TAC: 10. AUTHOR/REQUEST (comando: config t)
-    TAC-->>Router: 11. AUTHOR/REJECT
-    Router-->>Admin: 10. Access denied
-```
-
-
-```
-Administrador          Router/Switch         Servidor TACACS+
-     |                       |                        |
-     |--1. Login: admin----->|                        |
-     |                       |--2. AUTHEN/START------>|
-     |                       |   (username: admin)    |
-     |                       |<--3. AUTHEN/CONTINUE---|
-     |                       |   (solicita password)  |
-     |<--4. Password?--------|                        |
-     |--5. Password--------->|                        |
-     |                       |--6. AUTHEN/CONTINUE--->|
-     |                       |   (password: *****)    |
-     |                       |<--7. AUTHEN/PASS-------|
-     |<--6. Login exitoso----|                        |
-     |                       |                        |
-     |--7. show running----->|                        |
-     |                       |--8. AUTHOR/REQUEST---->|
-     |                       |   (comando: show run)  |
-     |                       |<--9. AUTHOR/ACCEPT-----|
-     |<--8. Config display---|                        |
-     |                       |--10. ACCT/START------->|
-     |                       |                        |
-     |--9. configure term--->|                        |
-     |                       |--10. AUTHOR/REQUEST--->|
-     |                       |   (comando: config t)  |
-     |                       |<--11. AUTHOR/REJECT----|
-     |<--10. Access denied---|                        |
+    Router-->>Admin: 8. Login exitoso
+    Admin->>Router: 9. show running
+    Router->>TAC: 10. AUTHOR/REQUEST (comando: show run)
+    TAC-->>Router: 11. AUTHOR/ACCEPT
+    Router-->>Admin: 12. Config display
+    Router->>TAC: 13. ACCT/START
+    Admin->>Router: 14. configure term
+    Router->>TAC: 15. AUTHOR/REQUEST (comando: config t)
+    TAC-->>Router: 16. AUTHOR/REJECT
+    Router-->>Admin: 17. Access denied
 ```
 
 #### Configuración de TACACS+ en Dispositivo Cisco
@@ -871,25 +796,21 @@ La autenticación multifactor añade capas adicionales de seguridad combinando:
 - **YubiKey**: Tokens USB/NFC con FIDO2/U2F
 
 **Flujo MFA con Duo + RADIUS**:
-```
-Usuario → VPN Gateway → RADIUS Server → Duo Cloud
-  |            |              |              |
-  +--(1)------>|              |              |
-  |  Login     |              |              |
-  |            +--(2)-------->|              |
-  |            | Access-Req   |              |
-  |            |              +--(3)-------->|
-  |            |              | Duo API      |
-  |            |              |<--(4)--------|
-  |            |              | Push notif   |
-  |<----------(5)-------------|              |
-  |  Notificación móvil       |              |
-  +--(6)-------------------->|              |
-  |  Apruebo en app           |              |
-  |            |<--(7)--------|              |
-  |            | Access-Accept|              |
-  |<---(8)-----|              |              |
-     Acceso permitido
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant VPN as VPN Gateway
+    participant R as RADIUS Server
+    participant D as Duo Cloud
+    U->>VPN: 1. Login
+    VPN->>R: 2. Access-Request
+    R->>D: 3. Duo API
+    D-->>R: 4. Push notification
+    D-->>U: 5. Notificación móvil
+    U->>D: 6. Apruebo en app
+    D-->>R: 7. Confirmación
+    R-->>VPN: 8. Access-Accept
+    VPN-->>U: 9. Acceso permitido
 ```
 
 ## Referencias y Recursos Adicionales
