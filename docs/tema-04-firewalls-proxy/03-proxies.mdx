@@ -7,22 +7,749 @@ title: Servidores Proxy
 
 ## Introducción
 
-En este capítulo profundizaremos en los servidores proxy, sus tipos, funciones y cómo configurarlos para mejorar la seguridad y el rendimiento de nuestras redes.
+Un **servidor proxy** es un intermediario que actúa como puente entre los clientes (usuarios) y los servidores de destino en Internet. Cuando un cliente solicita un recurso web, el proxy intercepta la solicitud, la procesa según sus políticas configuradas, y luego la reenvía al servidor de destino. La respuesta sigue el camino inverso, permitiendo al proxy aplicar filtros, cachear contenido, y registrar actividad.
 
-## Contenido
+Los servidores proxy proporcionan múltiples beneficios: **mejora del rendimiento** mediante cacheo de contenido, **control de acceso** a recursos web, **ahorro de ancho de banda**, **anonimato** de usuarios, y **filtrado de contenido**. En entornos empresariales, los proxies son elementos fundamentales para implementar políticas de uso de Internet y optimizar el tráfico de red.
 
-- Tipos de servidores proxy.
-    - Características.
-    - Funciones:
-        - Proxy caché.
-        - Proxy de reenvío.
-        - Proxy transparente. 
-- Instalación y configuración de un servidor proxy (Squid).
-- Configuración de clientes proxy. 
-- Almacenamiento en la caché y filtros de contenido.
-- Métodos de autenticación en un proxy.
-- Proxy inverso.
-- Encadenamiento y jerarquías de proxies.
-- Pruebas de funcionamiento y monitorización.
-- Documentación de instalación y configuración.
-- Beneficios y desventajas de usar un proxy.
+La ubicación estratégica del proxy en la arquitectura de red le permite actuar como un punto de control centralizado, donde se pueden aplicar políticas de seguridad, monitorizar el tráfico, y optimizar las comunicaciones entre la red interna e Internet.
+
+## Tipos de Servidores Proxy
+
+Los **servidores proxy** se clasifican según múltiples criterios: su ubicación en la red, el nivel de transparencia para los usuarios, los protocolos que manejan, y las funciones específicas que desempeñan. Comprender estas clasificaciones es esencial para seleccionar la solución proxy más adecuada para cada escenario de uso.
+
+### Características Generales
+
+Antes de examinar los tipos específicos, es importante comprender las **características fundamentales** que definen el comportamiento de cualquier servidor proxy:
+
+- **Intermediación**: Actúa como intermediario entre cliente y servidor
+- **Transparencia configurable**: Puede operar de forma visible o invisible para los usuarios
+- **Filtrado de contenido**: Capacidad de bloquear o modificar contenido basado en políticas
+- **Cacheo**: Almacenamiento local de contenido frecuentemente solicitado
+- **Logging**: Registro detallado de todas las transacciones
+- **Autenticación**: Verificación de identidad de usuarios antes de permitir acceso
+
+### Clasificación por Ubicación y Función
+
+#### Proxy Directo (Forward Proxy)
+
+El **proxy directo** es el tipo más común, ubicado entre los clientes internos e Internet. Los clientes configuran explícitamente el proxy como intermediario para sus solicitudes web.
+
+**Características principales**:
+- Los clientes deben configurarse para usar el proxy
+- Oculta las direcciones IP internas del tráfico saliente
+- Implementa políticas de acceso a Internet
+- Cachea contenido para mejorar rendimiento
+
+**Flujo de funcionamiento**:
+```
+Cliente → Proxy Directo → Internet → Servidor Web
+   ↑                                      ↓
+   ← Proxy Directo ← Internet ← Respuesta ←
+```
+
+**Configuración típica**:
+```bash
+# Configuración de cliente (variables de entorno)
+export http_proxy="http://proxy.empresa.com:3128"
+export https_proxy="http://proxy.empresa.com:3128"
+export ftp_proxy="http://proxy.empresa.com:3128"
+export no_proxy="localhost,127.0.0.1,*.empresa.com"
+```
+
+#### Proxy Transparente
+
+El **proxy transparente** intercepta automáticamente el tráfico web sin requerir configuración en los clientes. Utiliza redirección de tráfico a nivel de red para capturar las solicitudes HTTP/HTTPS.
+
+**Características principales**:
+- No requiere configuración en clientes
+- Implementado mediante redirección de tráfico (iptables, políticas de enrutamiento)
+- Transparente para los usuarios finales
+- Ideal para aplicar políticas sin intervención del usuario
+
+**Implementación con iptables**:
+```bash
+# Redireccionar tráfico HTTP al proxy transparente
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j REDIRECT --to-port 3129
+
+# Redireccionar tráfico HTTPS al proxy transparente
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 443 -j REDIRECT --to-port 3130
+```
+
+#### Proxy Inverso (Reverse Proxy)
+
+El **proxy inverso** se sitúa frente a uno o más servidores web, interceptando solicitudes desde Internet hacia los servidores internos. Actúa como la cara pública de los servicios web internos.
+
+**Características principales**:
+- Recibe solicitudes desde Internet para servidores internos
+- Balanceo de carga entre múltiples servidores backend
+- Terminación SSL/TLS
+- Caché de contenido estático
+- Protección de servidores internos
+
+**Flujo de funcionamiento**:
+```
+Cliente Internet → Proxy Inverso → Servidor Web Interno
+                        ↓                ↑
+                   [Balanceador]     [Pool de Servidores]
+```
+
+### Funciones Específicas de Proxy
+
+#### Proxy Caché
+
+La **función de caché** es una de las características más valiosas de los servidores proxy, permitiendo almacenar localmente contenido web frecuentemente solicitado para reducir el tiempo de respuesta y el uso de ancho de banda.
+
+**Mecanismos de cacheo**:
+- **Caché por tiempo**: Contenido válido durante un período específico
+- **Caché por validación**: Verificación con servidor origen antes de servir contenido cacheado
+- **Caché jerárquico**: Múltiples niveles de caché en la red
+
+**Beneficios del cacheo**:
+- Reducción del tiempo de respuesta (latencia)
+- Ahorro significativo de ancho de banda
+- Menor carga en servidores origen
+- Mejora de la experiencia del usuario
+
+**Configuración de caché en Squid**:
+```bash
+# Configuración básica de caché
+cache_dir ufs /var/spool/squid 10000 16 256
+
+# Reglas de cacheo por tipo de contenido
+acl STATIC_CONTENT urlpath_regex \.(jpg|jpeg|png|gif|css|js|pdf)$
+cache allow STATIC_CONTENT
+
+# Tiempo de vida en caché por tipo
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+```
+
+#### Proxy de Reenvío (Forward Proxy)
+
+El **proxy de reenvío** implementa políticas específicas para determinar cómo y cuándo reenviar solicitudes a servidores de destino. Esta función incluye capacidades avanzadas de filtrado y control de acceso.
+
+**Capacidades de filtrado**:
+- Filtrado por URL y dominio
+- Filtrado por tipo de contenido
+- Filtrado por horario y usuario
+- Bloqueo de categorías de sitios web
+
+**Ejemplo de configuración de filtrado**:
+```bash
+# ACLs para control de acceso
+acl BUSINESS_HOURS time MTWHF 08:00-18:00
+acl SOCIAL_MEDIA dstdomain .facebook.com .twitter.com .instagram.com
+acl STREAMING dstdomain .youtube.com .netflix.com .twitch.tv
+acl ADMIN_USERS src 192.168.1.10-192.168.1.20
+
+# Políticas de acceso
+http_access deny SOCIAL_MEDIA !ADMIN_USERS
+http_access deny STREAMING BUSINESS_HOURS
+http_access allow all
+```
+
+## Instalación y Configuración de Squid
+
+**Squid** es uno de los servidores proxy más populares y versátiles, ampliamente utilizado en entornos empresariales por su robustez, flexibilidad y extensa funcionalidad. Soporta múltiples protocolos, incluyendo HTTP, HTTPS, FTP, y proporciona características avanzadas como cacheo inteligente, control de acceso granular, y autenticación integrada.
+
+### Instalación de Squid
+
+La instalación de Squid varía según el sistema operativo, pero el proceso general es similar en la mayoría de distribuciones Linux:
+
+**Ubuntu/Debian**:
+```bash
+# Actualizar repositorios
+sudo apt update
+
+# Instalar Squid
+sudo apt install squid squid-common
+
+# Verificar instalación
+squid -v
+
+# Estado del servicio
+sudo systemctl status squid
+```
+
+**CentOS/RHEL/Rocky Linux**:
+```bash
+# Instalar Squid
+sudo dnf install squid
+
+# Habilitar e iniciar servicio
+sudo systemctl enable squid
+sudo systemctl start squid
+
+# Verificar estado
+sudo systemctl status squid
+```
+
+### Configuración Básica
+
+El archivo principal de configuración de Squid es `/etc/squid/squid.conf`. Una configuración básica incluye la definición de redes permitidas, puertos de escucha, y políticas de acceso fundamentales:
+
+```bash
+# /etc/squid/squid.conf - Configuración básica
+
+# Puerto de escucha
+http_port 3128
+
+# Definir redes locales
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl localnet src fc00::/7
+acl localnet src fe80::/10
+
+# Definir puertos seguros
+acl SSL_ports port 443
+acl Safe_ports port 80          # HTTP
+acl Safe_ports port 21          # FTP
+acl Safe_ports port 443         # HTTPS
+acl Safe_ports port 70          # Gopher
+acl Safe_ports port 210         # WAIS
+acl Safe_ports port 1025-65535  # Puertos no privilegiados
+acl Safe_ports port 280         # HTTP-mgmt
+acl Safe_ports port 488         # GSS-HTTP
+acl Safe_ports port 591         # FileMaker
+acl Safe_ports port 777         # Multiling HTTP
+
+# Método CONNECT solo para puertos SSL
+acl CONNECT method CONNECT
+
+# Reglas de acceso básicas
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports
+http_access allow localhost manager
+http_access deny manager
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+
+# Configuración de caché
+cache_dir ufs /var/spool/squid 1000 16 256
+coredump_dir /var/spool/squid
+
+# Configuración de logs
+access_log /var/log/squid/access.log squid
+cache_log /var/log/squid/cache.log
+```
+
+### Configuración Avanzada para Entorno Empresarial
+
+Una configuración empresarial típica incluye autenticación, filtrado de contenido avanzado, y optimizaciones de rendimiento:
+
+```bash
+# Configuración empresarial avanzada
+
+# Puertos y protocolos
+http_port 3128
+https_port 3129 cert=/etc/squid/ssl/squid.crt key=/etc/squid/ssl/squid.key
+
+# Autenticación LDAP
+auth_param basic program /usr/lib/squid/basic_ldap_auth -R -b "dc=empresa,dc=com" -D "cn=squid,dc=empresa,dc=com" -w "password" -f sAMAccountName=%s -h ldap.empresa.com
+auth_param basic children 5
+auth_param basic realm "Proxy Corporativo"
+auth_param basic credentialsttl 2 hours
+
+acl authenticated proxy_auth REQUIRED
+
+# Filtrado por grupos de usuarios
+external_acl_type ldap_group %LOGIN /usr/lib/squid/ext_ldap_group_acl -R -b "dc=empresa,dc=com" -D "cn=squid,dc=empresa,dc=com" -w "password" -f "(&(objectclass=person)(sAMAccountName=%v)(memberof=cn=%a,ou=groups,dc=empresa,dc=com))" -h ldap.empresa.com
+
+acl admin_group external ldap_group admin
+acl user_group external ldap_group users
+
+# Horarios de trabajo
+acl business_hours time MTWHF 08:00-18:00
+acl lunch_time time MTWHF 12:00-14:00
+
+# Categorías de sitios web
+acl social_media dstdomain "/etc/squid/acl/social_media.txt"
+acl streaming dstdomain "/etc/squid/acl/streaming.txt"
+acl malware dstdomain "/etc/squid/acl/malware.txt"
+
+# Políticas de acceso
+http_access deny malware
+http_access allow admin_group
+http_access deny social_media business_hours !admin_group
+http_access allow user_group authenticated
+http_access deny all
+
+# Optimizaciones de rendimiento
+cache_mem 256 MB
+maximum_object_size_in_memory 512 KB
+maximum_object_size 1 GB
+cache_replacement_policy lru
+
+# Configuración de caché por tipo de contenido
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern \.(jpg|jpeg|png|gif|bmp)$ 10080 90% 43200 override-expire ignore-no-cache ignore-no-store ignore-private
+refresh_pattern \.(css|js)$     1440    40%     40320
+refresh_pattern .               0       20%     4320
+```
+
+## Configuración de Clientes Proxy
+
+La **configuración de clientes** para usar un servidor proxy puede realizarse de múltiples formas, desde configuración manual hasta despliegue automatizado mediante políticas de grupo. La elección del método depende del tamaño de la organización, el tipo de dispositivos, y los requisitos de gestión centralizada.
+
+### Configuración Manual en Navegadores
+
+**Mozilla Firefox**:
+```
+1. Abrir Firefox → Preferencias → General
+2. Desplazarse a "Configuración de red"
+3. Hacer clic en "Configuración..."
+4. Seleccionar "Configuración manual del proxy"
+5. HTTP Proxy: proxy.empresa.com Puerto: 3128
+6. Marcar "Usar este servidor proxy para todos los protocolos"
+7. Excluir: localhost, 127.0.0.1, *.empresa.com
+```
+
+**Google Chrome**:
+```
+1. Chrome → Configuración → Avanzada → Sistema
+2. "Abrir la configuración de proxy de tu equipo"
+3. En Windows: Configuración → Red e Internet → Proxy
+4. Activar "Usar un servidor proxy"
+5. Dirección: proxy.empresa.com Puerto: 3128
+6. Excluir: localhost;127.0.0.1;*.empresa.com
+```
+
+### Configuración a Nivel de Sistema Operativo
+
+**Linux (variables de entorno)**:
+```bash
+# Archivo ~/.bashrc o /etc/environment
+export http_proxy="http://proxy.empresa.com:3128"
+export https_proxy="http://proxy.empresa.com:3128"
+export ftp_proxy="http://proxy.empresa.com:3128"
+export no_proxy="localhost,127.0.0.1,10.0.0.0/8,192.168.0.0/16,*.empresa.com"
+
+# Para aplicaciones que requieren autenticación
+export http_proxy="http://usuario:password@proxy.empresa.com:3128"
+export https_proxy="http://usuario:password@proxy.empresa.com:3128"
+```
+
+**Windows (mediante script de inicio)**:
+```batch
+@echo off
+rem Configurar proxy para usuario actual
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "proxy.empresa.com:3128"
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyOverride /t REG_SZ /d "localhost;127.0.0.1;*.empresa.com"
+```
+
+### Autodescubrimiento de Proxy (WPAD)
+
+**Web Proxy Autodiscovery Protocol (WPAD)** permite a los clientes descubrir automáticamente la configuración del proxy mediante DNS o DHCP:
+
+**Configuración DNS para WPAD**:
+```bash
+# Crear registro DNS
+wpad.empresa.com. IN A 192.168.1.100
+
+# Archivo wpad.dat en servidor web
+function FindProxyForURL(url, host) {
+    // Excluir tráfico local
+    if (isInNet(host, "192.168.0.0", "255.255.0.0") ||
+        isInNet(host, "10.0.0.0", "255.0.0.0") ||
+        isInNet(host, "127.0.0.0", "255.0.0.0")) {
+        return "DIRECT";
+    }
+    
+    // Balancear entre múltiples proxies
+    if (shExpMatch(host, "*.empresa.com")) {
+        return "PROXY proxy1.empresa.com:3128; PROXY proxy2.empresa.com:3128; DIRECT";
+    }
+    
+    // Tráfico general a Internet
+    return "PROXY proxy.empresa.com:3128; DIRECT";
+}
+```
+
+## Almacenamiento en Caché y Filtros de Contenido
+
+El **almacenamiento en caché** y el **filtrado de contenido** son dos funciones fundamentales que convierten a los servidores proxy en herramientas poderosas para la optimización de red y el control de acceso. Estas funciones trabajan en conjunto para mejorar el rendimiento y implementar políticas de uso aceptable.
+
+### Estrategias de Cacheo
+
+**Cacheo estático vs dinámico**:
+```bash
+# Configuración para contenido estático (imágenes, CSS, JS)
+acl static_content urlpath_regex \.(jpg|jpeg|png|gif|css|js|ico|pdf|zip)$
+cache allow static_content
+
+# Configuración para contenido dinámico
+acl dynamic_content urlpath_regex \.(cgi|php|asp|jsp)(\?.*)?$
+cache deny dynamic_content
+
+# Configuración específica por sitio
+acl cdn_sites dstdomain .cloudflare.com .amazonaws.com .googleapis.com
+cache allow cdn_sites
+```
+
+**Optimización de caché por tamaño**:
+```bash
+# Objetos pequeños en memoria para acceso rápido
+maximum_object_size_in_memory 1 MB
+
+# Objetos grandes en disco
+maximum_object_size 500 MB
+
+# Configuración de directorio de caché
+cache_dir ufs /var/spool/squid 20000 16 256
+cache_dir ufs /var/cache/squid-large 50000 16 256
+```
+
+### Filtros de Contenido Avanzados
+
+**Filtrado por patrones de URL**:
+```bash
+# Archivo /etc/squid/blocked_sites.txt
+# Redes sociales
+\.facebook\.com
+\.twitter\.com
+\.instagram\.com
+\.tiktok\.com
+
+# Streaming
+\.youtube\.com
+\.netflix\.com
+\.twitch\.tv
+
+# Archivo /etc/squid/squid.conf
+acl blocked_sites url_regex "/etc/squid/blocked_sites.txt"
+http_access deny blocked_sites
+```
+
+**Filtrado por tipo de archivo**:
+```bash
+# Bloquear ejecutables potencialmente peligrosos
+acl dangerous_files urlpath_regex -i \.(exe|msi|dmg|pkg|deb|rpm)$
+http_access deny dangerous_files
+
+# Permitir solo ciertos tipos de descarga
+acl allowed_downloads urlpath_regex -i \.(pdf|doc|docx|xls|xlsx|ppt|pptx|txt|jpg|png)$
+acl download_request urlpath_regex -i \.(exe|zip|rar|tar|gz)$
+http_access allow allowed_downloads download_request
+http_access deny download_request
+```
+
+## Métodos de Autenticación
+
+Los **métodos de autenticación** en servidores proxy permiten identificar usuarios, aplicar políticas específicas por persona o grupo, y mantener registros detallados de actividad. Squid soporta múltiples esquemas de autenticación que pueden integrarse con infraestructuras existentes.
+
+### Autenticación Básica (Basic)
+
+```bash
+# Crear archivo de usuarios con htpasswd
+sudo htpasswd -c /etc/squid/passwd juan.perez
+sudo htpasswd /etc/squid/passwd maria.garcia
+
+# Configuración en squid.conf
+auth_param basic program /usr/lib/squid/basic_ncsa_auth /etc/squid/passwd
+auth_param basic children 5
+auth_param basic realm "Proxy Corporativo - Autenticación Requerida"
+auth_param basic credentialsttl 2 hours
+
+acl authenticated proxy_auth REQUIRED
+http_access allow authenticated
+```
+
+### Autenticación LDAP/Active Directory
+
+```bash
+# Configuración para Active Directory
+auth_param basic program /usr/lib/squid/basic_ldap_auth -R -b "dc=empresa,dc=com" -D "cn=proxy-service,cn=Users,dc=empresa,dc=com" -w "ServicePassword123" -f sAMAccountName=%s -h dc.empresa.com
+auth_param basic children 10
+auth_param basic realm "Autenticación Corporativa"
+auth_param basic credentialsttl 4 hours
+
+# Configuración de grupos
+external_acl_type ldap_group %LOGIN /usr/lib/squid/ext_ldap_group_acl -R -b "dc=empresa,dc=com" -D "cn=proxy-service,cn=Users,dc=empresa,dc=com" -w "ServicePassword123" -f "(&(objectclass=person)(sAMAccountName=%v)(memberof=cn=%a,cn=Groups,dc=empresa,dc=com))" -h dc.empresa.com
+
+acl admin_users external ldap_group "Domain Admins"
+acl power_users external ldap_group "Power Users"
+acl regular_users external ldap_group "Domain Users"
+
+# Políticas diferenciadas por grupo
+http_access allow admin_users
+http_access allow power_users authenticated
+http_access deny social_media regular_users business_hours
+http_access allow regular_users authenticated
+```
+
+## Proxy Inverso
+
+El **proxy inverso** actúa como intermediario entre clientes externos e Internet y los servidores web internos, proporcionando múltiples beneficios en términos de seguridad, rendimiento y escalabilidad. A diferencia de un proxy directo que sirve a clientes internos para acceder a Internet, el proxy inverso sirve a clientes externos para acceder a servicios internos.
+
+### Configuración de Proxy Inverso con Nginx
+
+```nginx
+# /etc/nginx/sites-available/reverse-proxy
+upstream backend_servers {
+    least_conn;
+    server 10.0.1.10:80 weight=3;
+    server 10.0.1.11:80 weight=2;
+    server 10.0.1.12:80 weight=1 backup;
+}
+
+server {
+    listen 80;
+    listen 443 ssl http2;
+    server_name app.empresa.com;
+
+    # Certificados SSL
+    ssl_certificate /etc/nginx/ssl/empresa.crt;
+    ssl_certificate_key /etc/nginx/ssl/empresa.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    # Configuración de proxy
+    location / {
+        proxy_pass http://backend_servers;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Cache de contenido estático
+        location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
+            proxy_pass http://backend_servers;
+            proxy_cache static_cache;
+            proxy_cache_valid 200 1d;
+            expires 1d;
+            add_header Cache-Control public;
+        }
+    }
+
+    # Health check endpoint
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+    }
+}
+```
+
+### Configuración de Proxy Inverso con Apache
+
+```apache
+# /etc/apache2/sites-available/reverse-proxy.conf
+<VirtualHost *:80>
+    ServerName app.empresa.com
+    DocumentRoot /var/www/html
+    
+    # Habilitar módulos proxy
+    ProxyPreserveHost On
+    ProxyRequests Off
+    
+    # Balanceador de carga
+    ProxyPass /balancer-manager !
+    ProxyPass / balancer://mycluster/
+    ProxyPassReverse / balancer://mycluster/
+    
+    # Definir cluster de servidores
+    <Proxy balancer://mycluster>
+        BalancerMember http://10.0.1.10:80
+        BalancerMember http://10.0.1.11:80
+        BalancerMember http://10.0.1.12:80 status=+H
+        ProxySet lbmethod=byrequests
+    </Proxy>
+    
+    # Interfaz de gestión del balanceador
+    <Location "/balancer-manager">
+        SetHandler balancer-manager
+        Require local
+    </Location>
+</VirtualHost>
+```
+
+## Encadenamiento y Jerarquías de Proxies
+
+El **encadenamiento de proxies** permite crear arquitecturas jerárquicas donde múltiples servidores proxy trabajan en conjunto para optimizar el rendimiento, implementar políticas distribuidas, y proporcionar redundancia. Esta aproximación es especialmente útil en organizaciones grandes con múltiples ubicaciones geográficas.
+
+### Configuración de Jerarquía de Proxies
+
+```bash
+# Proxy hijo (edge) - configuración básica
+cache_peer proxy-parent.empresa.com parent 3128 0 no-query default
+cache_peer_access proxy-parent.empresa.com allow all
+
+# Configuración para múltiples padres con failover
+cache_peer proxy1.empresa.com parent 3128 0 no-query weight=1
+cache_peer proxy2.empresa.com parent 3128 0 no-query weight=1
+
+# Configuración de proxy padre regional
+hierarchy_stoplist cgi-bin ?
+acl QUERY urlpath_regex cgi-bin \?
+cache deny QUERY
+
+# Configuración específica para contenido local vs remoto
+acl LOCAL_DOMAIN dstdomain .empresa.com
+always_direct allow LOCAL_DOMAIN
+never_direct allow !LOCAL_DOMAIN
+```
+
+## Pruebas de Funcionamiento y Monitorización
+
+Las **pruebas sistemáticas** y la **monitorización continua** son esenciales para garantizar que el servidor proxy funcione correctamente y cumpla con los objetivos de rendimiento y seguridad establecidos.
+
+### Scripts de Testing
+
+```bash
+#!/bin/bash
+# Script de testing de proxy
+
+PROXY_HOST="proxy.empresa.com"
+PROXY_PORT="3128"
+TEST_URLS=("http://www.google.com" "https://www.github.com" "http://httpbin.org/ip")
+
+echo "=== Testing Proxy Functionality ==="
+
+for url in "${TEST_URLS[@]}"; do
+    echo "Testing: $url"
+    
+    # Test sin proxy
+    echo -n "  Direct: "
+    curl -s -o /dev/null -w "%{http_code} - %{time_total}s" "$url"
+    echo
+    
+    # Test con proxy
+    echo -n "  Proxy:  "
+    curl -s -o /dev/null -w "%{http_code} - %{time_total}s" --proxy "$PROXY_HOST:$PROXY_PORT" "$url"
+    echo
+    echo
+done
+
+echo "=== Cache Hit Rate Test ==="
+for i in {1..5}; do
+    echo -n "Request $i: "
+    curl -s -I --proxy "$PROXY_HOST:$PROXY_PORT" "http://httpbin.org/cache/60" | grep -i "x-cache\|x-squid"
+done
+```
+
+### Monitorización con SNMP
+
+```bash
+# Configurar SNMP en Squid
+snmp_port 3401
+snmp_access allow snmp_public localhost
+
+# OIDs útiles para monitorización
+# 1.3.6.1.4.1.3495.1.3.2.1.1.1 - HTTP requests received
+# 1.3.6.1.4.1.3495.1.3.2.1.1.2 - HTTP hits
+# 1.3.6.1.4.1.3495.1.3.2.1.1.3 - HTTP errors
+# 1.3.6.1.4.1.3495.1.3.2.1.1.12 - Current filesize of cache
+
+# Script de monitorización
+#!/bin/bash
+SQUID_HOST="localhost"
+COMMUNITY="public"
+
+echo "=== Squid Performance Statistics ==="
+echo "HTTP Requests: $(snmpget -v2c -c $COMMUNITY $SQUID_HOST 1.3.6.1.4.1.3495.1.3.2.1.1.1.0 | cut -d' ' -f4)"
+echo "Cache Hits: $(snmpget -v2c -c $COMMUNITY $SQUID_HOST 1.3.6.1.4.1.3495.1.3.2.1.1.2.0 | cut -d' ' -f4)"
+echo "Cache Size: $(snmpget -v2c -c $COMMUNITY $SQUID_HOST 1.3.6.1.4.1.3495.1.3.2.1.1.12.0 | cut -d' ' -f4) bytes"
+```
+
+## Beneficios y Desventajas
+
+### Beneficios de Usar un Proxy
+
+**Optimización de rendimiento**:
+- Cacheo de contenido reduce latencia y uso de ancho de banda
+- Compresión de contenido para conexiones lentas
+- Prefetching de contenido relacionado
+
+**Control y seguridad**:
+- Filtrado de contenido malicioso y categorías no deseadas
+- Prevención de acceso a sitios web peligrosos
+- Anonimización de direcciones IP internas
+
+**Gestión y auditoría**:
+- Logging detallado de actividad web
+- Análisis de patrones de uso
+- Cumplimiento de políticas corporativas
+
+**Ahorro de costos**:
+- Reducción del uso de ancho de banda de Internet
+- Optimización de conexiones internacionales costosas
+- Consolidación de políticas de acceso
+
+### Desventajas y Limitaciones
+
+**Impacto en rendimiento**:
+- Latencia adicional para contenido no cacheado
+- Punto único de fallo si no está en alta disponibilidad
+- Overhead de procesamiento para inspección de contenido
+
+**Complejidad operativa**:
+- Configuración y mantenimiento especializado
+- Gestión de certificados para HTTPS
+- Troubleshooting más complejo
+
+**Limitaciones de seguridad**:
+- Vulnerabilidades específicas del software proxy
+- Posible evasión mediante túneles y proxies alternativos
+- Dificultad para inspeccionar tráfico cifrado moderno
+
+**Ejemplo de análisis costo-beneficio**:
+```bash
+# Métricas típicas de un proxy empresarial
+echo "=== ROI Analysis ===" 
+echo "Ancho de banda ahorrado: 30-50%"
+echo "Reducción de latencia (contenido cacheado): 60-80%"
+echo "Tiempo de administración adicional: 2-4 horas/semana"
+echo "Costo de licencias y hardware: Variable según escala"
+```
+
+## Referencias y Recursos Adicionales
+
+### Documentación Oficial
+
+- **Squid Proxy Server**:
+   - Documentación oficial: http://www.squid-cache.org/Doc/
+   - Configuration Guide: http://www.squid-cache.org/Doc/config/
+   - Squid FAQ: https://wiki.squid-cache.org/SquidFaq
+
+- **Nginx como Proxy Inverso**:
+   - Nginx Documentation: http://nginx.org/en/docs/
+   - Reverse Proxy Guide: http://nginx.org/en/docs/http/ngx_http_proxy_module.html
+
+- **Apache HTTP Server**:
+   - Apache Proxy Documentation: https://httpd.apache.org/docs/current/mod/mod_proxy.html
+   - Load Balancing Guide: https://httpd.apache.org/docs/current/mod/mod_proxy_balancer.html
+
+### RFCs y Estándares
+
+- **RFC 7230-7235**: HTTP/1.1 Protocol Specifications
+- **RFC 3143**: Known HTTP Proxy/Caching Problems
+- **RFC 3040**: Internet Web Replication and Caching Taxonomy
+- **RFC 2616**: HTTP/1.1 (obsoleto, reemplazado por 7230-7235)
+
+### Herramientas y Recursos Online
+
+- **Testing y Monitoring**:
+   - WebPageTest: https://www.webpagetest.org/
+   - GTmetrix: https://gtmetrix.com/
+   - Squid Analysis Report Generator (SARG): http://sarg.sourceforge.net/
+
+- **Listas de Filtrado**:
+   - SquidGuard Blacklists: http://www.squidguard.org/blacklists.html
+   - Shalla's Blacklists: http://www.shallalist.de/
+   - URLBlacklist.com: http://urlblacklist.com/
+
+- **Configuración y Scripts**:
+   - Squid Configuration Examples: https://wiki.squid-cache.org/ConfigExamples
+   - Proxy Auto-Config (PAC) Files: https://en.wikipedia.org/wiki/Proxy_auto-config
+
+### Herramientas de Análisis y Gestión
+
+- **Squid Analysis Report Generator (SARG)**: Generación de reportes de uso
+- **LightSquid**: Analizador de logs en tiempo real
+- **SquidGuard**: Filtro de URL para Squid
+- **Calamaris**: Análisis estadístico de logs de proxy
