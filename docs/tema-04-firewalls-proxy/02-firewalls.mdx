@@ -1,0 +1,1156 @@
+---
+sidebar_position: 2
+title: Firewalls
+---
+
+# Firewalls
+
+## Introducción
+
+Un **firewall** (cortafuegos) es un dispositivo de seguridad de red que monitoriza y filtra el tráfico de red entrante y saliente basándose en un conjunto de reglas de seguridad predeterminadas. Establecen una barrera entre una red interna segura y de confianza y otra red externa como Internet, que se presupone no es segura ni de confianza.
+
+Los firewalls pueden ser implementados como hardware, software o una combinación de ambos. Su función principal es prevenir el acceso no autorizado desde redes externas mientras permite las comunicaciones autorizadas, actuando como la primera línea de defensa en la seguridad perimetral.
+
+## Características, Tipos y Funciones Principales
+
+### Características Fundamentales
+
+Los firewalls modernos comparten varias características esenciales:
+
+- **Control de acceso bidireccional**: Filtran tráfico tanto entrante como saliente
+- **Políticas configurables**: Permiten definir reglas específicas según las necesidades organizacionales
+- **Logging y auditoría**: Registran todas las conexiones y intentos de acceso
+- **Transparencia para usuarios**: Operan sin intervención del usuario final
+- **Escalabilidad**: Capacidad de adaptarse al crecimiento de la red
+- **Alta disponibilidad**: Muchos soportan configuraciones redundantes
+
+### Tipos de Firewalls
+
+#### 1. Firewalls de Filtrado de Paquetes (Packet Filtering)
+
+Los más básicos, operan en las capas 3 y 4 del modelo OSI (Red y Transporte):
+
+**Características**:
+- Examinan cabeceras IP y TCP/UDP
+- Decisiones basadas en IP origen/destino, puertos y protocolos
+- Rápidos y eficientes
+- Sin estado (stateless) en implementaciones básicas
+
+**Ventajas**:
+- Alto rendimiento
+- Transparencia total
+- Bajo costo computacional
+- Simplicidad de configuración básica
+
+**Desventajas**:
+- No inspeccionan contenido de paquetes
+- Vulnerables a ataques de fragmentación IP
+- Limitadas capacidades de logging
+- No comprenden el contexto de aplicación
+
+**Ejemplo de regla básica**:
+```bash
+# Permitir SSH desde red interna
+iptables -A INPUT -s 192.168.1.0/24 -p tcp --dport 22 -j ACCEPT
+
+# Denegar todo el tráfico desde Internet a puerto 22
+iptables -A INPUT -p tcp --dport 22 -j DROP
+```
+
+#### 2. Firewalls de Inspección con Estado (Stateful Inspection)
+
+Evolucionan el filtrado de paquetes manteniendo el estado de las conexiones:
+
+**Características**:
+- Mantienen tabla de estado de conexiones
+- Comprenden el contexto de la comunicación
+- Verifican que los paquetes pertenezcan a conexiones establecidas
+- Operan principalmente en capas 3-5
+
+**Ventajas**:
+- Mayor seguridad que filtrado básico
+- Previenen ataques de TCP hijacking
+- Mejor control de conexiones bidireccionales
+- Soporte para protocolos complejos (FTP, RPC)
+
+**Desventajas**:
+- Mayor consumo de memoria (tabla de estado)
+- Más complejos de configurar
+- Posible degradación del rendimiento
+
+**Ejemplo con iptables (stateful)**:
+```bash
+# Permitir conexiones establecidas y relacionadas
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Permitir nuevas conexiones SSH solo desde LAN
+iptables -A INPUT -s 192.168.1.0/24 -p tcp --dport 22 -m state --state NEW -j ACCEPT
+
+# Política por defecto: denegar
+iptables -P INPUT DROP
+```
+
+#### 3. Firewalls de Aplicación (Application Layer Gateway - ALG)
+
+Operan en la capa 7 del modelo OSI, inspeccionando el contenido de las aplicaciones:
+
+**Características**:
+- Inspección profunda de paquetes (DPI - Deep Packet Inspection)
+- Comprenden protocolos específicos de aplicación
+- Pueden actuar como proxy para ciertas aplicaciones
+- Capacidad de filtrado por contenido
+
+**Ventajas**:
+- Máximo nivel de seguridad
+- Control granular por aplicación
+- Prevención de ataques a nivel de aplicación
+- Filtrado de contenido malicioso
+
+**Desventajas**:
+- Alto impacto en rendimiento
+- Complejidad de configuración
+- Necesitan actualizaciones frecuentes para nuevas aplicaciones
+- Posible incompatibilidad con aplicaciones propietarias
+
+#### 4. Firewalls de Nueva Generación (NGFW - Next Generation Firewall)
+
+Combinan funcionalidades tradicionales con capacidades avanzadas:
+
+**Características integradas**:
+- Inspección de paquetes con estado
+- Sistema de detección y prevención de intrusiones (IDS/IPS)
+- Control de aplicaciones
+- Filtrado de contenido web
+- Inteligencia de amenazas
+- Integración con servicios cloud
+
+**Ejemplo de capacidades NGFW**:
+```
+Política: "Bloquear Facebook durante horario laboral"
+- Identificar tráfico Facebook (DPI)
+- Aplicar por grupos de usuarios (AD integration)
+- Horario: 08:00-17:00
+- Acción: Bloquear + Log + Notificar administrador
+```
+
+### Funciones Principales
+
+#### Control de Acceso
+- **Permitir/Denegar**: Decisiones binarias sobre el tráfico
+- **NAT (Network Address Translation)**: Ocultación de la topología interna
+- **PAT (Port Address Translation)**: Multiplexación de direcciones IP
+
+#### Monitorización y Logging
+- **Registro de conexiones**: Quién, qué, cuándo, desde dónde
+- **Alertas en tiempo real**: Notificaciones de eventos de seguridad
+- **Reportes estadísticos**: Análisis de patrones de tráfico
+
+#### Protección Avanzada
+- **Anti-DDoS**: Mitigación de ataques de denegación de servicio
+- **VPN Integration**: Soporte para túneles VPN
+- **Bandwidth Management**: Control de ancho de banda por aplicación/usuario
+
+## Filtrado de Paquetes de Datos: Niveles de Filtrado
+
+El **filtrado de paquetes** es el mecanismo fundamental mediante el cual los firewalls analizan el tráfico de red y toman decisiones sobre permitir o denegar su paso. Este proceso se basa en la inspección de diferentes elementos de los paquetes de datos según el nivel del modelo OSI en el que opere el firewall.
+
+La comprensión de los niveles de filtrado es crucial para diseñar políticas de seguridad efectivas, ya que cada nivel proporciona diferentes capacidades de inspección y control. Desde el filtrado básico basado en direcciones IP hasta la inspección profunda del contenido de aplicaciones, cada nivel añade complejidad pero también mayor granularidad en el control.
+
+### Nivel 1: Filtrado de Red (Capa 3)
+
+El **filtrado de capa 3** representa el nivel más básico de inspección, operando exclusivamente con la información contenida en las cabeceras del protocolo de red (principalmente IP). Este tipo de filtrado es el más rápido y eficiente computacionalmente, pero también el más limitado en términos de contexto y seguridad.
+
+En este nivel, el firewall actúa como un router inteligente que toma decisiones de reenvío basándose únicamente en la información de direccionamiento y el tipo de protocolo. No mantiene información sobre el estado de las conexiones ni comprende el contexto de la comunicación.
+
+Operaciones basadas en direcciones IP:
+
+**Criterios de filtrado**:
+- Dirección IP origen y destino
+- Tipo de protocolo (TCP, UDP, ICMP)
+- Fragmentación de paquetes
+
+**Ejemplo práctico**:
+```bash
+# Bloquear una IP específica
+iptables -A INPUT -s 203.0.113.45 -j DROP
+
+# Permitir solo tráfico desde redes corporativas
+iptables -A INPUT -s 10.0.0.0/8 -j ACCEPT
+iptables -A INPUT -s 172.16.0.0/12 -j ACCEPT
+iptables -A INPUT -s 192.168.0.0/16 -j ACCEPT
+```
+
+### Nivel 2: Filtrado de Transporte (Capa 4)
+
+El **filtrado de capa 4** extiende las capacidades del filtrado de red incorporando información de los protocolos de transporte (TCP y UDP). Este nivel permite un control mucho más granular al considerar no solo las direcciones IP, sino también los puertos de origen y destino, así como información específica del protocolo como los flags TCP.
+
+Esta aproximación permite implementar políticas más sofisticadas, como permitir conexiones salientes pero bloquear conexiones entrantes no solicitadas, o controlar el acceso a servicios específicos basándose en los números de puerto. El filtrado stateful, que mantiene el contexto de las conexiones, se implementa típicamente en este nivel.
+
+**Criterios adicionales**:
+- Puerto origen y destino
+- Flags TCP (SYN, ACK, FIN, RST)
+- Tipo de mensaje ICMP
+- Estado de conexión
+
+**Ejemplo con control de estado**:
+```bash
+# Permitir HTTP/HTTPS saliente, respuestas entrantes
+iptables -A OUTPUT -p tcp --dport 80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp --sport 80,443 -m state --state ESTABLISHED -j ACCEPT
+
+# Permitir ping saliente, respuestas entrantes
+iptables -A OUTPUT -p icmp --icmp-type 8 -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type 0 -j ACCEPT
+```
+
+### Nivel 3: Filtrado de Sesión (Capa 5)
+
+El **filtrado de sesión** introduce el concepto de **gestión de estado** (stateful inspection), donde el firewall mantiene una tabla de seguimiento de todas las conexiones activas y sus estados. Este nivel comprende el ciclo completo de vida de una conexión, desde el establecimiento hasta la terminación.
+
+La ventaja principal de este enfoque es la capacidad de distinguir entre tráfico legítimo que forma parte de una conexión establecida y tráfico malicioso que intenta explotar protocolos o simular conexiones falsas. El firewall puede validar que cada paquete pertenece a una sesión válida y que sigue la secuencia correcta del protocolo.
+
+**Capacidades**:
+- Seguimiento de sesiones TCP/UDP
+- Timeouts adaptativos
+- Detección de hijacking de sesión
+- Soporte para protocolos con múltiples conexiones
+
+**Ejemplo de configuración avanzada**:
+```bash
+# Configurar timeouts de conexión
+echo 1800 > /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_established
+echo 60 > /proc/sys/net/netfilter/nf_conntrack_udp_timeout
+
+# Limitar conexiones concurrentes por IP
+iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 10 -j REJECT
+```
+
+### Nivel 4: Filtrado de Aplicación (Capa 7)
+
+El **filtrado de aplicación** representa el nivel más avanzado de inspección, donde el firewall examina el contenido real de los paquetes y comprende los protocolos específicos de aplicación. Este tipo de filtrado, también conocido como **Inspección Profunda de Paquetes (DPI - Deep Packet Inspection)**, puede identificar aplicaciones, comandos específicos, tipos de archivos y patrones de contenido.
+
+Este nivel permite implementar políticas de seguridad muy granulares, como bloquear descargas de ciertos tipos de archivos, prevenir el acceso a funciones administrativas de aplicaciones web, o identificar y controlar aplicaciones que intentan evadir los controles de red usando puertos no estándar.
+
+**Criterios avanzados**:
+- Comandos HTTP específicos
+- Patrones de contenido
+- Tipos de archivo
+- Protocolos de aplicación específicos
+
+**Ejemplo con inspección HTTP**:
+```bash
+# Con iptables + string matching
+iptables -A FORWARD -p tcp --dport 80 -m string --string "GET /admin" --algo bm -j DROP
+
+# Con aplicaciones especializadas (Squid proxy)
+acl dangerous_downloads url_regex -i \.exe$
+acl admin_panel url_regex ^http://[^/]+/admin
+http_access deny dangerous_downloads
+http_access deny admin_panel
+```
+
+## Reglas de Filtrado: Diseño y Configuración
+
+El **diseño de reglas de filtrado** constituye el núcleo de la configuración de cualquier firewall y determina directamente la efectividad de la seguridad perimetral. Una regla de firewall define una condición específica que debe cumplir el tráfico y la acción que debe tomarse cuando se cumple esa condición.
+
+La arquitectura de reglas debe equilibrar varios factores críticos: **seguridad** (bloquear amenazas), **funcionalidad** (permitir tráfico legítimo), **rendimiento** (procesamiento eficiente) y **mantenibilidad** (facilidad de gestión y actualización). Un diseño deficiente puede resultar en brechas de seguridad, degradación del rendimiento o bloqueo de servicios críticos.
+
+El proceso de diseño requiere un análisis profundo de los flujos de tráfico de la organización, la identificación de todos los servicios necesarios, y la implementación de controles que sigan el principio de "denegar por defecto, permitir explícitamente". A continuación veremos los principios fundamentales que guían este proceso.
+
+### Principios de Diseño de Reglas
+
+Los **principios de diseño de reglas** son directrices fundamentales que garantizan que las políticas de firewall sean efectivas, mantenibles y seguras. Estos principios han evolucionado a partir de décadas de experiencia en seguridad de redes y representan las mejores prácticas de la industria.
+
+#### 1. Principio de Menor Privilegio
+
+El **principio de menor privilegio** establece que el sistema debe proporcionar únicamente los permisos mínimos necesarios para que los usuarios y servicios puedan realizar sus funciones. En el contexto de firewalls, esto se traduce en "denegar todo por defecto y permitir solo lo explícitamente necesario".
+
+Este enfoque invierte la lógica tradicional de muchos sistemas que permiten todo y bloquean lo específicamente denegado. Al adoptar una postura de "denegar por defecto", se reduce significativamente la superficie de ataque y se garantiza que cualquier nuevo servicio o protocolo requerirá una evaluación explícita antes de ser permitido.
+
+```bash
+# Estructura típica: denegar por defecto, permitir específico
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+# Permitir solo servicios necesarios
+iptables -A INPUT -p tcp --dport 22 -s 192.168.1.0/24 -j ACCEPT  # SSH admin
+iptables -A INPUT -p tcp --dport 80,443 -j ACCEPT               # Web
+iptables -A INPUT -p tcp --dport 25,587 -j ACCEPT               # SMTP
+```
+
+#### 2. Orden de Procesamiento
+
+El **orden de procesamiento** es un aspecto crítico en la configuración de firewalls, ya que la mayoría de sistemas procesan las reglas secuencialmente desde la primera hasta encontrar una coincidencia (algoritmo "first-match wins"). Una vez que se encuentra una regla que coincide con el tráfico, se ejecuta la acción asociada y no se evalúan más reglas.
+
+Este comportamiento significa que el orden de las reglas determina directamente qué políticas se aplicarán al tráfico. Reglas más específicas deben colocarse antes que reglas más generales, y reglas de excepción deben preceder a reglas de bloqueo generales. Un orden incorrecto puede resultar en que reglas importantes nunca se ejecuten.
+
+```bash
+# INCORRECTO: regla específica después de genérica
+iptables -A INPUT -j DROP                           # Rechaza todo
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT       # Nunca se ejecuta
+
+# CORRECTO: reglas específicas primero
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT       # SSH permitido
+iptables -A INPUT -j DROP                           # Resto rechazado
+```
+
+#### 3. Documentación y Comentarios
+
+La **documentación adecuada** de las reglas de firewall es esencial para el mantenimiento a largo plazo y la comprensión del propósito de cada política. Cada regla debe incluir comentarios que expliquen su razón de ser, qué tráfico específico está destinada a controlar, y cualquier consideración especial para su mantenimiento.
+
+Una documentación pobre es una de las principales causas de errores de configuración y brechas de seguridad, especialmente cuando diferentes administradores trabajan con el mismo sistema a lo largo del tiempo. Los comentarios deben ser lo suficientemente detallados para que cualquier administrador pueda entender rápidamente el impacto de modificar o eliminar una regla.
+```bash
+# === REGLAS DE ENTRADA ===
+# Permitir loopback
+iptables -A INPUT -i lo -j ACCEPT
+
+# SSH solo desde red de administración
+iptables -A INPUT -p tcp --dport 22 -s 10.0.100.0/24 -j ACCEPT -m comment --comment "SSH Admin Network"
+
+# Web público
+iptables -A INPUT -p tcp --dport 80,443 -j ACCEPT -m comment --comment "HTTP/HTTPS Public"
+```
+
+### Configuración de Reglas Básicas
+
+#### Configuración Inicial Segura
+```bash
+#!/bin/bash
+# Script de configuración básica de firewall
+
+# Limpiar reglas existentes
+iptables -F
+iptables -t nat -F
+iptables -t mangle -F
+
+# Políticas por defecto (denegar todo)
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
+
+# Permitir loopback (necesario para muchas aplicaciones)
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+# Permitir conexiones establecidas
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# SSH administrativa (cambiar red según necesidades)
+iptables -A INPUT -p tcp --dport 22 -s 192.168.1.0/24 -m state --state NEW -j ACCEPT
+
+# Tráfico saliente básico
+iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT      # DNS TCP
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT      # DNS UDP
+iptables -A OUTPUT -p tcp --dport 80,443 -j ACCEPT  # HTTP/HTTPS
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT     # NTP
+```
+
+#### Reglas para Servicios Específicos
+
+**Servidor Web**:
+```bash
+# HTTP/HTTPS desde cualquier origen
+iptables -A INPUT -p tcp --dport 80,443 -m state --state NEW -j ACCEPT
+
+# Limitar conexiones concurrentes por IP
+iptables -A INPUT -p tcp --dport 80 -m connlimit --connlimit-above 50 -j REJECT --reject-with tcp-reset
+```
+
+**Servidor de Correo**:
+```bash
+# SMTP, SMTPS, IMAP, IMAPS, POP3, POP3S
+iptables -A INPUT -p tcp -m multiport --dports 25,465,587,143,993,110,995 -j ACCEPT
+
+# Prevenir spam - rate limiting
+iptables -A INPUT -p tcp --dport 25 -m recent --set --name smtp
+iptables -A INPUT -p tcp --dport 25 -m recent --update --seconds 60 --hitcount 10 --name smtp -j DROP
+```
+
+**Base de Datos**:
+```bash
+# MySQL solo desde servidores de aplicación
+iptables -A INPUT -p tcp --dport 3306 -s 192.168.10.0/24 -j ACCEPT
+
+# PostgreSQL con logs detallados
+iptables -A INPUT -p tcp --dport 5432 -s 192.168.10.0/24 -j LOG --log-prefix "PostgreSQL Access: "
+iptables -A INPUT -p tcp --dport 5432 -s 192.168.10.0/24 -j ACCEPT
+```
+
+### Reglas Avanzadas
+
+#### Control de Ancho de Banda
+```bash
+# Limitar ancho de banda para tráfico P2P
+iptables -A FORWARD -m string --string "BitTorrent" --algo bm -j MARK --set-mark 1
+tc qdisc add dev eth0 handle 1: root htb
+tc class add dev eth0 parent 1: classid 1:1 htb rate 100kbit
+tc filter add dev eth0 protocol ip parent 1:0 prio 1 handle 1 fw flowid 1:1
+```
+
+#### Prevención de Ataques
+```bash
+# Protección contra SYN flood
+iptables -A INPUT -p tcp --syn -m limit --limit 1/s --limit-burst 3 -j ACCEPT
+iptables -A INPUT -p tcp --syn -j DROP
+
+# Protección contra ping flood
+iptables -A INPUT -p icmp --icmp-type 8 -m limit --limit 1/s --limit-burst 2 -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type 8 -j DROP
+
+# Bloquear escaneos de puertos
+iptables -A INPUT -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 1/s -j ACCEPT
+iptables -A INPUT -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j DROP
+```
+
+## Implementación
+
+La **implementación de firewalls** puede realizarse a través de múltiples enfoques, desde soluciones software integradas en sistemas operativos hasta dispositivos hardware dedicados. La elección de la implementación depende de factores como el tamaño de la red, los requisitos de rendimiento, el presupuesto disponible y la complejidad de las políticas de seguridad requeridas.
+
+Cada tipo de implementación tiene sus propias ventajas y desventajas. Las soluciones software suelen ser más flexibles y económicas, mientras que las soluciones hardware ofrecen mejor rendimiento y características especializadas. La comprensión de estas diferentes opciones es crucial para seleccionar la solución más apropiada para cada entorno.
+
+### Firewalls en el Sistema Operativo
+
+Los **firewalls integrados en sistemas operativos** representan la forma más común y accesible de implementar protección perimetral. Estos sistemas aprovechan las capacidades del kernel del sistema operativo para interceptar y filtrar el tráfico de red, ofreciendo una solución costo-efectiva que puede adaptarse a múltiples escenarios de uso.
+
+La principal ventaja de esta aproximación es la integración nativa con el sistema operativo, lo que permite un control granular sobre el tráfico y una configuración que puede automatizarse junto con otros aspectos del sistema. Sin embargo, también significa que el firewall comparte recursos con otras aplicaciones y servicios del sistema.
+
+#### iptables (Linux)
+
+**iptables** representa la herramienta de filtrado de paquetes más utilizada en sistemas Linux, actuando como interfaz de usuario para el framework **Netfilter** integrado en el kernel. Netfilter proporciona los "hooks" (puntos de intercepción) en diferentes etapas del procesamiento de paquetes, mientras que iptables permite configurar las reglas que determinan qué hacer con cada paquete.
+
+La arquitectura de iptables se basa en el concepto de **tablas**, **cadenas** y **reglas**. Cada tabla tiene un propósito específico (filtrado, NAT, modificación de paquetes), cada cadena representa un punto específico en el procesamiento del paquete, y cada regla define una condición y una acción a tomar.
+
+**iptables** es la herramienta estándar de filtrado de paquetes en Linux, interactuando con el framework Netfilter del kernel.
+
+**Estructura básica**:
+```
+iptables -t [tabla] -A [cadena] [criterios] -j [acción]
+```
+
+**Tablas principales**:
+- **filter**: Filtrado de paquetes (por defecto)
+- **nat**: Traducción de direcciones de red
+- **mangle**: Modificación de paquetes
+- **raw**: Configuración de seguimiento de conexiones
+
+**Cadenas principales**:
+- **INPUT**: Paquetes destinados al sistema local
+- **OUTPUT**: Paquetes generados localmente
+- **FORWARD**: Paquetes que atraviesan el sistema
+- **PREROUTING**: Antes del ruteo
+- **POSTROUTING**: Después del ruteo
+
+**Ejemplo de configuración completa**:
+```bash
+#!/bin/bash
+# Configuración de firewall para servidor web
+
+# Variables
+IPTABLES=/sbin/iptables
+LAN_NETWORK="192.168.1.0/24"
+ADMIN_NETWORK="10.0.100.0/24"
+
+# Limpiar reglas
+$IPTABLES -F
+$IPTABLES -t nat -F
+
+# Políticas por defecto
+$IPTABLES -P INPUT DROP
+$IPTABLES -P FORWARD DROP
+$IPTABLES -P OUTPUT ACCEPT
+
+# Loopback
+$IPTABLES -A INPUT -i lo -j ACCEPT
+
+# Conexiones establecidas
+$IPTABLES -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# SSH administrativa
+$IPTABLES -A INPUT -p tcp --dport 22 -s $ADMIN_NETWORK -j ACCEPT
+
+# Servicios públicos
+$IPTABLES -A INPUT -p tcp --dport 80,443 -j ACCEPT
+
+# DNS para resolución local
+$IPTABLES -A INPUT -p udp --dport 53 -s $LAN_NETWORK -j ACCEPT
+
+# Logging de conexiones rechazadas
+$IPTABLES -A INPUT -j LOG --log-prefix "FIREWALL-DROPPED: " --log-level 4
+$IPTABLES -A INPUT -j DROP
+
+# Guardar configuración
+iptables-save > /etc/iptables/rules.v4
+```
+
+#### UFW (Uncomplicated Firewall)
+
+**UFW** es una interfaz simplificada para iptables, diseñada para facilitar la configuración de firewalls:
+
+**Comandos básicos**:
+```bash
+# Habilitar firewall
+sudo ufw enable
+
+# Política por defecto
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# Permitir servicios específicos
+sudo ufw allow ssh
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+
+# Permitir desde red específica
+sudo ufw allow from 192.168.1.0/24 to any port 22
+
+# Denegar aplicación específica
+sudo ufw deny out 25
+
+# Estado y reglas
+sudo ufw status verbose
+sudo ufw status numbered
+
+# Eliminar regla
+sudo ufw delete 3
+sudo ufw delete allow 80/tcp
+```
+
+**Configuración avanzada UFW**:
+```bash
+# Limitar conexiones (rate limiting)
+sudo ufw limit ssh
+
+# Permitir rangos de puertos
+sudo ufw allow 6000:6007/tcp
+
+# Reglas por interfaz
+sudo ufw allow in on eth0 to any port 80
+sudo ufw allow out on eth1
+
+# Logging
+sudo ufw logging on
+sudo ufw logging medium  # off, low, medium, high, full
+```
+
+#### Windows Firewall
+
+**Windows Defender Firewall** (anteriormente Windows Firewall) proporciona protección básica:
+
+**Configuración vía PowerShell**:
+```powershell
+# Habilitar firewall en todos los perfiles
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True
+
+# Crear regla para permitir SSH
+New-NetFirewallRule -DisplayName "Allow SSH" -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow
+
+# Crear regla para bloquear aplicación
+New-NetFirewallRule -DisplayName "Block Telnet" -Direction Outbound -Protocol TCP -LocalPort 23 -Action Block
+
+# Listar reglas
+Get-NetFirewallRule | Where-Object {$_.Enabled -eq "True"}
+
+# Configurar logging
+Set-NetFirewallProfile -Profile Domain -LogAllowed True -LogBlocked True -LogMaxSizeKilobytes 32767
+```
+
+### Firewalls en Sistemas Libres y Propietarios
+
+#### pfSense
+
+**pfSense** es una distribución de firewall open source basada en FreeBSD:
+
+**Características principales**:
+- Interfaz web intuitiva
+- Soporte completo de VPN (IPsec, OpenVPN, WireGuard)
+- Balanceador de carga integrado
+- Sistema de paquetes extensible
+- Reportes y monitoring avanzados
+
+**Configuración básica**:
+```
+Interfaces:
+- WAN: DHCP o IP estática (Internet)
+- LAN: 192.168.1.1/24
+- DMZ: 10.0.1.1/24 (opcional)
+
+Reglas firewall típicas:
+1. LAN → Any: Allow (con restricciones opcionales)
+2. DMZ → WAN: Allow HTTP/HTTPS, SMTP, DNS
+3. DMZ → LAN: Deny (aislamiento)
+4. WAN → DMZ: Allow solo puertos públicos
+5. WAN → LAN: Block all
+```
+
+**Configuración de NAT**:
+```
+Port Forwarding:
+- WAN:80 → DMZ_WebServer:80
+- WAN:443 → DMZ_WebServer:443
+- WAN:25 → DMZ_MailServer:25
+
+Outbound NAT:
+- Source: LAN_Network → Translation: WAN_IP
+- Source: DMZ_Network → Translation: WAN_IP
+```
+
+#### Fortinet FortiGate
+
+**FortiGate** es una solución empresarial que combina firewall, IPS, AV y más:
+
+**Configuración CLI básica**:
+```
+# Configurar interfaces
+config system interface
+    edit "port1"
+        set vdom "root"
+        set ip 192.168.1.1 255.255.255.0
+        set allowaccess ping https ssh http
+        set type physical
+        set role lan
+    next
+    edit "port2"
+        set vdom "root"
+        set mode dhcp
+        set allowaccess ping
+        set type physical
+        set role wan
+    next
+end
+
+# Crear políticas de firewall
+config firewall policy
+    edit 1
+        set name "LAN-to-WAN"
+        set srcintf "port1"
+        set dstintf "port2"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set nat enable
+    next
+end
+```
+
+#### OPNsense
+
+**OPNsense** es un fork de pfSense con enfoque en seguridad y características modernas:
+
+**Características distintivas**:
+- Interfaz moderna y responsive
+- Actualizaciones de seguridad más frecuentes
+- Plugin system más flexible
+- Soporte nativo para Intrusion Detection (Suricata)
+- API REST completa
+
+### Firewalls Hardware
+
+Los **firewalls hardware** son dispositivos dedicados específicamente diseñados para realizar funciones de filtrado de paquetes y seguridad de red. A diferencia de las soluciones software que comparten recursos con otras aplicaciones, estos dispositivos están optimizados exclusivamente para el procesamiento de tráfico de red y la aplicación de políticas de seguridad.
+
+Estos sistemas utilizan hardware especializado como **ASICs (Application-Specific Integrated Circuits)** o **FPGAs (Field-Programmable Gate Arrays)** para acelerar las operaciones de filtrado y inspección de paquetes. Esta arquitectura dedicada permite manejar volúmenes de tráfico significativamente mayores que las soluciones software, manteniendo latencias bajas y un rendimiento consistente.
+
+La decisión de implementar firewalls hardware generalmente se justifica en entornos empresariales donde los requisitos de rendimiento, disponibilidad y características avanzadas de seguridad superan las consideraciones de costo.
+
+#### Ventajas de Firewalls Hardware
+
+Los firewalls hardware ofrecen múltiples ventajas que los hacen especialmente atractivos para entornos empresariales y organizaciones que requieren altos niveles de seguridad y disponibilidad:
+
+- **Rendimiento dedicado**: CPU y memoria específicamente para firewall
+- **Alta disponibilidad**: Componentes redundantes, fuentes de alimentación duales
+- **Menor superficie de ataque**: Sistema operativo mínimo, sin servicios innecesarios
+- **Facilidad de gestión**: Interfaces especializadas para administración
+- **Soporte empresarial**: SLA, actualizaciones prioritarias
+
+#### Ejemplos de Soluciones Hardware
+
+**Cisco ASA (Adaptive Security Appliance)**:
+```
+# Configuración básica ASA
+interface GigabitEthernet0/0
+ nameif outside
+ security-level 0
+ ip address 203.0.113.1 255.255.255.0
+
+interface GigabitEthernet0/1
+ nameif inside
+ security-level 100
+ ip address 192.168.1.1 255.255.255.0
+
+# NAT configuration
+object network LAN
+ subnet 192.168.1.0 255.255.255.0
+ nat (inside,outside) dynamic interface
+
+# Access Control Lists
+access-list OUTSIDE_IN extended permit tcp any host 192.168.1.10 eq 80
+access-list OUTSIDE_IN extended permit tcp any host 192.168.1.10 eq 443
+access-group OUTSIDE_IN in interface outside
+```
+
+**SonicWall NSA Series**:
+- Interfaz SonicOS intuitiva
+- Deep Packet Inspection (DPI)
+- Application Intelligence and Control
+- Intrusion Prevention integrado
+- Content Filtering Service
+
+**Palo Alto Networks**:
+- Firewall basado en aplicaciones
+- User-ID para políticas por usuario
+- WildFire analysis para malware
+- GlobalProtect VPN integrado
+
+## Pruebas de Funcionamiento y Sondeo
+
+Las **pruebas de funcionamiento** son un componente esencial en la implementación y mantenimiento de firewalls, ya que permiten verificar que las políticas de seguridad configuradas se aplican correctamente y que el sistema proporciona la protección esperada sin interferir con el tráfico legítimo.
+
+El **sondeo** (scanning) es una técnica utilizada tanto por administradores para verificar la seguridad de sus sistemas como por atacantes para identificar vulnerabilidades. Comprender las técnicas de sondeo y cómo los firewalls las detectan y mitigan es crucial para evaluar la efectividad de las implementaciones de seguridad.
+
+Las pruebas deben realizarse de manera sistemática y documentada, incluyendo tanto escenarios de tráfico legítimo como intentos de evasión de las políticas de seguridad. Esta aproximación dual permite identificar tanto falsos positivos (tráfico legítimo bloqueado) como falsos negativos (tráfico malicioso permitido).
+
+### Herramientas de Testing
+
+Las **herramientas de testing** de firewalls van desde utilities básicas de red hasta suites especializadas de pentesting. Cada herramienta tiene fortalezas específicas y está diseñada para probar diferentes aspectos de la funcionalidad del firewall. La combinación de múltiples herramientas proporciona una visión más completa de la postura de seguridad.
+
+#### Nmap - Network Mapper
+```bash
+# Escaneo básico de puertos
+nmap 192.168.1.1
+
+# Escaneo de red completa
+nmap 192.168.1.0/24
+
+# Escaneo intensivo con detección de OS
+sudo nmap -sS -O -sV 192.168.1.1
+
+# Escaneo de firewall evasion
+nmap -sA 192.168.1.1  # ACK scan
+nmap -sF 192.168.1.1  # FIN scan
+nmap -sX 192.168.1.1  # Xmas scan
+
+# Test específico de puertos
+nmap -p 1-65535 192.168.1.1
+```
+
+#### Netcat - Swiss Army Knife
+```bash
+# Test de conectividad TCP
+nc -v 192.168.1.1 80
+
+# Test de conectividad UDP
+nc -vu 192.168.1.1 53
+
+# Escuchar en puerto (simular servicio)
+nc -l 8080
+
+# Banner grabbing
+echo "" | nc -v 192.168.1.1 22
+```
+
+#### Hping3 - Packet Crafting
+```bash
+# Test de conectividad básico
+hping3 -c 3 192.168.1.1
+
+# SYN flood test (cuidado!)
+hping3 -S --flood -p 80 192.168.1.1
+
+# Test de fragmentación
+hping3 -f 192.168.1.1
+
+# Traceroute con TCP
+hping3 -T -p 80 192.168.1.1
+```
+
+### Metodología de Testing
+
+#### 1. Testing de Conectividad Básica
+```bash
+#!/bin/bash
+# Script de testing básico de firewall
+
+TARGET="192.168.1.1"
+PORTS="22 80 443 3389 3306"
+
+echo "=== Testing conectividad básica ==="
+ping -c 3 $TARGET
+
+echo "=== Testing puertos TCP ==="
+for port in $PORTS; do
+    echo -n "Puerto $port: "
+    nc -z -w3 $TARGET $port && echo "ABIERTO" || echo "CERRADO"
+done
+
+echo "=== Testing puertos UDP ==="
+nc -z -u -w3 $TARGET 53 && echo "DNS: ABIERTO" || echo "DNS: CERRADO"
+```
+
+#### 2. Testing de Reglas Específicas
+```bash
+# Verificar que SSH solo funciona desde red admin
+ssh admin@192.168.1.1  # Desde red permitida: debe funcionar
+ssh admin@192.168.1.1  # Desde red no permitida: debe fallar
+
+# Verificar rate limiting
+for i in {1..20}; do nc -z 192.168.1.1 22; done
+```
+
+#### 3. Testing de Logging
+```bash
+# Generar tráfico para logs
+nmap -sS 192.168.1.1
+
+# Verificar logs
+tail -f /var/log/iptables.log
+journalctl -f -u firewalld
+
+# En pfSense/OPNsense: Status → System Logs → Firewall
+```
+
+## Registro de Sucesos (Logs) y Revisión
+
+El **registro de sucesos** o **logging** constituye un elemento fundamental en la operación de firewalls, proporcionando visibilidad sobre las actividades de red, intentos de acceso, y la efectividad de las políticas de seguridad implementadas. Los logs no solo sirven para la detección de incidentes de seguridad, sino también para el análisis forense, el cumplimiento normativo y la optimización de las reglas de firewall.
+
+La **revisión sistemática de logs** permite identificar patrones de tráfico, detectar anomalías, y ajustar las políticas de seguridad basándose en evidencia empírica del comportamiento de la red. Sin un sistema de logging adecuado, los administradores operan "a ciegas", sin información crucial sobre el estado de seguridad de su infraestructura.
+
+El desafío principal en el logging de firewalls es balancear el nivel de detalle necesario para la seguridad con el volumen de datos generados y el impacto en el rendimiento. Un logging excesivo puede degradar el rendimiento y generar ruido que dificulte la identificación de eventos importantes, mientras que un logging insuficiente puede dejar vacíos críticos en la visibilidad de seguridad.
+
+### Configuración de Logging
+
+La **configuración de logging** determina qué eventos se registran, dónde se almacenan, con qué nivel de detalle, y durante cuánto tiempo se conservan. Esta configuración debe alinearse con los objetivos de seguridad de la organización, los requisitos de cumplimiento normativo, y las capacidades de almacenamiento y análisis disponibles.
+
+#### iptables Logging
+```bash
+# Crear cadena personalizada para logging
+iptables -N LOG_DROP
+iptables -A LOG_DROP -j LOG --log-prefix "FIREWALL-DROP: " --log-level 4
+iptables -A LOG_DROP -j DROP
+
+# Usar la cadena personalizada
+iptables -A INPUT -j LOG_DROP
+
+# Configurar rsyslog para separar logs
+echo "kern.warning /var/log/iptables.log" >> /etc/rsyslog.conf
+systemctl restart rsyslog
+```
+
+#### pfSense Logging
+```
+System → Advanced → Firewall/NAT:
+- Log firewall default blocks: ✓
+- Log packets matched by pass rules: ✓
+- Log packets blocked by 'Block Bogon Networks': ✓
+
+Format: RFC 3164 (BSD Syslog)
+Remote logging: Configure if needed
+```
+
+### Análisis de Logs
+
+#### Estructura de Log Típica
+```
+Oct 27 14:23:15 firewall kernel: FIREWALL-DROP: IN=eth0 OUT= MAC=00:0c:29:xx:xx:xx SRC=203.0.113.45 DST=192.168.1.10 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=12345 DF PROTO=TCP SPT=54321 DPT=22 WINDOW=65535 RES=0x00 SYN URGP=0
+```
+
+**Campos importantes**:
+- **Timestamp**: Oct 27 14:23:15
+- **Source IP**: SRC=203.0.113.45
+- **Destination IP**: DST=192.168.1.10
+- **Protocol**: PROTO=TCP
+- **Source Port**: SPT=54321
+- **Destination Port**: DPT=22
+- **TCP Flags**: SYN
+
+#### Scripts de Análisis
+```bash
+#!/bin/bash
+# Análisis básico de logs de firewall
+
+LOG_FILE="/var/log/iptables.log"
+
+echo "=== Top 10 IPs atacantes ==="
+grep "FIREWALL-DROP" $LOG_FILE | \
+    grep -oP 'SRC=\K[^ ]+' | \
+    sort | uniq -c | sort -nr | head -10
+
+echo "=== Top 10 puertos atacados ==="
+grep "FIREWALL-DROP" $LOG_FILE | \
+    grep -oP 'DPT=\K[^ ]+' | \
+    sort | uniq -c | sort -nr | head -10
+
+echo "=== Intentos SSH por hora ==="
+grep "DPT=22" $LOG_FILE | \
+    cut -d' ' -f3 | cut -d':' -f1 | \
+    sort | uniq -c
+```
+
+#### Herramientas de Análisis Avanzado
+
+**LogAnalyzer**:
+```bash
+# Instalación de LogAnalyzer (PHP-based)
+apt install apache2 php libapache2-mod-php
+wget http://download.adiscon.com/loganalyzer/loganalyzer-x.x.x.tar.gz
+# Configurar para leer logs de syslog
+```
+
+**ELK Stack (Elasticsearch, Logstash, Kibana)**:
+```yaml
+# Logstash configuration para logs de iptables
+input {
+  file {
+    path => "/var/log/iptables.log"
+    start_position => "beginning"
+  }
+}
+
+filter {
+  grok {
+    match => { "message" => "%{IPTABLES}" }
+  }
+  date {
+    match => [ "timestamp", "MMM dd HH:mm:ss" ]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    index => "firewall-logs-%{+YYYY.MM.dd}"
+  }
+}
+```
+
+### Monitorización en Tiempo Real
+
+#### Alertas Automáticas
+```bash
+#!/bin/bash
+# Script de alerta por email
+
+THRESHOLD=100
+LOG_FILE="/var/log/iptables.log"
+LAST_HOUR=$(date -d "1 hour ago" "+%b %d %H")
+
+ATTACKS=$(grep "$LAST_HOUR" $LOG_FILE | grep "FIREWALL-DROP" | wc -l)
+
+if [ $ATTACKS -gt $THRESHOLD ]; then
+    echo "ALERTA: $ATTACKS intentos de ataque en la última hora" | \
+    mail -s "Alerta Firewall" admin@empresa.com
+fi
+```
+
+#### SNMP Monitoring
+```bash
+# Configurar SNMP en pfSense/Linux para monitoring
+# Permitir consultas SNMP desde servidor de monitoreo
+iptables -A INPUT -p udp --dport 161 -s 192.168.1.100 -j ACCEPT
+
+# OIDs útiles para firewall monitoring:
+# 1.3.6.1.2.1.1.3.0 - System uptime
+# 1.3.6.1.2.1.2.2.1.10 - Interface input octets
+# 1.3.6.1.2.1.2.2.1.16 - Interface output octets
+```
+
+## Documentación de Instalación y Configuración
+
+La **documentación adecuada** es un aspecto crítico pero frecuentemente descuidado en la implementación de firewalls. Una documentación completa y actualizada no solo facilita el mantenimiento y la resolución de problemas, sino que también es esencial para el cumplimiento normativo, la transferencia de conocimiento entre equipos, y la continuidad operativa.
+
+La documentación de firewalls debe cubrir múltiples aspectos: desde la justificación de las decisiones de diseño hasta los procedimientos detallados de configuración, pasando por los procesos de mantenimiento y recuperación ante desastres. Esta documentación debe ser lo suficientemente detallada para permitir que otros administradores comprendan y mantengan el sistema, pero también lo suficientemente clara para ser útil en situaciones de emergencia.
+
+Un aspecto particular de los firewalls es que las decisiones de configuración tienen implicaciones directas en la seguridad y disponibilidad de los servicios. Por tanto, la documentación debe capturar no solo el "qué" y el "cómo", sino también el "por qué" de cada configuración, proporcionando contexto para futuras decisiones de modificación o actualización.
+
+### Plantilla de Documentación
+
+Una **plantilla de documentación** estandarizada garantiza que toda la información crítica se capture de manera consistente y completa. La plantilla debe ser lo suficientemente flexible para adaptarse a diferentes tipos de implementaciones, pero lo suficientemente estructurada para garantizar que no se omita información importante.
+
+#### 1. Información del Sistema
+```markdown
+# Configuración de Firewall - Servidor Web DMZ
+
+## Información General
+- **Fecha**: 27 de Octubre de 2025
+- **Administrador**: Juan Pérez
+- **Sistema**: Ubuntu 22.04 LTS
+- **Firewall**: iptables + UFW
+- **Función**: Servidor Web en DMZ
+
+## Arquitectura de Red
+```
+Internet --- [Router] --- [Firewall] --- [DMZ] --- [Servidor Web]
+                               |
+                               +--- [LAN Interna]
+```
+
+## Direccionamiento IP
+- WAN: 203.0.113.1/24 (Internet)
+- DMZ: 10.0.1.0/24
+- LAN: 192.168.1.0/24
+- Servidor Web: 10.0.1.10
+```
+
+#### 2. Configuración Implementada
+```markdown
+## Reglas de Firewall
+
+### Políticas por Defecto
+- INPUT: DROP
+- FORWARD: DROP  
+- OUTPUT: ACCEPT
+
+### Reglas de Entrada (INPUT)
+| Origen | Destino | Puerto | Protocolo | Acción | Comentario |
+|--------|---------|--------|-----------|--------|------------|
+| Any | DMZ | 80,443 | TCP | ACCEPT | Web público |
+| 192.168.1.0/24 | DMZ | 22 | TCP | ACCEPT | SSH admin |
+| 192.168.1.0/24 | DMZ | 53 | UDP | ACCEPT | DNS interno |
+
+### Reglas de Reenvío (FORWARD)
+| Origen | Destino | Puerto | Acción | Comentario |
+|--------|---------|--------|--------|------------|
+| DMZ | Internet | 80,443 | ACCEPT | Actualizaciones |
+| DMZ | LAN | Any | DROP | Aislamiento |
+| LAN | DMZ | 22,80,443 | ACCEPT | Administración |
+```
+
+#### 3. Comandos de Configuración
+```markdown
+## Script de Configuración
+
+```bash
+#!/bin/bash
+# Archivo: /etc/firewall/setup.sh
+# Configuración de firewall para servidor web DMZ
+
+# Limpiar reglas existentes
+iptables -F
+iptables -t nat -F
+
+# [Incluir script completo aquí]
+```
+
+## Verificación
+```bash
+# Comandos para verificar configuración
+iptables -L -n -v
+ufw status verbose
+systemctl status iptables
+```
+
+#### 4. Procedimientos de Mantenimiento
+```markdown
+## Mantenimiento Regular
+
+### Backup de Configuración
+```bash
+# Crear backup
+iptables-save > /etc/firewall/backup-$(date +%Y%m%d).rules
+
+# Restaurar backup
+iptables-restore < /etc/firewall/backup-20251027.rules
+```
+
+### Análisis de Logs
+- **Frecuencia**: Diario
+- **Ubicación**: /var/log/iptables.log
+- **Alertas**: > 1000 intentos/hora
+
+### Actualizaciones
+- **OS**: Mensual (segundo martes)
+- **Reglas**: Según necesidad del negocio
+- **Testing**: Obligatorio en entorno de pruebas
+
+
+### Herramientas de Documentación
+
+#### Automatización con Ansible
+```yaml
+- name: Configurar firewall básico
+  hosts: firewalls
+  tasks:
+    - name: Instalar UFW
+      apt:
+        name: ufw
+        state: present
+      
+    - name: Configurar políticas por defecto
+      ufw:
+        direction: "{{ item.direction }}"
+        policy: "{{ item.policy }}"
+      loop:
+        - { direction: 'incoming', policy: 'deny' }
+        - { direction: 'outgoing', policy: 'allow' }
+    
+    - name: Permitir SSH
+      ufw:
+        rule: allow
+        port: '22'
+        src: '{{ admin_network }}'
+```
+
+#### Diagramas de Red
+```python
+# Script para generar diagramas automáticamente
+import diagrams
+from diagrams.aws.network import VPC, PublicSubnet, PrivateSubnet
+from diagrams.aws.security import SecurityGroup
+
+with Diagram("Arquitectura Firewall", show=False):
+    internet = VPC("Internet")
+    dmz = PublicSubnet("DMZ")
+    lan = PrivateSubnet("LAN")
+    fw = SecurityGroup("Firewall")
+    
+    internet >> fw >> dmz
+    fw >> lan
+```
+
+## Referencias y Recursos Adicionales
+
+### Documentación Oficial
+
+1. **iptables/Netfilter**:
+   - Netfilter Project: https://www.netfilter.org/
+   - Manual de iptables: `man iptables`
+   - Linux Kernel Documentation - Networking
+
+2. **UFW (Uncomplicated Firewall)**:
+   - Ubuntu UFW Documentation: https://help.ubuntu.com/community/UFW
+   - UFW Manual: `man ufw`
+
+3. **pfSense**:
+   - pfSense Documentation: https://docs.netgate.com/pfsense/
+   - pfSense Book: https://docs.netgate.com/pfsense/en/latest/book/
+
+4. **OPNsense**:
+   - OPNsense Documentation: https://docs.opnsense.org/
+   - OPNsense User Guide
+
+### RFCs y Estándares
+
+- **RFC 3234**: Middleboxes: Taxonomy and Issues
+- **RFC 2979**: Behavior of and Requirements for Internet Firewalls
+- **RFC 5245**: Interactive Connectivity Establishment (ICE) - NAT Traversal
+- **NIST SP 800-41**: Guidelines on Firewalls and Firewall Policy
+
+### Herramientas y Recursos Online
+
+- **Testing y Verificación**:
+   - Nmap: https://nmap.org/
+   - ShieldsUP!: https://www.grc.com/shieldsup
+   - CanYouSeeMe.org: http://canyouseeme.org/
+
+- **Distribuciones Especializadas**:
+   - pfSense: https://www.pfsense.org/
+   - OPNsense: https://opnsense.org/
+   - IPFire: https://www.ipfire.org/
+   - Endian Firewall: https://www.endian.com/
+
+- **Laboratorios Virtuales**:
+   - GNS3: https://www.gns3.com/
+   - EVE-NG: https://www.eve-ng.net/
+   - VirtualBox/VMware para testing
