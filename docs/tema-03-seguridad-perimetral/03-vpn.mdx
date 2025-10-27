@@ -26,23 +26,27 @@ Una VPN establece una conexión lógica segura sobre una infraestructura de red 
 
 El **tunneling** es el proceso de encapsular un paquete de datos completo dentro de otro paquete para su transmisión a través de una red.
 
-```
-┌─────────────────────────────────────────────────┐
-│           Paquete Original (Payload)            │
-│  ┌──────────┬─────────────────────────────┐    │
-│  │ IP Header│      Datos Aplicación        │    │
-│  └──────────┴─────────────────────────────┘    │
-│                                                  │
-│              ↓ Encapsulación VPN ↓              │
-│                                                  │
-│  ┌─────────────────────────────────────────┐   │
-│  │ Nuevo IP  │ VPN      │ IP    │  Datos   │   │
-│  │ Header    │ Header   │ Orig. │  Orig.   │   │
-│  │ (Público) │ (Cifrado)│       │          │   │
-│  └─────────────────────────────────────────┘   │
-│                                                  │
-│         Paquete Transmitido por Internet        │
-└─────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "Paquete Original (Payload)"
+        A[IP Header]
+        B[Datos Aplicación]
+    end
+    
+    subgraph "Encapsulación VPN"
+        C[Nuevo IP Header<br/>Público]
+        D[VPN Header<br/>Cifrado]
+        E[IP Original]
+        F[Datos Originales]
+    end
+    
+    A --> C
+    B --> F
+    
+    style C fill:#e1f5ff
+    style D fill:#fff4e1
+    style E fill:#ffe1e1
+    style F fill:#ffe1e1
 ```
 
 **Proceso**:
@@ -235,21 +239,25 @@ Para VPN basadas en certificados:
 - Bypass de censura y geo-restricciones
 
 **Ejemplo de interceptación sin VPN**:
-```
-Usuario ──[HTTP sin cifrar]──> Router WiFi Hotel ──> Internet
-                                    ↑
-                              Atacante con
-                           Wireshark captura
-                         credenciales y datos
+```mermaid
+graph LR
+    A[Usuario] -->|HTTP sin cifrar| B[Router WiFi Hotel]
+    B --> C[Internet]
+    D[Atacante con Wireshark<br/>Captura credenciales] -.-> B
+    
+    style D fill:#ff6b6b
 ```
 
 **Con VPN**:
-```
-Usuario ──[Túnel cifrado AES-256]──> Router WiFi Hotel ──> VPN Gateway ──> Internet
-                                           ↑
-                                    Atacante solo ve
-                                    datos cifrados
-                                   (indescifrables)
+```mermaid
+graph LR
+    A[Usuario] -->|Túnel cifrado AES-256| B[Router WiFi Hotel]
+    B --> C[VPN Gateway]
+    C --> D[Internet]
+    E[Atacante solo ve<br/>datos cifrados<br/>indescifrables] -.-> B
+    
+    style E fill:#ff6b6b
+    style C fill:#51cf66
 ```
 
 ### 2. Acceso Remoto Seguro
@@ -265,14 +273,14 @@ Usuario ──[Túnel cifrado AES-256]──> Router WiFi Hotel ──> VPN Gate
 - Acceso seguro desde dispositivos móviles
 
 **Ejemplo de caso de uso**:
-```
-Empleado remoto (Casa)
-      ↓ VPN
-[Servidor VPN] ←→ [Red Interna]
-                       ├─ Servidor de archivos (SMB)
-                       ├─ Base de datos (MySQL)
-                       ├─ Aplicaciones web internas
-                       └─ Impresoras de red
+```mermaid
+graph TD
+    A[Empleado remoto<br/>Casa] -->|VPN| B[Servidor VPN]
+    B <--> C[Red Interna]
+    C --> D[Servidor de archivos<br/>SMB]
+    C --> E[Base de datos<br/>MySQL]
+    C --> F[Aplicaciones web<br/>internas]
+    C --> G[Impresoras de red]
 ```
 
 ### 3. Conectividad entre Sedes
@@ -412,17 +420,13 @@ Para minimizar impacto en rendimiento:
 - Crítico para organizaciones con teletrabajo intensivo
 
 **Mitigaciones**:
-```
-                      Internet
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-    [VPN Gateway 1]        [VPN Gateway 2]
-      (Activo)               (Standby)
-              │                     │
-              └──────────┬──────────┘
-                         │
-                   [Red Interna]
+```mermaid
+graph TD
+    A[Internet] --> B{Balanceo}
+    B --> C[VPN Gateway 1<br/>Activo]
+    B --> D[VPN Gateway 2<br/>Standby]
+    C --> E[Red Interna]
+    D --> E
 ```
 
 **Alta disponibilidad**:
@@ -439,17 +443,16 @@ Para minimizar impacto en rendimiento:
 - Malware en laptop remota puede propagarse internamente
 
 **Vectores de ataque**:
-```
-Dispositivo Remoto Comprometido
-         │
-         ├─ Malware local
-         ├─ Keylogger captura credenciales
-         ├─ Ransomware se propaga por VPN
-         └─ Backdoor para acceso persistente
-                │
-                ↓ VPN
-          [Red Corporativa]
-         (infectada desde remoto)
+```mermaid
+graph TD
+    A[Dispositivo Remoto<br/>Comprometido] --> B[Malware local]
+    A --> C[Keylogger captura<br/>credenciales]
+    A --> D[Ransomware se<br/>propaga por VPN]
+    A --> E[Backdoor acceso<br/>persistente]
+    E -->|VPN| F[Red Corporativa<br/>infectada desde remoto]
+    
+    style A fill:#ff6b6b
+    style F fill:#ff6b6b
 ```
 
 **Controles necesarios**:
@@ -547,21 +550,12 @@ Las VPN se clasifican según diferentes criterios: propósito, alcance, protocol
 Conecta usuarios individuales (clientes) a una red corporativa desde ubicaciones remotas.
 
 **Arquitectura**:
-```
-┌─────────────┐
-│ Usuario 1   │
-│ (Casa)      │──┐
-└─────────────┘  │
-                 │
-┌─────────────┐  │    Internet    ┌──────────────┐      ┌──────────────┐
-│ Usuario 2   │──┼───────────────→│ VPN Gateway  │──────│ Red Interna  │
-│ (Café)      │  │                 │ (Servidor)   │      │ Corporativa  │
-└─────────────┘  │                 └──────────────┘      └──────────────┘
-                 │
-┌─────────────┐  │
-│ Usuario 3   │──┘
-│ (Hotel)     │
-└─────────────┘
+```mermaid
+graph LR
+    A[Usuario 1<br/>Casa] --> D[VPN Gateway<br/>Servidor]
+    B[Usuario 2<br/>Café] --> D
+    C[Usuario 3<br/>Hotel] --> D
+    D -->|Internet| E[Red Interna<br/>Corporativa]
 ```
 
 **Características**:
@@ -601,26 +595,19 @@ Conecta usuarios individuales (clientes) a una red corporativa desde ubicaciones
 Conecta redes completas entre diferentes ubicaciones físicas, creando una única red lógica extendida.
 
 **Arquitectura**:
-```
-┌────────────────────────┐                    ┌────────────────────────┐
-│   Oficina Central      │                    │   Sucursal Remota      │
-│                        │                    │                        │
-│  ┌──────────────────┐  │                    │  ┌──────────────────┐  │
-│  │ Servidores       │  │                    │  │ PCs Locales      │  │
-│  │ Bases de Datos   │  │                    │  │ Impresoras       │  │
-│  └────────┬─────────┘  │                    │  └────────┬─────────┘  │
-│           │            │                    │           │            │
-│    ┌──────┴──────┐     │                    │    ┌──────┴──────┐     │
-│    │   Switch    │     │                    │    │   Switch    │     │
-│    └──────┬──────┘     │                    │    └──────┬──────┘     │
-│           │            │                    │           │            │
-│    ┌──────┴──────┐     │    Internet        │    ┌──────┴──────┐     │
-│    │ VPN Gateway │◄────┼────────────────────┼───►│ VPN Gateway │     │
-│    │ (Router/FW) │     │  Túnel IPSec       │    │ (Router/FW) │     │
-│    └─────────────┘     │    Cifrado         │    └─────────────┘     │
-│                        │                    │                        │
-│  Red: 10.0.0.0/24      │                    │  Red: 10.1.0.0/24      │
-└────────────────────────┘                    └────────────────────────┘
+```mermaid
+graph TB
+    subgraph "Oficina Central<br/>10.0.0.0/24"
+        A[Servidores<br/>Bases de Datos] --> B[Switch]
+        B --> C[VPN Gateway<br/>Router/FW]
+    end
+    
+    subgraph "Sucursal Remota<br/>10.1.0.0/24"
+        D[PCs Locales<br/>Impresoras] --> E[Switch]
+        E --> F[VPN Gateway<br/>Router/FW]
+    end
+    
+    C <-->|Internet<br/>Túnel IPSec Cifrado| F
 ```
 
 **Características**:
@@ -702,22 +689,19 @@ interface GigabitEthernet0/0
 Caso especial de site-to-site VPN que conecta la red de una organización con redes de partners externos, proveedores o clientes, con acceso controlado y limitado.
 
 **Arquitectura**:
-```
-┌──────────────────────┐                    ┌──────────────────────┐
-│   Tu Empresa         │                    │   Proveedor          │
-│                      │                    │                      │
-│  ┌────────────────┐  │                    │  ┌────────────────┐  │
-│  │ ERP            │  │                    │  │ Sistema de     │  │
-│  │ (Interno)      │  │                    │  │ Inventario     │  │
-│  └────────────────┘  │                    │  └───────┬────────┘  │
-│                      │                    │          │           │
-│  ┌────────────────┐  │                    │  ┌───────┴────────┐  │
-│  │ API Compras    │◄─┼────────────────────┼─►│ API Pedidos    │  │
-│  │ (Compartido)   │  │   VPN Extranet     │  │ (Compartido)   │  │
-│  └────────────────┘  │                    │  └────────────────┘  │
-│                      │                    │                      │
-│  Acceso Limitado     │                    │  Acceso Limitado     │
-└──────────────────────┘                    └──────────────────────┘
+```mermaid
+graph LR
+    subgraph "Tu Empresa"
+        A[ERP<br/>Interno]
+        B[API Compras<br/>Compartido]
+    end
+    
+    subgraph "Proveedor"
+        C[Sistema de<br/>Inventario]
+        D[API Pedidos<br/>Compartido]
+    end
+    
+    B <-->|VPN Extranet<br/>Acceso Limitado| D
 ```
 
 **Características diferenciadoras**:
@@ -773,26 +757,21 @@ Utiliza protocolos SSL/TLS (los mismos que aseguran HTTPS) para crear el túnel 
 **Modos de operación**:
 
 *Modo Portal (Clientless)*:
-```
-Usuario ──[Navegador Web]──> https://vpn.empresa.com
-                                    ↓
-                          Portal Web de Acceso
-                                    ↓
-                      ┌──────────────┴──────────────┐
-                      │                             │
-            Acceso a Aplicaciones Web      Escritorio Remoto
-            (Intranet, SharePoint)         (RDP, VNC)
+```mermaid
+graph TD
+    A[Usuario<br/>Navegador Web] -->|https://vpn.empresa.com| B[Portal Web de Acceso]
+    B --> C[Acceso a Aplicaciones Web<br/>Intranet, SharePoint]
+    B --> D[Escritorio Remoto<br/>RDP, VNC]
 ```
 - Acceso desde navegador sin instalar nada
 - Limitado a aplicaciones web y protocolos específicos
 - Ideal para accesos puntuales o equipos no gestionados
 
 *Modo Túnel (Cliente)*:
-```
-Usuario ──[Cliente SSL VPN]──> VPN Gateway
-                                    ↓
-                            Red Completa
-                        (como VPN tradicional)
+```mermaid
+graph LR
+    A[Usuario<br/>Cliente SSL VPN] --> B[VPN Gateway]
+    B --> C[Red Completa<br/>como VPN tradicional]
 ```
 - Cliente ligero instalable
 - Acceso completo a red (igual que IPSec)
@@ -865,11 +844,10 @@ Suite de protocolos que proporciona seguridad a nivel de capa de red (capa 3 OSI
 **Modos de operación**:
 
 *Modo Transporte*:
-```
-┌──────────┬──────────┬───────────┐
-│ IP Header│ ESP Header│ Datos     │
-│ Original │ (Cifrado) │ (Cifrados)│
-└──────────┴──────────┴───────────┘
+```mermaid
+graph LR
+    A["IP Header<br/>Original"] --> B["ESP Header"]
+    B --> C["Datos<br/>Cifrados"]
 ```
 - Solo cifra el payload, no el header IP
 - IPs origen/destino visibles
@@ -877,12 +855,11 @@ Suite de protocolos que proporciona seguridad a nivel de capa de red (capa 3 OSI
 - Menor overhead
 
 *Modo Túnel*:
-```
-┌─────────┬──────────┬──────────┬──────────┬─────────┐
-│ Nuevo IP│ESP Header│IP Original│  Datos   │ESP      │
-│ Header  │          │+ Payload  │Originales│Trailer  │
-│         │          │(Cifrados) │          │         │
-└─────────┴──────────┴──────────┴──────────┴─────────┘
+```mermaid
+graph LR
+    A["Nuevo IP<br/>Header"] --> B["ESP<br/>Header"]
+    B --> C["IP Original+Payload<br/>Todo Cifrado"]
+    C --> D["ESP<br/>Trailer"]
 ```
 - Cifra paquete IP completo
 - IPs reales ocultas
@@ -892,28 +869,30 @@ Suite de protocolos que proporciona seguridad a nivel de capa de red (capa 3 OSI
 **Fases de establecimiento**:
 
 *Fase 1 (IKE Phase 1 / Main Mode)*:
-```
-Objetivo: Establecer canal seguro para negociar
-┌─────────┐                              ┌─────────┐
-│Cliente  │ ────1. Propuesta────────────>│Servidor │
-│         │ <───2. Aceptación────────────│         │
-│         │ ────3. Intercambio claves────>│         │
-│         │ <───4. Confirmación──────────│         │
-│         │ ────5. Autenticación─────────>│         │
-│         │ <───6. Verificación──────────│         │
-└─────────┘                              └─────────┘
-   Resultado: Túnel ISAKMP seguro (SA)
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant S as Servidor
+    Note over C,S: Objetivo: Establecer canal seguro
+    C->>S: 1. Propuesta
+    S->>C: 2. Aceptación
+    C->>S: 3. Intercambio claves
+    S->>C: 4. Confirmación
+    C->>S: 5. Autenticación
+    S->>C: 6. Verificación
+    Note over C,S: Resultado: Túnel ISAKMP seguro (SA)
 ```
 
 *Fase 2 (IKE Phase 2 / Quick Mode)*:
-```
-Objetivo: Negociar parámetros del túnel datos
-┌─────────┐                              ┌─────────┐
-│Cliente  │ ────1. Propuesta IPSec───────>│Servidor │
-│         │ <───2. Aceptación IPSec──────│         │
-│         │ ────3. Confirmación──────────>│         │
-└─────────┘                              └─────────┘
-   Resultado: Túnel IPSec operativo (SA)
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant S as Servidor
+    Note over C,S: Objetivo: Negociar parámetros del túnel
+    C->>S: 1. Propuesta IPSec
+    S->>C: 2. Aceptación IPSec
+    C->>S: 3. Confirmación
+    Note over C,S: Resultado: Túnel IPSec operativo (SA)
 ```
 
 **Ventajas**:
@@ -942,27 +921,26 @@ Objetivo: Negociar parámetros del túnel datos
 VPN proporcionada por proveedores de servicios (ISP) que utiliza etiquetas MPLS para segregar tráfico de diferentes clientes en una infraestructura compartida.
 
 **Arquitectura**:
-```
-┌──────────┐                                        ┌──────────┐
-│Sucursal A│────┐                              ┌────│Sucursal B│
-└──────────┘    │                              │    └──────────┘
-              ┌─┴─┐                          ┌─┴─┐
-              │CE │                          │CE │
-              │Router                        │Router
-              └─┬─┘                          └─┬─┘
-                │                              │
-              ┌─┴───────────────────────────────┴─┐
-              │    Red MPLS del Proveedor         │
-              │  ┌───┐   ┌───┐   ┌───┐   ┌───┐   │
-              │  │PE │───│P  │───│P  │───│PE │   │
-              │  └───┘   └───┘   └───┘   └───┘   │
-              │                                    │
-              │  Etiquetas MPLS segregan tráfico  │
-              └────────────────────────────────────┘
-
-CE = Customer Edge (router cliente)
-PE = Provider Edge (router proveedor)
-P  = Provider Core (core del proveedor)
+```mermaid
+graph TB
+    A[Sucursal A] --> B[CE Router]
+    C[Sucursal B] --> D[CE Router]
+    
+    B --> E[Red MPLS del Proveedor]
+    D --> E
+    
+    subgraph "Red MPLS"
+        F[PE] --> G[P]
+        G --> H[P]
+        H --> I[PE]
+    end
+    
+    E --> F
+    E --> I
+    
+    style E fill:#e1f5ff
+    
+    Note[CE = Customer Edge router cliente<br/>PE = Provider Edge router proveedor<br/>P = Provider Core core del proveedor<br/>Etiquetas MPLS segregan tráfico]
 ```
 
 **Características**:
@@ -1011,16 +989,14 @@ P  = Provider Core (core del proveedor)
 Combinación de múltiples tecnologías VPN para optimizar coste, rendimiento y flexibilidad.
 
 **Arquitectura típica**:
-```
-                   Sede Central
-                        │
-        ┌───────────────┼───────────────┐
-        │               │               │
-    MPLS (Primario)  IPSec (Backup)  SSL VPN
-        │               │             (Usuarios)
-        │               │               │
-    Sucursal A      Sucursal B      Remotos
-  (Permanente)    (Temporal)      (Móviles)
+```mermaid
+graph TD
+    A[Sede Central] --> B[MPLS - Primario]
+    A --> C[IPSec - Backup]
+    A --> D[SSL VPN - Usuarios Remotos]
+    B --> E[Sucursal A<br/>Permanente]
+    C --> F[Sucursal B<br/>Temporal]
+    D --> G[Empleados Móviles]
 ```
 
 **Estrategias comunes**:
@@ -1099,14 +1075,14 @@ PPTP fue uno de los primeros protocolos VPN, desarrollado por Microsoft en los a
 - **Overhead**: Bajo (~10%)
 
 **Arquitectura**:
-```
-Cliente ──[TCP 1723]──> Servidor PPTP
-            │                │
-         Control          Control
-            │                │
-Cliente ──[GRE]────────> Servidor PPTP
-       (Datos cifrados   (Túnel)
-        con MPPE)
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant S as Servidor PPTP
+    C->>S: TCP 1723 (Control)
+    Note over C,S: Establecimiento de túnel
+    C->>S: GRE (Datos cifrados con MPPE)
+    Note over C,S: Transmisión de datos
 ```
 
 **Proceso de conexión**:
@@ -1186,26 +1162,17 @@ L2TP es un protocolo de túnel (sin cifrado propio) que se combina con IPSec par
 - **Overhead**: Alto (~20-30% debido a doble encapsulación)
 
 **Arquitectura de doble encapsulación**:
-```
-┌────────────────────────────────────────────────────────┐
-│                  Paquete Original                      │
-│  ┌──────┬──────────────────────────────────────┐      │
-│  │ IP   │           Datos                      │      │
-│  └──────┴──────────────────────────────────────┘      │
-│                      ↓                                 │
-│              Encapsulación L2TP                        │
-│  ┌──────┬──────┬────────────────────────────┐         │
-│  │ IP   │ L2TP │  IP Orig + Datos           │         │
-│  └──────┴──────┴────────────────────────────┘         │
-│                      ↓                                 │
-│              Cifrado IPSec                             │
-│  ┌──────┬──────┬────────────────────────────────┐     │
-│  │ IP   │ ESP  │ L2TP + IP Orig + Datos         │     │
-│  │ Ext  │      │      (Cifrado AES)             │     │
-│  └──────┴──────┴────────────────────────────────┘     │
-│                                                        │
-│         Paquete transmitido por Internet               │
-└────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    A["Paquete Original<br/>IP Header | Datos"] 
+    A --> B["Encapsulación L2TP<br/>IP | L2TP | IP Orig + Datos"]
+    B --> C["Cifrado IPSec<br/>IP Ext | ESP | L2TP + IP Orig + Datos<br/>(Cifrado AES)"]
+    C --> D[Paquete transmitido<br/>por Internet]
+    
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#ffe1e1
+    style D fill:#d4edda
 ```
 
 **Proceso de establecimiento**:
@@ -1336,14 +1303,12 @@ IPSec es una suite de protocolos que proporciona seguridad a nivel de capa de re
 #### 1. Protocolos de Seguridad
 
 **AH (Authentication Header) - IP Protocol 51**:
-```
-┌──────┬──────┬────────────────────┐
-│ IP   │  AH  │  Payload Original  │
-│Header│      │  (Sin cifrar)      │
-└──────┴──────┴────────────────────┘
-         │
-         └──> Autenticación e Integridad
-              (No proporciona confidencialidad)
+```mermaid
+graph LR
+    A[IP<br/>Header] --> B[AH] --> C[Payload Original<br/>Sin cifrar]
+    B -.->|Autenticación e Integridad<br/>No confidencialidad| D[ ]
+    
+    style C fill:#ffe1e1
 ```
 - Proporciona: Autenticación, Integridad, Anti-replay
 - No proporciona: Confidencialidad (no cifra)
@@ -1351,14 +1316,14 @@ IPSec es una suite de protocolos que proporciona seguridad a nivel de capa de re
 - Uso actual: Obsoleto, reemplazado por ESP
 
 **ESP (Encapsulating Security Payload) - IP Protocol 50**:
-```
-┌──────┬──────┬────────────────────┬──────────┐
-│ IP   │ ESP  │     Payload        │   ESP    │
-│Header│Header│   (Cifrado AES)    │  Trailer │
-└──────┴──────┴────────────────────┴──────────┘
-         │                              │
-         └─── Cifrado ────────────────┘
-              Autenticación e Integridad
+```mermaid
+graph LR
+    A[IP<br/>Header] --> B[ESP<br/>Header]
+    B --> C[Payload<br/>Cifrado AES]
+    C --> D[ESP<br/>Trailer]
+    B -.->|Cifrado, Autenticación<br/>e Integridad| E[ ]
+    
+    style C fill:#ffe1e1
 ```
 - Proporciona: Confidencialidad, Autenticación, Integridad, Anti-replay
 - Protege: Payload (y opcionalmente header en modo túnel)
@@ -1395,45 +1360,35 @@ IPSec:     [Nuevo IP Header][ESP Header][IP+TCP+Datos (Todo Cifrado)][ESP Traile
 #### 3. IKE (Internet Key Exchange)
 
 **IKEv1 (RFC 2409)**:
-```
-Fase 1 - ISAKMP SA (Main Mode o Aggressive Mode):
-┌─────────┐                                    ┌─────────┐
-│Iniciador│                                    │Responder│
-└────┬────┘                                    └────┬────┘
-     │                                              │
-     │──1. SA Proposal (algoritmos)───────────────>│
-     │<─2. SA Accept (selecciona algoritmos)───────│
-     │──3. Key Exchange (DH public key)───────────>│
-     │<─4. Key Exchange (DH public key)────────────│
-     │──5. Identity + Auth (cifrado con DH key)──>│
-     │<─6. Identity + Auth (cifrado con DH key)────│
-     │                                              │
-     └──────── Túnel ISAKMP establecido ───────────┘
-              (Protege Fase 2)
-
-Fase 2 - IPSec SA (Quick Mode):
-     │──1. IPSec Proposal (transform sets)────────>│
-     │<─2. IPSec Accept────────────────────────────│
-     │──3. Confirm─────────────────────────────────>│
-     │                                              │
-     └───── Túnel IPSec operativo para datos ──────┘
+```mermaid
+sequenceDiagram
+    participant I as Iniciador
+    participant R as Responder
+    Note over I,R: Fase 1 - ISAKMP SA (Main Mode)
+    I->>R: 1. SA Proposal (algoritmos)
+    R->>I: 2. SA Accept
+    I->>R: 3. Key Exchange (DH public key)
+    R->>I: 4. Key Exchange (DH public key)
+    I->>R: 5. Identity + Auth (cifrado)
+    R->>I: 6. Verificación
+    Note over I,R: Túnel ISAKMP establecido (Protege Fase 2)
+    I->>R: 7. IPSec Proposal (transform sets)
+    R->>I: 8. IPSec Accept
+    I->>R: 9. Confirm
+    Note over I,R: Túnel IPSec operativo para datos
 ```
 
 **IKEv2 (RFC 7296)** - Versión moderna:
-```
-Simplificación: Solo 4 mensajes (vs 6-9 en IKEv1)
-
-┌─────────┐                                    ┌─────────┐
-│Iniciador│                                    │Responder│
-└────┬────┘                                    └────┬────┘
-     │                                              │
-     │──IKE_SA_INIT (SA, KE, Nonce)──────────────>│
-     │<─IKE_SA_INIT (SA, KE, Nonce)───────────────│
-     │                                              │
-     │──IKE_AUTH (IDi, AUTH, SAi2, TSi, TSr)─────>│
-     │<─IKE_AUTH (IDr, AUTH, SAr2, TSi, TSr)──────│
-     │                                              │
-     └──── Túnel completo en 2 round-trips ────────┘
+```mermaid
+sequenceDiagram
+    participant I as Iniciador
+    participant R as Responder
+    Note over I,R: Simplificación: Solo 4 mensajes (vs 6-9 en IKEv1)
+    I->>R: IKE_SA_INIT (SA, KE, Nonce)
+    R->>I: IKE_SA_INIT (SA, KE, Nonce)
+    I->>R: IKE_AUTH (IDi, AUTH, SAi2, TSi, TSr)
+    R->>I: IKE_AUTH (IDr, AUTH, SAr2, TSi, TSr)
+    Note over I,R: Túnel completo en 2 round-trips
 ```
 
 **Ventajas IKEv2 sobre IKEv1**:
@@ -1585,43 +1540,21 @@ OpenVPN es una solución VPN open-source basada en SSL/TLS que utiliza la biblio
 - **Interfaz de red**: TUN (capa 3) o TAP (capa 2)
 
 **Arquitectura**:
-```
-┌────────────────────────────────────────────────────────┐
-│                  Cliente OpenVPN                       │
-│  ┌──────────────────────────────────────────────┐     │
-│  │  Aplicación (SSH, HTTP, etc.)                │     │
-│  └───────────────────┬──────────────────────────┘     │
-│                      │                                 │
-│  ┌───────────────────▼──────────────────────────┐     │
-│  │  Interfaz Virtual (tun0 / 10.8.0.2)          │     │
-│  └───────────────────┬──────────────────────────┘     │
-│                      │                                 │
-│  ┌───────────────────▼──────────────────────────┐     │
-│  │  OpenVPN Process                              │     │
-│  │  - Cifra con AES-256-GCM                      │     │
-│  │  - Encapsula en SSL/TLS                       │     │
-│  │  - Envuelve en UDP/TCP                        │     │
-│  └───────────────────┬──────────────────────────┘     │
-└────────────────────┬─┴────────────────────────────────┘
-                     │
-              ═══════╪═══════ Internet ══════════
-                     │
-┌────────────────────▼─────────────────────────────────┐
-│              Servidor OpenVPN                         │
-│  ┌──────────────────────────────────────────────┐   │
-│  │  OpenVPN Process                              │   │
-│  │  - Descifra                                   │   │
-│  │  - Desencapsula                               │   │
-│  │  - Rutea a red interna                        │   │
-│  └───────────────────┬──────────────────────────┘   │
-│                      │                               │
-│  ┌───────────────────▼──────────────────────────┐   │
-│  │  Interfaz Virtual (tun0 / 10.8.0.1)          │   │
-│  └───────────────────┬──────────────────────────┘   │
-│                      │                               │
-│                      ▼                               │
-│               [Red Interna LAN]                      │
-└──────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "Cliente OpenVPN"
+        A[Aplicación<br/>SSH, HTTP, etc.]
+        A --> B[Interfaz Virtual<br/>tun0 / 10.8.0.2]
+        B --> C[OpenVPN Process<br/>- Cifra AES-256-GCM<br/>- Encapsula SSL/TLS<br/>- Envuelve UDP/TCP]
+    end
+    
+    C <-->|Internet| D
+    
+    subgraph "Servidor OpenVPN"
+        D[OpenVPN Process<br/>- Descifra<br/>- Desencapsula<br/>- Rutea a red interna]
+        D --> E[Interfaz Virtual<br/>tun0 / 10.8.0.1]
+        E --> F[Red Interna LAN]
+    end
 ```
 
 **Modos de operación**:
@@ -1934,35 +1867,19 @@ Si los algoritmos quedan obsoletos (muy improbable antes de 2030+), se lanzará 
 :::
 
 **Arquitectura**:
-```
-┌──────────────────────────────────────────────────┐
-│  Peer A (Cliente)                                │
-│  ┌─────────────────────────────────────────┐    │
-│  │ wg0: 10.0.0.2/24                        │    │
-│  │ Private Key: aaaa...                    │    │
-│  │ Public Key:  AAAA...                    │    │
-│  └──────────────┬──────────────────────────┘    │
-│                 │                                │
-│  [peer]         │                                │
-│  PublicKey = BBBB...  (Peer B)                  │
-│  Endpoint = 203.0.113.50:51820                  │
-│  AllowedIPs = 10.0.0.0/24, 192.168.1.0/24       │
-└─────────────────┼────────────────────────────────┘
-                  │
-         ═════════╪═════════ Internet ══════════
-                  │
-┌─────────────────▼────────────────────────────────┐
-│  Peer B (Servidor)                               │
-│  ┌─────────────────────────────────────────┐    │
-│  │ wg0: 10.0.0.1/24                        │    │
-│  │ Private Key: bbbb...                    │    │
-│  │ Public Key:  BBBB...                    │    │
-│  └──────────────┬──────────────────────────┘    │
-│                 │                                │
-│  [peer]         │                                │
-│  PublicKey = AAAA...  (Peer A)                  │
-│  AllowedIPs = 10.0.0.2/32                       │
-└─────────────────┴────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "Peer A - Cliente<br/>wg0: 10.0.0.2/24"
+        A[Private Key: aaaa...<br/>Public Key: AAAA...]
+        A --> B[peer config:<br/>PublicKey = BBBB...<br/>Endpoint = 203.0.113.50:51820<br/>AllowedIPs = 10.0.0.0/24, 192.168.1.0/24]
+    end
+    
+    B <-->|Internet| C
+    
+    subgraph "Peer B - Servidor<br/>wg0: 10.0.0.1/24"
+        C[peer config:<br/>PublicKey = AAAA...<br/>AllowedIPs = 10.0.0.2/32]
+        C --> D[Private Key: bbbb...<br/>Public Key: BBBB...]
+    end
 ```
 
 **Conceptos clave de WireGuard**:
@@ -2297,25 +2214,27 @@ En esta sección veremos ejemplos prácticos y completos de configuración de VP
 **Objetivo**: Configurar un servidor OpenVPN para acceso remoto de empleados, con autenticación mediante certificados y usuario/contraseña.
 
 **Arquitectura**:
-```
-┌─────────────────┐                          ┌──────────────────────┐
-│ Empleado Remoto │                          │  Servidor OpenVPN    │
-│                 │                          │  (Ubuntu 22.04)      │
-│  - Laptop       │      Internet            │                      │
-│  - Cliente VPN  │◄─────────────────────────►│  IP: 203.0.113.10   │
-│  - Certificado  │   Túnel Cifrado          │  Puerto: 1194/UDP   │
-│                 │   AES-256-GCM            │                      │
-└─────────────────┘                          └──────────┬───────────┘
-                                                        │
-                                                        │
-                                              ┌─────────▼───────────┐
-                                              │   Red Corporativa   │
-                                              │   192.168.1.0/24    │
-                                              │                     │
-                                              │  - Servidores       │
-                                              │  - Bases de Datos   │
-                                              │  - Recursos         │
-                                              └─────────────────────┘
+```mermaid
+graph TB
+    subgraph "Empleado Remoto"
+        A[Laptop<br/>Cliente VPN<br/>Certificado]
+    end
+    
+    A <-->|Internet<br/>Túnel Cifrado<br/>AES-256-GCM| B
+    
+    subgraph "Servidor OpenVPN<br/>Ubuntu 22.04<br/>IP: 203.0.113.10<br/>Puerto: 1194/UDP"
+        B[OpenVPN Server]
+    end
+    
+    B --> C
+    
+    subgraph "Red Corporativa<br/>192.168.1.0/24"
+        C[Recursos]
+        D[Servidores]
+        E[Bases de Datos]
+        C --- D
+        D --- E
+    end
 ```
 
 #### Paso 1: Instalación del Servidor
@@ -2706,36 +2625,20 @@ plugin /usr/lib/openvpn/openvpn-auth-ldap.so /etc/openvpn/auth/ldap.conf
 **Objetivo**: Conectar dos oficinas mediante WireGuard, permitiendo comunicación transparente entre sus redes locales.
 
 **Arquitectura**:
-```
-┌───────────────────────────────────────┐              ┌───────────────────────────────────────┐
-│       Oficina Central (Vigo)        │              │     Sucursal Remota (Ourense)       │
-│                                       │              │                                       │
-│  Red LAN: 192.168.1.0/24              │              │  Red LAN: 192.168.2.0/24              │
-│                                       │              │                                       │
-│  ┌─────────────────────────────────┐  │              │  ┌─────────────────────────────────┐  │
-│  │  Servidores, PCs, Impresoras    │  │              │  │  PCs, Impresoras                │  │
-│  └──────────────┬──────────────────┘  │              │  └──────────────┬──────────────────┘  │
-│                 │                     │              │                 │                     │
-│          ┌──────┴──────┐              │              │          ┌──────┴──────┐              │
-│          │   Switch    │              │              │          │   Switch    │              │
-│          └──────┬──────┘              │              │          └──────┬──────┘              │
-│                 │                     │              │                 │                     │
-│       ┌─────────┴─────────┐           │              │       ┌─────────┴─────────┐           │
-│       │ Gateway WireGuard │           │              │       │ Gateway WireGuard │           │
-│       │ wg0: 10.99.0.1/24 │           │              │       │ wg0: 10.99.0.2/24 │           │
-│       │ eth0: 192.168.1.1 │           │              │       │ eth0: 192.168.2.1 │           │
-│       └─────────┬─────────┘           │              │       └─────────┬─────────┘           │
-│                 │                     │              │                 │                     │
-│         IP Pública: 203.0.113.10      │              │         IP Pública: 198.51.100.20     │
-└─────────────────┼─────────────────────┘              └─────────────────┼─────────────────────┘
-                  │                                                      │
-                  │                    Internet                          │
-                  │            ═══════════════════════════               │
-                  └──────────────────────┬───────────────────────────────┘
-                                         │
-                              Túnel WireGuard Cifrado
-                              (ChaCha20-Poly1305)
-                              Puerto UDP 51820
+```mermaid
+graph TB
+    subgraph "Oficina Central - Vigo<br/>Red LAN: 192.168.1.0/24"
+        A[Servidores, PCs<br/>Impresoras] --> B[Switch]
+        B --> C[Gateway WireGuard<br/>wg0: 10.99.0.1/24<br/>eth0: 192.168.1.1<br/>IP Pública: 203.0.113.10]
+    end
+    
+    C <-->|Internet<br/>Túnel WireGuard Cifrado<br/>ChaCha20-Poly1305<br/>Puerto UDP 51820| D
+    
+    subgraph "Sucursal Remota - Ourense<br/>Red LAN: 192.168.2.0/24"
+        D[Gateway WireGuard<br/>wg0: 10.99.0.2/24<br/>eth0: 192.168.2.1<br/>IP Pública: 198.51.100.20]
+        D --> E[Switch]
+        E --> F[PCs<br/>Impresoras]
+    end
 ```
 
 #### Paso 1: Instalación en Ambos Gateways
@@ -3055,21 +2958,17 @@ PersistentKeepalive = 25
 **Objetivo**: Conectar sede central con sucursal usando IPSec IKEv2, autenticación con certificados.
 
 **Arquitectura**:
-```
-┌─────────────────────────────────┐         ┌─────────────────────────────────┐
-│    Sede Central (10.0.0.0/24)   │         │    Sucursal (10.1.0.0/24)       │
-│                                 │         │                                 │
-│    ┌────────────────────┐       │         │    ┌────────────────────┐       │
-│    │ Gateway strongSwan │       │         │    │ Gateway strongSwan │       │
-│    │ eth0: 203.0.113.10 │       │         │    │ eth0: 198.51.100.20│       │
-│    │ eth1: 10.0.0.1     │       │         │    │ eth1: 10.1.0.1     │       │
-│    └────────┬───────────┘       │         │    └────────┬───────────┘       │
-│             │                   │         │             │                   │
-└─────────────┼───────────────────┘         └─────────────┼───────────────────┘
-              │                                           │
-              └─────────────► Internet ◄──────────────────┘
-                         IPSec Túnel
-                      AES-256, SHA-384
+```mermaid
+graph LR
+    subgraph "Sede Central<br/>10.0.0.0/24"
+        A[Gateway strongSwan<br/>eth0: 203.0.113.10<br/>eth1: 10.0.0.1]
+    end
+    
+    A <-->|Internet<br/>IPSec Túnel<br/>AES-256, SHA-384| B
+    
+    subgraph "Sucursal<br/>10.1.0.0/24"
+        B[Gateway strongSwan<br/>eth0: 198.51.100.20<br/>eth1: 10.1.0.1]
+    end
 ```
 
 #### Paso 1: Instalación en Ambos Gateways

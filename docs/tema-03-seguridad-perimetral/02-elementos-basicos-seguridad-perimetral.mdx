@@ -65,15 +65,13 @@ Las organizaciones modernas necesitan conectarse a Internet para proporcionar se
 
 En el escenario más básico (y menos seguro), todos los sistemas están en la misma red y comparten la misma conexión a Internet sin ninguna segmentación.
 
-```
-Internet
-   |
-[Router]
-   |
-   +-- Servidor Web
-   +-- Servidor Base de Datos
-   +-- Estaciones de Trabajo
-   +-- Servidores Internos
+```mermaid
+graph TD
+    A[Internet] --> B[Router]
+    B --> C[Servidor Web]
+    B --> D[Servidor Base de Datos]
+    B --> E[Estaciones de Trabajo]
+    B --> F[Servidores Internos]
 ```
 
 **Problemas**:
@@ -92,16 +90,13 @@ Internet
 
 Introduce un firewall entre Internet y la red interna, estableciendo un punto de control centralizado.
 
-```
-Internet
-   |
-[Router/Firewall]
-   |
-[Switch]
-   |
-   +-- Red Interna
-        +-- Servidores
-        +-- Estaciones de Trabajo
+```mermaid
+graph TD
+    A[Internet] --> B[Router/Firewall]
+    B --> C[Switch]
+    C --> D[Red Interna]
+    D --> E[Servidores]
+    D --> F[Estaciones de Trabajo]
 ```
 
 **Ventajas**:
@@ -119,22 +114,18 @@ Internet
 
 Implementa una **Zona Desmilitarizada (DMZ)** que segrega los servicios públicos de la red interna.
 
-```
-                    Internet
-                       |
-                  [Firewall 1]
-                  (Externo)
-                       |
-                     [DMZ]
-            +----------+----------+
-       Servidor Web  Servidor Mail  Proxy
-                       |
-                  [Firewall 2]
-                  (Interno)
-                       |
-                  [Red Interna]
-            +----------+----------+
-       Servidores    BD    Estaciones
+```mermaid
+graph TD
+    A[Internet] --> B[Firewall 1<br/>Externo]
+    B --> C[DMZ]
+    C --> D[Servidor Web]
+    C --> E[Servidor Mail]
+    C --> F[Proxy]
+    C --> G[Firewall 2<br/>Interno]
+    G --> H[Red Interna]
+    H --> I[Servidores]
+    H --> J[BD]
+    H --> K[Estaciones]
 ```
 
 **Características**:
@@ -163,24 +154,17 @@ Implementa una **Zona Desmilitarizada (DMZ)** que segrega los servicios público
 
 Para organizaciones con requisitos complejos, se pueden implementar múltiples DMZ con diferentes niveles de seguridad.
 
-```
-Internet
-   |
-[Firewall Externo]
-   |
-   +-- [DMZ Pública] - Servidores web de cara al público
-   |
-[Firewall Intermedio]
-   |
-   +-- [DMZ Corporativa] - Portales de empleados, VPN
-   |
-[Firewall Interno]
-   |
-[Red Interna]
-   |
-   +-- [Segmento Usuarios]
-   +-- [Segmento Servidores]
-   +-- [Segmento Crítico/BD]
+```mermaid
+graph TD
+    A[Internet] --> B[Firewall Externo]
+    B --> C[DMZ Pública<br/>Servidores web públicos]
+    C --> D[Firewall Intermedio]
+    D --> E[DMZ Corporativa<br/>Portales empleados, VPN]
+    E --> F[Firewall Interno]
+    F --> G[Red Interna]
+    G --> H[Segmento Usuarios]
+    G --> I[Segmento Servidores]
+    G --> J[Segmento Crítico/BD]
 ```
 
 **Ventajas**:
@@ -214,14 +198,12 @@ El propósito principal de una DMZ es proporcionar servicios accesibles desde In
 
 Utiliza un único firewall con tres interfaces de red:
 
-```
-                 Internet (eth0)
-                      |
-                 [Firewall]
-                      |
-         +------------+------------+
-         |            |            |
-    DMZ (eth1)   LAN (eth2)   Gestión (eth3)
+```mermaid
+graph TD
+    A[Internet<br/>eth0] --> B[Firewall]
+    B --> C[DMZ<br/>eth1]
+    B --> D[LAN<br/>eth2]
+    B --> E[Gestión<br/>eth3]
 ```
 
 **Ventajas**:
@@ -266,18 +248,12 @@ iptables -A FORWARD -i eth1 -o eth0 -p tcp --dport 443 -j ACCEPT
 
 Implementa dos firewalls independientes para mayor seguridad:
 
-```
-     Internet
-        |
-   [Firewall 1]
-     Externo
-        |
-      [DMZ]
-        |
-   [Firewall 2]
-     Interno
-        |
-    [Red LAN]
+```mermaid
+graph TD
+    A[Internet] --> B[Firewall 1<br/>Externo]
+    B --> C[DMZ]
+    C --> D[Firewall 2<br/>Interno]
+    D --> E[Red LAN]
 ```
 
 **Ventajas**:
@@ -630,12 +606,12 @@ Es importante entender las diferencias y relaciones entre estos dispositivos:
 | **Filtrado de contenido** | No | Sí (antivirus, anti-spam, URL filtering) |
 
 **Arquitectura típica**:
-```
-Internet ←→ [Router Frontera] ←→ [Firewall] ←→ [Switch Core] ←→ Red Interna
-                  │                    │                │
-              Enrutamiento         Seguridad      Distribución
-                  NAT              Filtrado        VLANs
-              QoS Básico         IDS/IPS          QoS
+```mermaid
+graph LR
+    A[Internet] <--> B[Router Frontera<br/>Enrutamiento<br/>NAT<br/>QoS Básico]
+    B <--> C[Firewall<br/>Seguridad<br/>Filtrado<br/>IDS/IPS]
+    C <--> D[Switch Core<br/>Distribución<br/>VLANs<br/>QoS]
+    D <--> E[Red Interna]
 ```
 
 **Ventajas de separar Router y Firewall**:

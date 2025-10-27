@@ -41,10 +41,19 @@ El **proxy directo** es el tipo más común, ubicado entre los clientes internos
 - Cachea contenido para mejorar rendimiento
 
 **Flujo de funcionamiento**:
-```
-Cliente → Proxy Directo → Internet → Servidor Web
-   ↑                                      ↓
-   ← Proxy Directo ← Internet ← Respuesta ←
+```mermaid
+sequenceDiagram
+    participant Cliente
+    participant Proxy as Proxy Directo
+    participant Internet
+    participant Servidor as Servidor Web
+    
+    Cliente->>Proxy: Solicitud HTTP
+    Proxy->>Internet: Reenvía solicitud
+    Internet->>Servidor: Solicitud
+    Servidor->>Internet: Respuesta
+    Internet->>Proxy: Respuesta
+    Proxy->>Cliente: Respuesta HTTP
 ```
 
 **Configuración típica**:
@@ -87,10 +96,21 @@ El **proxy inverso** se sitúa frente a uno o más servidores web, interceptando
 - Protección de servidores internos
 
 **Flujo de funcionamiento**:
-```
-Cliente Internet → Proxy Inverso → Servidor Web Interno
-                        ↓                ↑
-                   [Balanceador]     [Pool de Servidores]
+```mermaid
+graph LR
+    Cliente[Cliente Internet] --> Proxy[Proxy Inverso]
+    Proxy --> Balanceador[Balanceador de Carga]
+    Balanceador --> Pool[Pool de Servidores]
+    Pool --> S1[Servidor Web 1]
+    Pool --> S2[Servidor Web 2]
+    Pool --> S3[Servidor Web 3]
+    
+    S1 --> Pool
+    S2 --> Pool
+    S3 --> Pool
+    Pool --> Balanceador
+    Balanceador --> Proxy
+    Proxy --> Cliente
 ```
 
 ### Funciones Específicas de Proxy

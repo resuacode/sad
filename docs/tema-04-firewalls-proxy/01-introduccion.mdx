@@ -39,3 +39,118 @@ En este tema ahondaremos más en los firewalls y también en los servidores prox
     - Pruebas de funcionamiento y monitorización.
     - Documentación de instalación y configuración.
     - Beneficios y desventajas de usar un proxy.
+
+## Ejercicios prácticos
+
+### Ejercicio Práctico 1: Configuración y Prueba de Firewall con IPTables/UFW
+**Objetivo**: Configurar un firewall básico en un sistema Linux y probar su funcionamiento, además de analizar sus logs.
+
+**Escenario**: Tienes una máquina virtual (MV1) con Ubuntu Server, que actuará como firewall/router, y otra máquina virtual (MV2) en la misma red interna, además de acceso a Internet (simulado por la NAT de VirtualBox).
+
+**Tareas**:
+- **Configuración de red en MV1**: Configura dos interfaces de red: eth0 (conectada a Internet vía NAT) y eth1 (conectada a una "Red Interna" de VirtualBox, por ejemplo, 192.168.10.1/24). Habilita el reenvío de IP (ip_forward).
+- **Configuración de IPTables/UFW en MV1**:
+    - Establece la política por defecto de FORWARD a DROP.
+    - Crea una regla MASQUERADE para permitir la salida a Internet desde la red interna (NAT).
+    - Permite el tráfico SSH (puerto 22) entrante a MV1 solo desde tu máquina anfitriona (host).
+    - Permite el tráfico HTTP (puerto 80) y HTTPS (puerto 443) saliente desde la red interna hacia Internet.
+    - Deniega todo el tráfico entrante a la red interna desde Internet (excepto el relacionado con conexiones salientes ya establecidas).
+    - Añade una regla para registrar los paquetes denegados (-j LOG).
+- **Pruebas desde MV2**:
+    - Verifica que MV2 puede acceder a Internet (navegar por HTTP/HTTPS).
+    - Intenta acceder a un servicio en MV2 (ej. un servidor web en el puerto 80) desde tu máquina anfitriona o desde otra VM externa (debería ser denegado por el firewall de MV1).
+    - Intenta hacer ping a una IP externa desde MV2 (debería funcionar). Intenta hacer ping a MV2 desde el exterior (debería ser denegado).
+- **Análisis de Logs en MV1**: Revisa los logs del sistema (/var/log/syslog o dmesg) para identificar las entradas de los paquetes denegados por tu firewall.
+
+**Entrega**: Documento con el diagrama de red, los comandos iptables/UFW utilizados, capturas de pantalla de la configuración del firewall, y los resultados de las pruebas de conectividad y del análisis de logs.
+
+
+### Ejercicio Práctico 2: Configuración de un Servidor Proxy Squid y Proxy Inverso
+**Objetivo**: Instalar y configurar un servidor proxy Squid para diferentes funciones (caché, filtro de contenido, autenticación básica) y configurar un proxy inverso con Nginx.
+
+**Escenario**: Tienes dos o tres máquinas virtuales: MV1 (Ubuntu Server para Squid), MV2 (Ubuntu Server para Nginx como proxy inverso y un servidor web simple), MV3 (cliente Windows/Linux).
+
+**Tareas**:
+- **Configuración de Squid (en MV1)**:
+    - Instala Squid.
+    - Configura Squid para escuchar en el puerto 3128.
+    - Configura la caché de disco (ej. 5GB).
+    - Crea una ACL para tu red interna (192.168.10.0/24).
+    - Crea un fichero de usuarios para autenticación básica y configúralo en Squid.
+    - Crea reglas para:
+        - Permitir el acceso solo a usuarios autenticados.
+        - Denegar el acceso a dominios específicos (ej. facebook.com, youtube.com).
+        - Denegar URLs que contengan palabras clave (ej. "casino", "warez").
+- **Configura un cliente** (MV3) para usar este proxy y verifica las restricciones.
+Revisa los logs de acceso de Squid.
+- **Configuración de Nginx como Proxy Inverso (en MV2)**:
+    - Instala Nginx y un servidor web muy básico (ej. apache2 con una página HTML simple en el puerto 8080).
+    - Configura Nginx para actuar como proxy inverso para ese servidor web. Nginx debería escuchar en el puerto 80 y reenviar las peticiones al servidor web interno (ej. localhost:8080).
+    - Accede al servidor web a través de Nginx desde MV3.
+
+**Entrega**: Documento con los ficheros de configuración de Squid y Nginx (squid.conf, nginx.conf o sites-available/default), capturas de pantalla de la configuración del cliente, y las pruebas de funcionamiento para cada escenario (acceso/denegación de sitios, caché, autenticación en Squid, acceso a través de proxy inverso). Análisis de los logs de Squid y Nginx.
+
+### Estructura de Entrega y Evaluación
+
+Cada estudiante debe resolver los 3 ejercicios prácticos propuestos en este tema. La evaluación se basará en:
+
+:::info 📋 Formato de Entrega
+La entrega consiste en un **único documento PDF** que debe seguir las normas establecidas en:
+
+👉 **[Formato de Entregas](../formato-entregas.mdx)**
+
+El documento debe contener la resolución completa de los 3 ejercicios del bloque asignado.
+:::
+
+
+#### Formato y Contenido del Documento PDF
+
+El documento debe incluir **obligatoriamente**:
+
+1. **Portada** con:
+   - Título: "Tema 4: Firewalls y Proxies"
+   - Nombre completo del estudiante
+   - Módulo: Seguridad y Alta Disponibilidad
+   - Fecha de entrega
+   - Número de bloque asignado
+
+2. **Índice** numerado con enlaces a cada sección
+
+3. **Resolución de cada ejercicio** (uno por apartado) que incluya:
+   - **Introducción:** Breve descripción del objetivo del ejercicio
+   - **Procedimiento:** Pasos seguidos detalladamente con:
+     - Comandos ejecutados (con sintaxis resaltada o en bloques de código)
+     - Configuraciones realizadas (archivos modificados, parámetros)
+     - Capturas de pantalla numeradas y tituladas mostrando:
+       - Proceso de configuración
+       - Resultados obtenidos
+       - Verificaciones de funcionamiento
+   - **Análisis de resultados:** Interpretación de los resultados obtenidos
+   - **Problemas encontrados y soluciones:** Documentar dificultades y cómo se resolvieron
+   - **Conclusiones del ejercicio:** Aprendizajes y reflexiones
+
+4. **Conclusiones generales del bloque:** Síntesis de lo aprendido en los 2 ejercicios
+
+5. **Referencias:** Fuentes consultadas (documentación oficial, tutoriales, etc.)
+
+6. **Anexo sobre uso de IA** (obligatorio según normativa de formato de entregas)
+
+:::warning Normas de Formato
+El documento **DEBE** cumplir estrictamente con todas las especificaciones del [Formato de Entregas](../formato-entregas.mdx)
+:::
+
+---
+
+#### Rúbrica de Evaluación
+
+La evaluación del bloque asignado se realizará sobre **10 puntos** con la siguiente distribución:
+
+| Criterio | Ejercicio 1 | Ejercicio 2 | Calidad de la Memoria | **Total** |
+|----------|--------------|--------------|--------------|----------------------|-----------|
+| **Puntuación** | 4 puntos | 4 puntos  | 2 puntos | **10 puntos** |
+
+#### Nombre del archivo de entrega
+
+El archivo PDF debe nombrarse siguiendo la convención:
+
+`Tema4_Firewalls_y_Proxies_Apellido1_Apellido2_Nombre.pdf`
