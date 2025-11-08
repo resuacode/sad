@@ -935,28 +935,16 @@ Monitoriza la actividad en un host individual.
 
 La efectividad de un IDS depende de su ubicación estratégica:
 
-```
-                          Internet
-                             |
-                        [Firewall]
-                             |
-                +------------+------------+
-                |                         |
-              [IDS 1]                   [DMZ]
-          (Exterior)              Servidores Públicos
-                                        |
-                                   [Firewall]
-                                        |
-                                   [IDS 2]
-                                   (Interno)
-                                        |
-                                  [Red Interna]
-                                        |
-                           +------------+------------+
-                           |                         |
-                      [IDS 3]                   Servidores
-                   (Segmento                    Críticos
-                    Crítico)
+```mermaid
+graph TD
+    A[Internet] --> B[Firewall]
+    B --> C[IDS 1<br/>(Exterior)]
+    B --> D[DMZ<br/>Servidores Públicos]
+    D --> E[Firewall]
+    E --> F[IDS 2<br/>(Interno)]
+    F --> G[Red Interna]
+    G --> H[IDS 3<br/>(Segmento Crítico)]
+    G --> I[Servidores Críticos]
 ```
 
 **IDS 1 (Externo)**: 
