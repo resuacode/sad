@@ -1,0 +1,98 @@
+---
+sidebar_position: 4
+title: Auditorías y Vulnerabilidades
+---
+
+# Auditorías de Seguridad y Detección de Vulnerabilidades
+
+## Realización de Auditorías de Seguridad
+Una auditoría de seguridad es una evaluación sistemática de la seguridad del sistema de información de una empresa midiendo qué tan bien se ajusta a un conjunto de criterios establecidos.
+
+### Metodologías Estándar
+-   **OSSTMM (Open Source Security Testing Methodology Manual)**: Se centra en métricas operacionales. Evalúa seguridad física, humana, inalámbrica, telecomunicaciones y redes de datos.
+-   **OWASP (Open Web Application Security Project)**: Estándar de facto para seguridad web. Su "Top 10" lista las vulnerabilidades más críticas (Inyección SQL, XSS, Fallos de autenticación).
+-   **NIST SP 800-115**: Guía técnica del gobierno de EE.UU. para pruebas y evaluaciones de seguridad.
+-   **PTES (Penetration Testing Execution Standard)**: Define las fases de un pentest de forma muy detallada.
+
+## Riesgos Potenciales y Puntuación (CVSS)
+No todas las vulnerabilidades son iguales. Para priorizar, se usa el **CVSS (Common Vulnerability Scoring System)**.
+-   **Puntuación Base (0.0 - 10.0)**: Gravedad intrínseca.
+    -   **Vector de Ataque**: ¿Se puede explotar remoto o requiere acceso físico?
+    -   **Complejidad**: ¿Es fácil o difícil de explotar?
+    -   **Impacto**: ¿Afecta a la Confidencialidad, Integridad o Disponibilidad (CIA)?
+-   **Niveles**:
+    -   **Crítico (9.0 - 10.0)**: Ejecución remota de código (RCE) sin autenticación. Parchear INMEDIATAMENTE.
+    -   **Alto (7.0 - 8.9)**: Inyección SQL, acceso a datos sensibles.
+    -   **Medio (4.0 - 6.9)**: XSS reflejado, denegación de servicio parcial.
+
+## Software para Detección de Vulnerabilidades (Escáneres)
+Herramientas automatizadas que comprueban sistemas en busca de fallos conocidos (CVEs).
+
+-   **Nessus**: El estándar comercial. Base de datos de plugins enorme y actualizada.
+-   **OpenVAS (Greenbone)**: Alternativa Open Source. Muy potente pero requiere más configuración.
+-   **Nmap (con scripts NSE)**: Nmap no es solo un escáner de puertos. Su *Nmap Scripting Engine* es muy versátil.
+
+**Ejemplo Práctico con Nmap:**
+```bash
+# Escaneo de servicios y versiones (fundamental para saber qué buscar)
+nmap -sV -O 192.168.1.10
+
+# Escaneo agresivo buscando vulnerabilidades conocidas (usando categoría 'vuln')
+# Esto lanzará scripts que comprueban CVEs específicos contra los servicios detectados
+nmap --script vuln 192.168.1.10
+```
+
+## Intentos de Penetración (PenTesting)
+Simulación de un ciberataque real para evaluar la seguridad del sistema. A diferencia del escaneo de vulnerabilidades (que solo lista fallos), el pentesting intenta **explotarlos** para ver hasta dónde se puede llegar.
+
+### Tipología
+1.  **Caja Negra (Black Box)**: El auditor no tiene información previa. Simula un atacante externo. Prueba la seguridad perimetral.
+2.  **Caja Blanca (White Box)**: Acceso total (código fuente, diagramas). Simula ataque interno o busca fallos lógicos profundos.
+3.  **Caja Gris (Gray Box)**: Información parcial (ej. usuario/password de empleado). Simula un empleado descontento o una cuenta comprometida.
+
+### Fases de un Pentest (PTES)
+1.  **Reconocimiento (OSINT)**: Recopilar emails, dominios, IPs sin tocar el objetivo.
+2.  **Escaneo y Enumeración**: Descubrir puertos abiertos, servicios y versiones.
+3.  **Análisis de Vulnerabilidades**: Mapear servicios a posibles fallos.
+4.  **Explotación**: Usar exploits (Metasploit, scripts custom) para ganar acceso inicial.
+5.  **Post-Explotación**:
+    -   **Escalada de Privilegios**: Pasar de usuario web (`www-data`) a `root`.
+    -   **Movimiento Lateral**: Saltar a otros servidores de la red.
+    -   **Persistencia**: Instalar backdoors para mantener el acceso.
+6.  **Borrado de Huellas**: Limpiar logs para no ser detectado.
+7.  **Informe**: Reporte técnico y ejecutivo.
+
+**Herramienta Clave: Metasploit Framework**
+```bash
+# Ejemplo conceptual de uso de Metasploit (msfconsole)
+# 1. Buscar un exploit para un servicio vulnerable (ej. vsftpd 2.3.4)
+search vsftpd
+
+# 2. Seleccionar el exploit
+use exploit/unix/ftp/vsftpd_234_backdoor
+
+# 3. Configurar el objetivo
+set RHOSTS 192.168.1.50
+
+# 4. Lanzar el ataque
+exploit
+
+# Si tiene éxito, obtendremos una 'shell' o sesión 'meterpreter' en la máquina remota.
+```
+
+## Sistemas de Detección de Intrusiones (IDS/IPS)
+Sistemas diseñados para detectar (IDS) y prevenir (IPS) accesos no autorizados.
+
+-   **IDS (Intrusion Detection System)**: Monitoriza y alerta. Es pasivo (copia del tráfico).
+-   **IPS (Intrusion Prevention System)**: Monitoriza y bloquea. Es activo (está en línea, como un firewall).
+
+### Tipos
+-   **NIDS (Network IDS)**: Analiza paquetes en la red (ej. Snort, Suricata, Zeek). Busca firmas de ataques conocidos.
+-   **HIDS (Host IDS)**: Analiza el host (ej. OSSEC, Wazuh). Monitoriza logs, integridad de archivos (FIM) y rootkits.
+
+**Ejemplo de regla Snort:**
+```snort
+# Estructura: Acción | Protocolo | Origen | Puerto | -> | Destino | Puerto | (Opciones)
+# Alerta si detecta un intento de acceso a /etc/passwd vía web
+alert tcp any any -> 192.168.1.0/24 80 (msg:"WEB-ATTACK intento de acceso a /etc/passwd"; content:"/etc/passwd"; nocase; sid:1000002; rev:1;)
+```

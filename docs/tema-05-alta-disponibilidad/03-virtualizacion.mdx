@@ -1,0 +1,122 @@
+---
+sidebar_position: 3
+title: Virtualización de Sistemas
+---
+
+# Virtualización de Sistemas
+
+## Posibilidades de la Virtualización para Alta Disponibilidad
+
+La virtualización ha revolucionado la forma en que implementamos la alta disponibilidad. Al abstraer el hardware físico, las máquinas virtuales (VMs) y los contenedores ofrecen una flexibilidad que el hardware tradicional no puede igualar.
+
+### Beneficios Clave
+- **Independencia del Hardware**: Las VMs pueden moverse entre diferentes servidores físicos sin necesidad de reconfiguración, eliminando la dependencia de un hardware específico.
+- **Aislamiento**: Un fallo en una aplicación o sistema operativo virtualizado no afecta necesariamente a otras VMs en el mismo host.
+- **Consolidación**: Permite ejecutar múltiples servidores lógicos en menos servidores físicos, facilitando la gestión de recursos redundantes.
+- **Recuperación Rápida**: Restaurar una VM desde una copia de seguridad o imagen es mucho más rápido que reinstalar un sistema operativo en bare-metal.
+
+## Herramientas para la Virtualización: Hipervisores
+
+El componente central de la virtualización es el **Hipervisor** (o Monitor de Máquina Virtual - VMM), que crea y ejecuta las máquinas virtuales.
+
+### Hipervisores Tipo 1 (Bare-Metal)
+Se instalan directamente sobre el hardware físico, sin un sistema operativo anfitrión intermedio.
+- **Características**: Mayor rendimiento, seguridad y estabilidad. Son el estándar en entornos de producción empresarial.
+- **Ejemplos**: VMware ESXi, Microsoft Hyper-V, KVM (Kernel-based Virtual Machine - técnicamente híbrido pero funciona como tipo 1), Proxmox VE, Xen.
+
+### Hipervisores Tipo 2 (Hosted)
+Se ejecutan como una aplicación sobre un sistema operativo convencional (Windows, Linux, macOS).
+- **Características**: Más fáciles de instalar y usar para pruebas o desarrollo, pero con menor rendimiento debido a la capa extra del SO anfitrión.
+- **Ejemplos**: Oracle VirtualBox, VMware Workstation, Parallels Desktop.
+
+## Alta Disponibilidad con Virtualización
+
+La virtualización habilita mecanismos avanzados de HA que serían muy complejos o imposibles en entornos físicos puros.
+
+### Migración en Vivo (Live Migration)
+Permite mover una máquina virtual en ejecución de un host físico a otro **sin interrumpir el servicio** (o con una interrupción imperceptible de milisegundos).
+- **Uso**: Mantenimiento programado de servidores físicos, balanceo de carga dinámico.
+- **Tecnologías**: vMotion (VMware), Live Migration (Hyper-V), KVM Live Migration.
+
+**¿Cómo funciona (simplificado)?**
+1.  **Pre-copia**: Se copia la memoria RAM de la VM origen al destino mientras la VM sigue funcionando.
+2.  **Copia iterativa**: Se copian las páginas de memoria que han cambiado (sucias) durante la copia anterior. Esto se repite hasta que los cambios son mínimos.
+3.  **Pausa y corte**: Se pausa la VM origen por un instante brevísimo, se copian los últimos cambios de CPU y memoria, y se activa la VM en el destino.
+4.  **Reanudación**: La VM continúa ejecutándose en el nuevo host como si nada hubiera pasado.
+
+### Snapshots (Instantáneas)
+Capturan el estado completo de una máquina virtual (disco, memoria y configuración) en un momento específico.
+- **Uso**: Antes de aplicar parches o actualizaciones críticas. Si algo falla, se puede revertir al estado anterior (rollback) en segundos.
+- **Nota**: No sustituyen a los backups tradicionales, pero son vitales para la disponibilidad operativa durante cambios.
+
+### Failover Automático
+Si un host físico falla, el sistema de gestión del clúster de virtualización detecta la caída y reinicia automáticamente las VMs afectadas en otros hosts disponibles del clúster.
+- **Diferencia con Live Migration**: Aquí hay una breve interrupción (reinicio), pero el servicio se recupera automáticamente sin intervención humana.
+
+## Simulación de Servicios con Virtualización
+
+La virtualización no solo sirve para producción, sino que es esencial para crear entornos de desarrollo y pruebas que repliquen fielmente la producción.
+
+### Uso de Vagrant
+Vagrant es una herramienta para construir y gestionar entornos de máquinas virtuales de forma declarativa.
+- **Entornos Replicables**: Mediante un archivo `Vagrantfile`, se define la configuración exacta (SO, red, recursos). Cualquier desarrollador puede levantar un entorno idéntico con un solo comando (`vagrant up`).
+- **Integración**: Se integra con VirtualBox, VMware, Hyper-V y herramientas de aprovisionamiento como Ansible o Chef.
+
+**Ejemplo de `Vagrantfile` básico:**
+
+```ruby
+Vagrant.configure("2") do |config|
+  # Define la imagen base (box) a utilizar, en este caso Ubuntu 20.04
+  config.vm.box = "ubuntu/focal64"
+
+  # Configura una red privada con una IP estática
+  config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Configura la memoria RAM de la VM
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+  end
+
+  # Script de aprovisionamiento simple
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y apache2
+  SHELL
+end
+```
+
+### Contenedores (Docker, Podman)
+A diferencia de las VMs que virtualizan el hardware, los contenedores virtualizan el sistema operativo.
+- **Servicios Aislados**: Cada contenedor tiene sus propias librerías y dependencias, pero comparte el kernel del host.
+- **Rápido Despliegue**: Arrancan en milisegundos y son muy ligeros.
+- **Ideal para Microservicios**: Facilitan la arquitectura de aplicaciones distribuidas y resilientes.
+
+**Ejemplo Práctico con Docker:**
+
+1.  **Dockerfile** (Definición de la imagen):
+    ```dockerfile
+    # Usar imagen base de Node.js
+    FROM node:14
+    WORKDIR /app
+    COPY package*.json ./
+    RUN npm install
+    COPY . .
+    EXPOSE 8080
+    CMD ["node", "server.js"]
+    ```
+
+2.  **Comando para ejecutar**:
+    ```bash
+    docker build -t mi-app-web .
+    docker run -d -p 8080:8080 --name mi-contenedor mi-app-web
+    ```
+
+### Virtualización en Entornos de Producción
+En producción, la tendencia es hacia la **infraestructura inmutable** y la orquestación.
+- Los servidores no se "arreglan", se reemplazan.
+- Uso de clústers de virtualización (Proxmox, vSphere) o de contenedores (Kubernetes) para gestionar la disponibilidad de cientos de servicios.
+
+### Análisis y Optimización
+Para mantener la alta disponibilidad, es crucial monitorizar el rendimiento de los sistemas virtualizados.
+- **Overcommitment**: Asignar más recursos virtuales (vCPU, RAM) de los que existen físicamente. Es útil pero peligroso si todos los sistemas demandan recursos a la vez.
+- **Pruebas de Carga**: Simular tráfico intenso para verificar cómo se comporta el sistema virtualizado y si los mecanismos de autoescalado o balanceo responden correctamente.

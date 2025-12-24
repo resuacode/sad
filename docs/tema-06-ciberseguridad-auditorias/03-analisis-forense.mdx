@@ -1,0 +1,95 @@
+---
+sidebar_position: 3
+title: Análisis Forense en Sistemas Informáticos
+---
+
+# Análisis Forense en Sistemas Informáticos
+
+## Objetivo del Análisis Forense
+El análisis forense digital es el proceso de preservación, identificación, extracción y documentación de pruebas informáticas para que puedan ser utilizadas ante un tribunal de justicia o para determinar la causa raíz de un incidente de seguridad.
+El objetivo no es solo "encontrar al culpable", sino reconstruir los hechos de manera irrefutable manteniendo la **Cadena de Custodia**.
+
+### Cadena de Custodia
+Es el procedimiento documentado que garantiza la integridad de las pruebas desde el momento de su recolección hasta su presentación en juicio. Debe responder a:
+-   ¿Quién recolectó la evidencia?
+-   ¿Cómo y dónde se recolectó?
+-   ¿Quién ha tenido acceso a ella en todo momento?
+-   ¿Cómo se ha almacenado?
+
+Si se rompe la cadena de custodia, la prueba puede ser invalidada legalmente.
+
+## Fases del Análisis Forense
+
+### 1. Identificación y Preservación (Adquisición)
+Es la fase más crítica. Se debe asegurar la escena y evitar cualquier modificación de los datos.
+
+#### Orden de Volatilidad (RFC 3227)
+Al recolectar evidencias, siempre se debe empezar por lo más volátil (lo que desaparece más rápido):
+1.  Registros y caché del procesador.
+2.  Memoria RAM (Routing table, ARP cache, Process table, Kernel stats).
+3.  Datos en disco (Sistemas de archivos).
+4.  Logs remotos y datos de monitorización.
+5.  Medios de archivo (Backups).
+
+#### Adquisición en Vivo vs. Post-Mortem
+-   **Análisis en Vivo (Live)**: Se realiza con el equipo encendido. Necesario para capturar RAM y procesos activos, pero altera ligeramente el sistema.
+-   **Análisis Post-Mortem (Dead)**: Se realiza sobre una copia del disco de un equipo apagado. Es más seguro para la integridad de los datos estáticos.
+
+**Herramienta Práctica: `dd` y `sha256sum`**
+```bash
+# Crear una imagen forense de un disco (sdb) a un archivo
+# conv=noerror,sync asegura que si hay sectores defectuosos, no se detenga y rellene con ceros para mantener el alineamiento
+sudo dd if=/dev/sdb of=/evidencias/disco_sospechoso.img bs=4M conv=noerror,sync status=progress
+
+# Calcular hash de la imagen (IMPRESCINDIBLE para la cadena de custodia)
+sha256sum /evidencias/disco_sospechoso.img > hash_original.txt
+```
+
+### 2. Análisis
+Examen profundo de los datos adquiridos para encontrar evidencias.
+
+#### Artefactos Forenses Clave
+-   **Windows**:
+    -   **Registro (Registry)**: Contiene información de hardware conectado (USB), software instalado, redes recientes.
+    -   **Prefetch**: Archivos que indican qué programas se ejecutaron, cuántas veces y cuándo.
+    -   **Event Logs**: Registros de seguridad, sistema y aplicaciones.
+-   **Linux**:
+    -   `/var/log/auth.log` (o `secure`): Intentos de login, uso de sudo.
+    -   `/var/log/syslog`: Mensajes generales del sistema.
+    -   `.bash_history`: Comandos ejecutados por el usuario.
+-   **Navegadores**: Historial, cookies, caché, descargas.
+
+### 3. Presentación / Documentación
+Redacción de un informe técnico y ejecutivo que detalle los hallazgos, la metodología usada y las conclusiones, de forma comprensible para personal no técnico (jueces, directivos).
+
+## Herramientas Utilizadas
+
+### Herramientas de Línea de Comandos (Linux)
+-   **The Sleuth Kit (TSK)**: Colección de herramientas para análisis de sistemas de archivos (NTFS, FAT, EXT4). Permite ver inodos borrados.
+-   **Volatility**: Framework líder para análisis de memoria RAM.
+-   **Foremost / Scalpel**: Herramientas de "File Carving". Recuperan archivos basándose en sus cabeceras (magic numbers) y pies, ignorando el sistema de archivos. Útil para discos formateados.
+
+**Ejemplo Práctico: Recuperar archivos borrados con `foremost`**
+```bash
+# Intentar recuperar archivos jpg y pdf de la imagen de disco
+foremost -t jpg,pdf -i /evidencias/disco_sospechoso.img -o /evidencias/recuperados
+```
+
+### Suites Forenses
+-   **Autopsy**: Interfaz gráfica para The Sleuth Kit. Permite indexar todo el disco, buscar por palabras clave, analizar línea de tiempo (timeline) de eventos, etc.
+-   **FTK Imager**: Herramienta gratuita (propietaria) estándar para crear imágenes de disco y volcar memoria en Windows.
+-   **CAINE / SIFT Workstation**: Distribuciones Linux especializadas que montan los discos en modo "solo lectura" por defecto para no contaminar la evidencia.
+
+### Análisis de Memoria con Volatility
+Permite ver qué procesos estaban corriendo, conexiones de red abiertas y contraseñas en texto claro en el momento de la captura.
+
+```bash
+# 1. Identificar el perfil del sistema operativo (en versiones antiguas de Volatility)
+volatility -f memoria.raw imageinfo
+
+# 2. Listar conexiones de red activas en el momento de la captura
+volatility -f memoria.raw --profile=Win10x64 netscan
+
+# 3. Volcar el ejecutable de un proceso sospechoso (malware) para analizarlo
+volatility -f memoria.raw --profile=Win10x64 procdump -p 1234 -D /dump/
+```

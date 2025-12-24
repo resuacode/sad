@@ -1,0 +1,78 @@
+---
+sidebar_position: 2
+title: Criptografía Avanzada
+---
+
+# Criptografía Avanzada
+
+En el [Tema 2: Criptografía aplicada a la seguridad lógica](../../tema-02-seguridad-activa/04-criptografia.mdx), ya introdujimos los conceptos fundamentales de cifrado simétrico, asimétrico y hashing. En este apartado, profundizaremos en su aplicación práctica en entornos de auditoría y seguridad avanzada, centrándonos en la infraestructura que sustenta la confianza en internet y en técnicas modernas.
+
+## Técnicas de Cifrado de la Información
+
+### Algoritmos de Cifrado Simétrico: Profundización
+Aunque ya conocemos AES, es importante entender cómo se implementa correctamente para evitar vulnerabilidades.
+
+-   **Modos de Operación**: No basta con usar AES; hay que elegir el modo correcto.
+    -   **ECB (Electronic Codebook)**: Inseguro. Bloques idénticos de texto plano producen bloques idénticos de texto cifrado (se ven patrones). **Nunca usar**.
+    -   **CBC (Cipher Block Chaining)**: Seguro, pero requiere un Vector de Inicialización (IV) aleatorio y único.
+    -   **GCM (Galois/Counter Mode)**: El estándar moderno. Proporciona cifrado autenticado (AEAD), garantizando confidencialidad e integridad simultáneamente. Muy rápido.
+
+**Ejemplo Práctico con OpenSSL (Simétrico con GCM):**
+Cifrar un archivo usando AES-256-GCM (nota: OpenSSL CLI a veces requiere parámetros complejos para GCM, usaremos CBC para el ejemplo básico pero ten en cuenta la recomendación de GCM para desarrollo):
+
+```bash
+# Cifrar archivo 'documento.txt' con AES-256-CBC y Salt (para evitar ataques de diccionario)
+openssl enc -aes-256-cbc -salt -pbkdf2 -in documento.txt -out documento.enc -k mi_contraseña_secreta
+
+# Descifrar
+openssl enc -aes-256-cbc -d -pbkdf2 -in documento.enc -out documento_descifrado.txt -k mi_contraseña_secreta
+```
+
+### Algoritmos de Cifrado Asimétrico: Más allá de RSA
+RSA ha sido el rey, pero la **Criptografía de Curva Elíptica (ECC)** es el presente y futuro debido a su eficiencia.
+
+-   **RSA vs ECC**: Una clave ECC de 256 bits ofrece una seguridad comparable a una clave RSA de 3072 bits. Esto significa menos carga computacional para dispositivos móviles y servidores.
+-   **Intercambio de Claves Diffie-Hellman (DH)**: Permite que dos partes que no se conocen acuerden una clave secreta compartida (para luego usar cifrado simétrico) a través de un canal inseguro.
+    -   **PFS (Perfect Forward Secrecy)**: Propiedad vital en TLS. Si un atacante roba la clave privada del servidor *hoy*, no debería poder descifrar el tráfico capturado *ayer*. Esto se logra usando claves DH efímeras (DHE o ECDHE).
+
+**Ejemplo Práctico con GPG (Asimétrico):**
+```bash
+# Generar par de claves (GPG usa por defecto algoritmos robustos)
+gpg --gen-key
+
+# Cifrar para un destinatario (usando su clave pública)
+# Esto asegura CONFIDENCIALIDAD: Solo el destinatario puede leerlo.
+gpg --encrypt --recipient "destinatario@email.com" mensaje.txt
+
+# Firmar un documento (usando mi clave privada)
+# Esto asegura AUTENTICIDAD e INTEGRIDAD: Cualquiera con mi pública puede verificar que fui yo.
+gpg --clearsign mensaje.txt
+```
+
+## Infraestructura de Clave Pública (PKI) y Certificados
+
+La criptografía asimétrica por sí sola no garantiza la identidad (¿cómo sé que la clave pública de "Google" es realmente de Google?). Aquí entra la PKI.
+
+### Cadena de Confianza
+1.  **Root CA (Autoridad de Certificación Raíz)**: Entidad de máxima confianza (su certificado viene preinstalado en navegadores y SO).
+2.  **Intermediate CA**: Emitida por la Root CA. Emite certificados finales para proteger a la Root (que se guarda offline).
+3.  **End-Entity Certificate**: El certificado de la web (ej. google.com).
+
+### Estándar X.509
+Define el formato de los certificados digitales. Campos críticos para una auditoría:
+-   **Subject**: Quién es el dueño (CN = Common Name).
+-   **Issuer**: Quién lo emitió.
+-   **Validity**: Fechas `Not Before` y `Not After`.
+-   **Subject Alternative Name (SAN)**: Lista de dominios válidos para este certificado (vital para hosting virtual).
+
+### Firma Electrónica Avanzada
+Legalmente vinculante en muchos países (como eIDAS en Europa).
+-   **Sellado de Tiempo (Timestamping)**: Garantiza que el documento existía en un momento dado y no ha sido alterado desde entonces.
+-   **Validación de Estado (OCSP/CRL)**: Comprobar si el certificado ha sido revocado antes de su expiración.
+
+**Ejemplo: Inspeccionar a fondo un certificado SSL:**
+```bash
+# Ver toda la cadena de certificación y detalles técnicos
+echo | openssl s_client -showcerts -servername google.com -connect google.com:443 2>/dev/null | openssl x509 -noout -text
+```
+*Busca en la salida el campo "Subject Alternative Name" para ver todos los subdominios que cubre.*

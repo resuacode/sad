@@ -1,0 +1,205 @@
+---
+sidebar_position: 2
+title: Introducción a la Alta Disponibilidad
+---
+
+# Introducción a la Alta Disponibilidad
+
+## Definición y Objetivos
+
+La **Alta Disponibilidad** (High Availability o **HA**) se refiere a la capacidad de un sistema o componente para permanecer operativo y accesible durante un periodo de tiempo prolongado, habitualmente superior al de un sistema estándar. El objetivo principal es asegurar que el servicio esté funcionando el mayor tiempo posible, minimizando las interrupciones no planificadas.
+
+### Objetivos Principales
+
+1.  **Minimizar el tiempo de inactividad (Downtime)**: Reducir al máximo los periodos en los que el servicio no está disponible.
+2.  **Continuidad del Negocio**: Garantizar que las operaciones críticas de la organización puedan continuar incluso ante fallos.
+3.  **Integridad de los Datos**: Asegurar que no se pierda información durante un fallo o el proceso de recuperación.
+4.  **Transparencia para el Usuario**: Lograr que los fallos y recuperaciones sean imperceptibles para el usuario final.
+
+### Conceptos Clave
+
+-   **SLA (Service Level Agreement)**: Acuerdo de Nivel de Servicio que estipula el porcentaje de tiempo que el sistema debe estar disponible.
+-   **Uptime**: Tiempo de actividad del sistema, generalmente expresado en porcentajes de "nueves" (ej. 99.9%, 99.99%).
+-   **Downtime**: Tiempo de inactividad.
+-   **RTO (Recovery Time Objective)**: Tiempo máximo aceptable que un sistema puede estar caído.
+-   **RPO (Recovery Point Objective)**: Cantidad máxima de datos que se pueden perder (medido en tiempo) ante un fallo.
+
+#### Tabla de Disponibilidad (SLA)
+
+| Disponibilidad | Tiempo de inactividad por año | Tiempo de inactividad por mes |
+| :--- | :--- | :--- |
+| 99% (dos nueves) | 3 días, 15 horas, 39 minutos | 7 horas, 18 minutos |
+| 99.9% (tres nueves) | 8 horas, 45 minutos | 43 minutos |
+| 99.99% (cuatro nueves) | 52 minutos, 35 segundos | 4 minutos, 22 segundos |
+| 99.999% (cinco nueves) | 5 minutos, 15 segundos | 26 segundos |
+
+> **Ejemplo**: Un SLA del 99.9% permite que tu servicio esté caído casi 9 horas al año. Si tu negocio pierde 1000€ por hora de caída, esto podría costar 9000€ anuales. Con cinco nueves, el coste sería despreciable.
+
+## Análisis de Supuestos y Situaciones
+
+Para implementar una estrategia de alta disponibilidad efectiva, es crucial analizar qué puede fallar y cómo impactaría al sistema. Esto implica identificar los **Puntos Únicos de Fallo** (SPOF - Single Point of Failure).
+
+### Escenarios Comunes de Fallo
+
+-   **Fallos de Hardware**: Discos duros dañados, fuentes de alimentación quemadas, fallos en la memoria RAM o placas base.
+-   **Fallos de Software**: Bugs en el sistema operativo o aplicaciones, fugas de memoria, procesos colgados.
+-   **Fallos de Infraestructura**: Cortes de energía eléctrica, fallos en la refrigeración, cortes de conectividad a Internet.
+-   **Desastres Naturales**: Incendios, inundaciones, terremotos.
+
+| Nivel RAID | Descripción | Redundancia | Rendimiento | Capacidad Útil |
+| :--- | :--- | :--- | :--- | :--- |
+| **RAID 0** | Striping (distribución) | Ninguna (si falla un disco, se pierde todo) | Muy alto | 100% |
+| **RAID 1** | Mirroring (espejo) | Alta (soporta fallo de N-1 discos) | Lectura alta, Escritura media | 50% (con 2 discos) |
+| **RAID 5** | Striping con paridad | Media (soporta fallo de 1 disco) | Lectura alta, Escritura lenta (cálculo paridad) | (N-1)/N |
+| **RAID 10** | Espejo de stripes | Alta (soporta fallo de 1 disco por subgrupo) | Muy alto | 50% |
+
+> **Recomendación**: Para sistemas operativos y bases de datos donde el rendimiento y la redundancia son críticos, **RAID 10** suele ser la mejor opción. Para almacenamiento de archivos general donde se busca capacidad, **RAID 5** o **RAID 6** son comuneslos SPOF mediante redundancia.
+
+## Soluciones Hardware para Continuidad
+
+La primera línea de defensa en la alta disponibilidad es la redundancia a nivel de hardware dentro del propio servidor o infraestructura física.
+
+### RAID (Redundant Array of Independent Disks)
+
+El uso de RAID permite proteger los datos ante el fallo de uno o más discos duros.
+-   **RAID 1 (Espejo)**: Replica los datos en dos discos. Si uno falla, el otro sigue funcionando.
+-   **RAID 5**: Distribuye datos y paridad. Soporta el fallo de un disco.
+-   **RAID 10**: Combina espejo y striping. Alto rendimiento y redundancia.
+
+### Fuentes de Alimentación Redundantes
+
+Los servidores críticos deben contar con al menos dos fuentes de alimentación conectadas a circuitos eléctricos diferentes. Si una fuente falla o se corta la corriente de una línea, la otra asume la carga sin interrumpir el servicio.
+
+### SAI / UPS (Sistemas de Alimentación Ininterrumpida)
+
+Dispositivos que proporcionan energía de emergencia mediante baterías cuando falla el suministro eléctrico principal, permitiendo mantener el sistema encendido o realizar un apagado controlado.
+
+### Redundancia de Red (NIC Teaming / Bonding)
+
+Uso de múltiples tarjetas de red (NICs) configuradas como una sola interfaz lógica. Proporciona tolerancia a fallos (si un cable o switch falla) y balanceo de carga.
+
+## Servidores Redundantes y Sistemas de Almacenamiento
+
+Cuando la redundancia interna no es suficiente, se escala a la redundancia de nodos completos.
+
+### Servidores Redundantes
+
+-   **Activo-Pasivo**: Un servidor principal maneja todo el tráfico. El servidor secundario está en espera y solo se activa si el principal falla (Failover).
+-   **Activo-Activo**: Ambos servidores manejan tráfico simultáneamente, repartiendo la carga. Si uno falla, el otro asume toda la carga.
+
+### Almacenamiento Redundante
+
+Para que los servidores redundantes funcionen, deben acceder a los mismos datos.
+-   **SAN (Storage Area Network)**: Red dedicada de almacenamiento que permite a múltiples servidores acceder a discos compartidos.
+-   **NAS (Network Attached Storage)**: Almacenamiento conectado a la red, accesible mediante protocolos como NFS o SMB.
+-   **Replicación de Datos**: Sincronización de datos entre diferentes ubicaciones físicas o lógicas (ej. DRBD en Linux).
+
+## Sistemas de Clústers
+
+Un **clúster** es un conjunto de ordenadores independientes (nodos) que trabajan juntos para funcionar como un único sistema integrado.
+
+### Conceptos Fundamentales
+
+-   **Heartbeat (Latido)**: Señal periódica que los nodos se envían entre sí para confirmar que siguen activos. Si el latido cesa, se asume que el nodo ha fallado.
+-   **Quorum**: Número mínimo de nodos que deben estar activos para que el clúster tome decisiones. Evita la corrupción de datos.
+-   **Split-Brain**: Situación crítica donde se pierde la comunicación entre nodos y ambos creen ser el "maestro", intentando escribir en el mismo disco compartido y corrompiendo los datos. Se soluciona con mecanismos de STONITH (Shoot The Other Node In The Head).
+
+### Tipos de Clústers
+
+1.  **Clústers de Alta Disponibilidad (HA Clusters)**:
+    -   **Objetivo**: Garantizar la continuidad del servicio (uptime).
+    -   **Funcionamiento**: Utilizan software como **Pacemaker** y **Corosync**. Si el nodo activo falla, los recursos (IP virtual, servicio web, montaje de disco) se mueven automáticamente al nodo pasivo.
+    -   **Ejemplo**: Un clúster de base de datos PostgreSQL donde si el primario cae, la réplica se promociona a maestra automáticamente.
+
+2.  **Clústers de Balanceo de Carga (Load Balancing)**:
+    -   **Objetivo**: Distribuir la carga de trabajo para mejorar el rendimiento y la escalabilidad.
+    -   **Funcionamiento**: Todos los nodos están activos y procesan peticiones. Si uno falla, simplemente se saca de la rotación.
+    -   **Ejemplo**: Una granja de servidores web Apache sirviendo la misma página.
+
+3.  **Clústers de Alto Rendimiento (HPC)**:
+    -   **Objetivo**: Potencia de cálculo pura para tareas científicas o renderizado. Dividen una tarea compleja en miles de subtareas paralelas.
+
+## Balanceadores de Carga (Load Balancers)
+
+Los balanceadores de carga son componentes críticos que actúan como intermediarios entre los clientes y los servidores backend.
+
+### Algoritmos de Distribución
+El balanceador debe decidir a qué servidor enviar cada petición. Los algoritmos más comunes son:
+
+1.  **Round Robin**: Turno rotatorio. Uno para A, uno para B, uno para C, y vuelta a empezar. Simple y efectivo si los servidores son iguales.
+2.  **Least Connections**: Envía la petición al servidor que tenga menos conexiones activas en ese momento. Ideal cuando las peticiones tienen duraciones muy variables.
+3.  **IP Hash**: Calcula un hash de la IP del cliente para asegurar que un usuario siempre vaya al mismo servidor (persistencia básica).
+4.  **Weighted Round Robin**: Igual que Round Robin, pero asignando más peso (más peticiones) a los servidores más potentes.
+
+### Funciones Avanzadas
+-   **Health Checks (Comprobaciones de Salud)**: El balanceador hace "ping" o peticiones HTTP periódicas a los backends. Si uno devuelve error 500 o no responde, se marca como *down* y no recibe tráfico hasta que se recupere.
+-   **SSL Offloading (Terminación SSL)**: El balanceador gestiona el certificado HTTPS y descifra el tráfico, enviándolo en texto plano (HTTP) a los servidores backend. Esto libera de carga CPU a los servidores web.
+-   **Sticky Sessions (Persistencia de Sesión)**: Mecanismo para asegurar que un usuario mantenga su sesión (carrito de compra, login) siendo atendido siempre por el mismo servidor backend durante su visita.
+
+### Tipos de Balanceadores
+-   **Hardware**: Dispositivos dedicados (F5, Citrix).
+-   **Software**: Aplicaciones instalables (HAProxy, Nginx, Traefik).
+-   **Cloud**: Servicios gestionados (AWS ELB, Google Cloud Load Balancing).
+
+### Ejemplo de Configuración (Nginx como Load Balancer)
+
+A continuación, un ejemplo básico de cómo configurar Nginx para balancear carga entre tres servidores web backend:
+
+```nginx
+http {
+    upstream backend_servers {
+        # Definición del grupo de servidores
+        server backend1.example.com;
+        server backend2.example.com;
+        server backend3.example.com;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            # Reenvío de peticiones al grupo definido arriba
+            proxy_pass http://backend_servers;
+        }
+    }
+}
+```
+
+## Soluciones de Futuro y Demanda Creciente
+
+La demanda de alta disponibilidad sigue creciendo impulsada por la transformación digital.
+
+-   **Cloud Computing**: Facilita la creación de arquitecturas redundantes en múltiples zonas geográficas (Multi-AZ) sin inversión en hardware físico.
+-   **Contenedores y Orquestación**: Herramientas como **Kubernetes** han estandarizado la alta disponibilidad de aplicaciones, con auto-curación (self-healing) y escalado automático.
+-   **Edge Computing**: Descentralización del procesamiento para acercarlo al usuario, requiriendo nuevas estrategias de disponibilidad distribuida.
+-   **Chaos Engineering**: Práctica de introducir fallos deliberados en sistemas en producción para probar y mejorar su resiliencia (ej. Netflix Chaos Monkey).
+
+## Esquematización y Documentación de Soluciones HA
+
+La complejidad de los sistemas de alta disponibilidad hace imprescindible una documentación rigurosa.
+
+### Elementos a Documentar
+
+Una documentación deficiente convierte un incidente menor en un desastre.
+
+1.  **Diagramas de Arquitectura**:
+    -   Debe incluir: Direcciones IP (VIP y reales), nombres de host, conexiones de red (VLANs), ubicación física/lógica.
+    -   *Ejemplo*: Un diagrama de red mostrando el flujo desde Internet -> Firewall -> Balanceador -> Nodos Web -> Clúster de Base de Datos.
+
+2.  **Procedimientos de Failover y Failback**:
+    -   **Failover**: ¿Qué pasa si cae el nodo primario? ¿Es automático? ¿Cuánto tarda?
+    -   **Failback**: Una vez reparado el nodo primario, ¿cómo se devuelve la carga? (A veces es manual para evitar oscilaciones).
+
+3.  **Plan de Recuperación ante Desastres (DRP)**:
+    -   Diferente a la HA. La HA es para fallos de componentes; el DRP es para la pérdida total del centro de datos (incendio, inundación).
+    -   *Ejemplo*: "En caso de pérdida del CPD principal, activar réplica en AWS Región Irlanda restaurando último backup de S3".
+
+4.  **Configuraciones (Configuration Management)**:
+    -   No confiar en backups manuales. Usar **Infraestructura como Código (IaC)** (Ansible, Terraform) para que la configuración esté versionada en Git.
+    -   Documentar las versiones de software exactas utilizadas.
+
+5.  **Pruebas de Recuperación (Drill Tests)**:
+    -   Registro de simulacros.
+    -   *Ejemplo*: "Día 15/03: Se desconectó cable de red del Nodo 1. El servicio migró al Nodo 2 en 3 segundos. Resultado: ÉXITO".
+
+> **Nota**: Una solución de alta disponibilidad no probada es una solución que no existe.

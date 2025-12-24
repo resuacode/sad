@@ -1,0 +1,79 @@
+---
+sidebar_position: 4
+title: Introducción a la Nube y HA en AWS
+---
+
+# Introducción a la Nube y Alta Disponibilidad en AWS
+
+## Conceptos Básicos de Cloud Computing
+
+El **Cloud Computing** (Computación en la Nube) es la entrega bajo demanda de recursos de TI a través de Internet con un modelo de precios de pago por uso. En lugar de comprar, poseer y mantener servidores físicos y centros de datos, se accede a servicios tecnológicos como capacidad informática, almacenamiento y bases de datos según sea necesario.
+
+### Modelos de Servicio
+- **IaaS (Infrastructure as a Service)**: Infraestructura como servicio (ej. AWS EC2). El proveedor gestiona el hardware, tú gestionas el SO y las aplicaciones.
+- **PaaS (Platform as a Service)**: Plataforma como servicio (ej. AWS Elastic Beanstalk). El proveedor gestiona el hardware y el SO, tú te centras en la aplicación.
+- **SaaS (Software as a Service)**: Software como servicio (ej. Gmail, Dropbox). El proveedor gestiona todo, tú solo usas la aplicación.
+
+### Ventajas para la Alta Disponibilidad
+La nube facilita enormemente la HA gracias a su escala global y redundancia intrínseca. Los proveedores como AWS tienen **Regiones** (áreas geográficas) y **Zonas de Disponibilidad (AZ)** (centros de datos aislados dentro de una región). Diseñar sistemas que abarquen múltiples AZs es la base de la HA en la nube.
+
+## Servicios AWS para Alta Disponibilidad
+
+Amazon Web Services (AWS) ofrece un conjunto robusto de herramientas para construir arquitecturas resilientes.
+
+### EC2 (Elastic Compute Cloud)
+Es el servicio de servidores virtuales (instancias) en la nube.
+
+- **Lanzamiento de Instancias**: Permite crear máquinas virtuales en minutos, eligiendo el sistema operativo (AMI), la potencia (tipo de instancia) y la ubicación (red y zona de disponibilidad).
+- **Grupos de Autoescalado (Auto Scaling Groups)**:
+    - Monitorizan sus aplicaciones y ajustan automáticamente la capacidad para mantener un rendimiento estable y predecible al menor coste posible.
+    - **Escalado Horizontal**: Si la demanda sube, AWS lanza más instancias automáticamente. Si baja, las termina para ahorrar costes.
+    - **Self-Healing**: Si una instancia falla, el grupo de autoescalado la detecta como "no saludable" y la reemplaza automáticamente por una nueva.
+
+**Ejemplo CLI (AWS Command Line Interface):**
+Lanzar una instancia Ubuntu t2.micro:
+```bash
+aws ec2 run-instances \
+    --image-id ami-0abcdef1234567890 \
+    --count 1 \
+    --instance-type t2.micro \
+    --key-name MiClaveSSH \
+    --security-group-ids sg-903004f8
+```
+
+### Elastic Load Balancing (ELB)
+El balanceo de carga elástico distribuye automáticamente el tráfico de aplicaciones entrante entre varios destinos, como instancias EC2, contenedores y direcciones IP.
+
+- **Alta Disponibilidad**: Funciona a través de múltiples Zonas de Disponibilidad. Si una zona entera cae, el ELB redirige el tráfico a las zonas restantes.
+- **Health Checks**: Comprueba constantemente la salud de los destinos y deja de enviar tráfico a los que fallan.
+
+### S3 (Simple Storage Service)
+Servicio de almacenamiento de objetos diseñado para ofrecer una durabilidad de datos del 99,999999999% (11 nueves).
+
+- **Redundancia Automática**: Por defecto, S3 almacena los datos de forma redundante en múltiples dispositivos en un mínimo de tres Zonas de Disponibilidad dentro de una región.
+- **Versatilidad**: Se usa para backups, alojamiento de webs estáticas, lagos de datos y almacenamiento de archivos de aplicaciones.
+
+**Ejemplo CLI:**
+Crear un bucket y subir un archivo:
+```bash
+# Crear bucket
+aws s3 mb s3://mi-bucket-de-backups
+
+# Subir archivo
+aws s3 cp backup.zip s3://mi-bucket-de-backups/
+```
+
+### VPC (Virtual Private Cloud)
+Permite aprovisionar una sección lógicamente aislada de la nube de AWS donde puede lanzar recursos de AWS en una red virtual que usted defina.
+
+- **Aislamiento y Seguridad**: Control total sobre el entorno de red virtual, incluyendo la selección de su propio rango de direcciones IP, la creación de subredes y la configuración de tablas de enrutamiento y puertas de enlace de red.
+- **Diseño HA**: Una VPC abarca todas las zonas de disponibilidad de la región, permitiendo crear subredes en diferentes zonas para distribuir las cargas de trabajo.
+
+### Contenedores en Producción: ECS y EKS
+
+Para gestionar contenedores a escala en producción, AWS ofrece orquestadores gestionados:
+
+- **Amazon ECS (Elastic Container Service)**: Servicio de orquestación de contenedores nativo de AWS. Es sencillo de usar y se integra profundamente con otros servicios de AWS.
+- **Amazon EKS (Elastic Kubernetes Service)**: Servicio gestionado de Kubernetes. Permite ejecutar Kubernetes en AWS sin necesidad de instalar y operar sus propios planos de control.
+
+Ambos servicios facilitan la ejecución de aplicaciones en contenedores altamente disponibles, gestionando la colocación de contenedores a través de múltiples zonas de disponibilidad y reemplazando contenedores fallidos automáticamente.
