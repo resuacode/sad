@@ -140,6 +140,12 @@ const config = {
               },
             ],
           },
+          {            
+            type: 'docSidebar',
+            sidebarId: 'entregaFinalSidebar',
+            position: 'left',
+            label: 'Entrega Final',
+          },
           {
             type: 'docSidebar',
             sidebarId: 'laboratorioSidebar',
